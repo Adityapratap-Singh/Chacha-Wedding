@@ -9,7 +9,8 @@ export const SocketProvider = ({ children, serverUrl }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const url = serverUrl || (process.env.REACT_APP_SERVER_URL || 'http://localhost:5001').replace('/api', '').replace(/\/$/, '');
+    const fallbackServerUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5001';
+    const url = serverUrl || (process.env.REACT_APP_SERVER_URL || fallbackServerUrl).replace('/api', '').replace(/\/$/, '');
     const s = io(url, { transports: ['websocket', 'polling'] });
     setSocket(s);
     return () => s.disconnect();

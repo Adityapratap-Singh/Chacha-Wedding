@@ -1,11 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import axios from 'axios';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { SocketProvider } from './context/SocketContext';
 
-const socketUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:5001';
+const fallbackServerUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5001';
+const socketUrl = process.env.REACT_APP_SERVER_URL || fallbackServerUrl;
+
+// Ensure all requests like axios.post('/api/...') go to the configured backend.
+axios.defaults.baseURL = socketUrl;
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

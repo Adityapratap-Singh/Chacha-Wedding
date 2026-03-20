@@ -39,7 +39,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [serverReady, setServerReady] = useState(false);
   const serverUrl = useMemo(
-    () => process.env.REACT_APP_SERVER_URL || 'http://localhost:5001',
+    () => process.env.REACT_APP_SERVER_URL || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5001'),
     []
   );
 
