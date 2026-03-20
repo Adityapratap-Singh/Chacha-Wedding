@@ -16,12 +16,6 @@ import {
   MapPin,
 } from 'lucide-react';
 
-const formatDate = (d) => {
-  if (!d) return '-';
-  const dt = new Date(d);
-  return dt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-};
-
 const GuestList = () => {
   const navigate = useNavigate();
   const socket = useSocket();
