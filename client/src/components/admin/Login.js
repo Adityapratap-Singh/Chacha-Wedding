@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Lock, User, ShieldCheck } from 'lucide-react';
+import { Lock, Mail, ShieldCheck } from 'lucide-react';
 
 const MandalaBg = () => {
   return (
@@ -33,14 +33,14 @@ const MandalaBg = () => {
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: '',
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const { username, password } = formData;
+  const { email, password } = formData;
 
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -75,7 +75,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen min-h-[100dvh] relative overflow-hidden flex items-center justify-center px-4 sm:px-6 py-8 bg-gradient-to-br from-[#070203] via-[#160406] to-[#0b0103]">
-      {/* Cinematic gold glows (kept simple to ensure Tailwind generates the CSS reliably) */}
+      {/* Cinematic gold glows */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,rgba(255,215,0,0.22),transparent_40%),radial-gradient(circle_at_90%_20%,rgba(128,0,0,0.25),transparent_35%)]" />
       <div className="absolute inset-0 pointer-events-none login-noise" />
 
@@ -156,19 +156,19 @@ const Login = () => {
 
           <div className="space-y-6">
             <div className="space-y-2">
-              <label htmlFor="admin-username" className="text-sm font-semibold text-white/75 ml-1">
-                Username
+              <label htmlFor="admin-email" className="text-sm font-semibold text-white/75 ml-1">
+                Email Address
               </label>
               <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/45" size={18} />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/45" size={18} />
                 <input
-                  type="text"
-                  name="username"
-                  id="admin-username"
-                  value={username}
+                  type="email"
+                  name="email"
+                  id="admin-email"
+                  value={email}
                   onChange={onChange}
                   required
-                  placeholder="admin_username"
+                  placeholder="admin@example.com"
                   className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-white/35 outline-none transition-all focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500/35 shadow-[0_0_0_1px_rgba(255,215,0,0.10)] focus:shadow-[0_0_0_1px_rgba(255,215,0,0.18),0_0_34px_rgba(255,215,0,0.12)]"
                 />
               </div>
@@ -218,7 +218,7 @@ const Login = () => {
           Secure Wedding Administration Panel
         </p>
 
-        {/* Adex promotional section - subtle, premium */}
+        {/* Adex promotional section */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}

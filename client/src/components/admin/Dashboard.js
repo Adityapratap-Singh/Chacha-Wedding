@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Users, UserCheck, UserMinus, LayoutDashboard, LogOut, Menu, X, MapPin, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Users, UserCheck, UserMinus, LayoutDashboard, LogOut, Menu, X, MapPin, CheckCircle, XCircle, Clock, Settings, Image } from 'lucide-react';
 import axios from 'axios';
 import { useSocket } from '../../context/SocketContext';
 
@@ -234,6 +234,8 @@ const Dashboard = () => {
         <nav className="flex-1 px-4 space-y-2 mt-4 relative z-10" onClick={() => setIsMobileMenuOpen(false)}>
           <NavItem to="/admin/dashboard" icon={LayoutDashboard} label={isSidebarOpen ? "Overview" : ""} />
           <NavItem to="/admin/dashboard/guests" icon={Users} label={isSidebarOpen ? "Guest List" : ""} />
+          <NavItem to="/admin/dashboard/content" icon={Settings} label={isSidebarOpen ? "CMS" : ""} />
+          <NavItem to="/admin/dashboard/images" icon={Image} label={isSidebarOpen ? "Image Manager" : ""} />
         </nav>
 
         <div className="p-4 mt-auto relative z-10">
