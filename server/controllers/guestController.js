@@ -1,6 +1,7 @@
 
 const Guest = require('../models/guest');
 const { v4: uuidv4 } = require('uuid');
+const { logAction } = require('../utils/logger');
 
 const emitGuestsUpdate = (req) => {
   const io = req.app.get('io');
@@ -41,6 +42,16 @@ exports.addGuest = async (req, res) => {
     });
 
     const guest = await newGuest.save();
+    
+    // Log the change
+    await logAction(
+      req.user ? req.user.email : 'System',
+      'ADD_GUEST',
+      `Guest: ${guest.name}`,
+      { guestId: guest.guestId, family: guest.family },
+      req.ip
+    );
+
     emitGuestsUpdate(req);
     res.json(guest);
   } catch (err) {
@@ -62,6 +73,16 @@ exports.rsvpGuest = async (req, res) => {
     guest.rsvpDate = Date.now();
 
     await guest.save();
+
+    // Log the RSVP
+    await logAction(
+      'Guest',
+      'RSVP_SUBMIT',
+      `Guest: ${guest.name}`,
+      { status: rsvpStatus, count: guestCount },
+      req.ip
+    );
+
     emitGuestsUpdate(req);
     res.json(guest);
   } catch (err) {
@@ -107,6 +128,16 @@ exports.editGuest = async (req, res) => {
       { $set: update },
       { new: true }
     );
+
+    // Log the edit
+    await logAction(
+      req.user ? req.user.email : 'System',
+      'EDIT_GUEST',
+      `Guest: ${guest.name}`,
+      { update },
+      req.ip
+    );
+
     emitGuestsUpdate(req);
     res.json(guest);
   } catch (err) {
@@ -123,6 +154,16 @@ exports.deleteGuest = async (req, res) => {
     }
 
     await Guest.findByIdAndDelete(req.params.id);
+
+    // Log the deletion
+    await logAction(
+      req.user ? req.user.email : 'System',
+      'DELETE_GUEST',
+      `Guest: ${guest.name}`,
+      { guestId: guest.guestId },
+      req.ip
+    );
+
     emitGuestsUpdate(req);
     res.json({ msg: 'Guest removed' });
   } catch (err) {

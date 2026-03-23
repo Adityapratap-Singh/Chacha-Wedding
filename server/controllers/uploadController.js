@@ -2,6 +2,7 @@
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
+const { logAction } = require('../utils/logger');
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -26,6 +27,16 @@ exports.uploadImage = [
       if (!req.file) {
         return res.status(400).json({ msg: 'No file uploaded' });
       }
+
+      // Log the upload
+      await logAction(
+        req.user ? req.user.email : 'System',
+        'UPLOAD_IMAGE',
+        'Cloudinary',
+        { url: req.file.path, public_id: req.file.filename, originalName: req.file.originalname },
+        req.ip
+      );
+
       res.json({ url: req.file.path, public_id: req.file.filename });
     } catch (err) {
       console.error(err.message);

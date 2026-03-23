@@ -1,5 +1,6 @@
 
 const Setting = require('../models/setting');
+const { logAction } = require('../utils/logger');
 
 const emitSettingsUpdate = (req) => {
   const io = req.app.get('io');
@@ -34,6 +35,16 @@ exports.updateSettings = async (req, res) => {
     });
 
     await Promise.all(promises);
+    
+    // Log the change
+    await logAction(
+      req.user ? req.user.email : 'System',
+      'UPDATE_SETTING',
+      'Site Content',
+      { settings: Object.keys(settings) }, // Log keys changed
+      req.ip
+    );
+
     emitSettingsUpdate(req);
     res.json({ msg: 'Settings updated successfully' });
   } catch (err) {

@@ -2,6 +2,7 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { logAction } = require('../utils/logger');
 
 exports.register = async (req, res) => {
   const { email, password } = req.body;
@@ -25,6 +26,7 @@ exports.register = async (req, res) => {
     const payload = {
       user: {
         id: user.id,
+        email: user.email,
       },
     };
 
@@ -49,17 +51,20 @@ exports.login = async (req, res) => {
   try {
     let user = await User.findOne({ email });
     if (!user) {
+      await logAction(email, 'LOGIN_FAILED', 'User Account', { msg: 'User not found' }, req.ip);
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
+      await logAction(email, 'LOGIN_FAILED', 'User Account', { msg: 'Password mismatch' }, req.ip);
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
 
     const payload = {
       user: {
         id: user.id,
+        email: user.email,
       },
     };
 
@@ -67,8 +72,9 @@ exports.login = async (req, res) => {
       payload,
       process.env.JWT_SECRET,
       { expiresIn: '30d' },
-      (err, token) => {
+      async (err, token) => {
         if (err) throw err;
+        await logAction(email, 'LOGIN_SUCCESS', 'User Account', {}, req.ip);
         res.json({ token });
       }
     );
