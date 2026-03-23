@@ -18,12 +18,12 @@ const EventsTimeline = () => {
   const { events } = settings;
 
   return (
-    <section className="py-16 sm:py-20 md:py-24 bg-[#fdfbf7] relative overflow-hidden">
+    <section className="py-16 sm:py-20 md:py-24 bg-theme-secondary relative overflow-hidden">
       <GoldDust count={15} />
       
       {/* Royal Mandala Background Elements */}
       <motion.div 
-        className="absolute top-[-10%] left-[-10%] w-[200px] h-[200px] sm:w-[350px] sm:h-[350px] md:w-[500px] md:h-[500px] text-maroon-700 opacity-[0.02] pointer-events-none"
+        className="absolute top-[-10%] left-[-10%] w-[200px] h-[200px] sm:w-[350px] sm:h-[350px] md:w-[500px] md:h-[500px] text-theme-title opacity-[0.05] pointer-events-none"
         animate={{ rotate: 360 }}
         transition={{ duration: 180, repeat: Infinity, ease: "linear" }}
       >
@@ -31,7 +31,7 @@ const EventsTimeline = () => {
       </motion.div>
       
       <motion.div 
-        className="absolute bottom-[-10%] right-[-10%] w-[200px] h-[200px] sm:w-[350px] sm:h-[350px] md:w-[500px] md:h-[500px] text-gold-500 opacity-[0.03] pointer-events-none"
+        className="absolute bottom-[-10%] right-[-10%] w-[200px] h-[200px] sm:w-[350px] sm:h-[350px] md:w-[500px] md:h-[500px] text-theme-accent opacity-[0.05] pointer-events-none"
         animate={{ rotate: -360 }}
         transition={{ duration: 200, repeat: Infinity, ease: "linear" }}
       >
@@ -45,7 +45,7 @@ const EventsTimeline = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="text-gold-500 uppercase tracking-[0.4em] text-xs font-semibold block mb-3"
+            className="text-theme-accent uppercase tracking-[0.4em] text-xs font-semibold block mb-3"
           >
             {settings.messages.eventsJourney}
           </motion.span>
@@ -54,7 +54,7 @@ const EventsTimeline = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.15 }}
-            className="text-2xl sm:text-3xl md:text-4xl font-serif text-maroon-700 mb-2"
+            className="text-2xl sm:text-3xl md:text-4xl font-serif text-theme-title mb-2"
           >
             {settings.messages.eventsTitle}
           </motion.h2>
@@ -63,7 +63,7 @@ const EventsTimeline = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.25 }}
-            className="text-xl sm:text-2xl md:text-3xl font-serif text-gray-700 mb-8"
+            className="text-xl sm:text-2xl md:text-3xl font-serif text-theme-text-secondary mb-8 opacity-80"
           >
             {settings.messages.eventsSubtitle}
           </motion.h3>
@@ -72,7 +72,7 @@ const EventsTimeline = () => {
             whileInView={{ width: "4rem", opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 1, delay: 0.4 }}
-            className="h-[2px] bg-gradient-to-r from-transparent via-gold-500 to-transparent mx-auto" 
+            className="h-[2px] bg-gradient-to-r from-transparent via-theme-accent to-transparent mx-auto" 
           />
         </div>
 
@@ -84,7 +84,7 @@ const EventsTimeline = () => {
             viewport={{ once: true }}
             transition={{ duration: 1.2, ease: "easeOut" }}
             style={{ transformOrigin: "top" }}
-            className="absolute left-1/2 -translate-x-1/2 w-[1px] h-full bg-gradient-to-b from-gold-500/40 via-gold-500/20 to-transparent hidden md:block" 
+            className="absolute left-1/2 -translate-x-1/2 w-[1px] h-full bg-gradient-to-b from-theme-accent/40 via-theme-accent/20 to-transparent hidden md:block" 
           />
 
           <div className="space-y-10 sm:space-y-14 md:space-y-0">
@@ -103,11 +103,11 @@ const EventsTimeline = () => {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.8, delay: 0.2 + 0.1 * index }}
-                  className="w-full md:w-[45%] bg-white p-6 sm:p-7 md:p-8 rounded-sm shadow-[0_8px_24px_rgba(0,0,0,0.06)] border border-gray-100/50 hover:border-gold-500/40 hover:shadow-[0_12px_36px_rgba(255,215,0,0.08)] transition-all duration-500 group"
+                  className="w-full md:w-[45%] bg-white/5 p-6 sm:p-7 md:p-8 rounded-sm shadow-[0_8px_24px_rgba(0,0,0,0.06)] border border-theme-accent/10 hover:border-theme-accent/40 hover:shadow-[0_12px_36px_rgba(255,215,0,0.08)] transition-all duration-500 group"
                 >
                   <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-5">
                     <span className="text-2xl sm:text-3xl group-hover:scale-110 transition-transform duration-300">{event.icon}</span>
-                    <h3 className="text-xl sm:text-2xl md:text-3xl font-serif text-maroon-700 tracking-[0.02em]">{event.name}</h3>
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-serif text-theme-title tracking-[0.02em]">{event.name}</h3>
                   </div>
                   
                   <motion.div 
@@ -115,15 +115,15 @@ const EventsTimeline = () => {
                     whileInView={{ width: "100%", opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.8, delay: 0.3 + 0.1 * index }}
-                    className="h-[1px] bg-gradient-to-r from-transparent via-gold-500/40 to-transparent mb-4"
+                    className="h-[1px] bg-gradient-to-r from-transparent via-theme-accent/40 to-transparent mb-4"
                   />
                   
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-5 pb-4 border-b border-gray-50/80">
-                    <span className="text-sm font-semibold text-gray-900 tracking-[0.05em] uppercase">{event.date}</span>
-                    <span className="text-xs text-gold-500 font-light tracking-[0.08em] uppercase">{event.time}</span>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-5 pb-4 border-b border-theme-accent/5">
+                    <span className="text-sm font-semibold text-theme-text tracking-[0.05em] uppercase opacity-80">{event.date}</span>
+                    <span className="text-xs text-theme-accent font-light tracking-[0.08em] uppercase">{event.time}</span>
                   </div>
                   
-                  <p className="text-gray-600 font-serif italic text-base sm:text-lg leading-[1.8] tracking-[0.005em]">
+                  <p className="text-theme-text font-serif italic text-base sm:text-lg leading-[1.8] tracking-[0.005em] opacity-70">
                     {event.description}
                   </p>
                 </motion.div>
@@ -137,8 +137,8 @@ const EventsTimeline = () => {
                   className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center z-10"
                 >
                   <motion.div 
-                    whileHover={{ scale: 1.3, boxShadow: "0 0 20px rgba(255, 215, 0, 0.5)" }}
-                    className="w-4 h-4 rounded-full bg-white border-[2.5px] border-gold-500 shadow-[0_0_12px_rgba(255,215,0,0.4)] transition-all"
+                    whileHover={{ scale: 1.3, boxShadow: "0 0 20px rgba(var(--color-accent-rgb), 0.5)" }}
+                    className="w-4 h-4 rounded-full bg-white border-[2.5px] border-theme-accent shadow-[0_0_12px_rgba(var(--color-accent-rgb),0.4)] transition-all"
                   />
                 </motion.div>
 

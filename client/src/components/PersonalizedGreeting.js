@@ -53,13 +53,13 @@ const PersonalizedGreeting = () => {
   const { coupleNames, weddingDate, messages } = settings;
 
   return (
-    <div className="bg-[#fdfbf7]">
+    <div className="bg-theme-bg">
       <div className="min-h-screen min-h-[100dvh] flex flex-col items-center justify-center py-12 sm:py-16 md:py-20 px-4 sm:px-6 relative overflow-hidden">
         <GoldDust count={30} />
         
         {/* Royal Mandala Background - smaller on mobile */}
         <motion.div 
-          className="absolute top-[-5%] left-[-5%] w-[220px] h-[220px] sm:w-[320px] sm:h-[320px] md:w-[400px] md:h-[400px] text-maroon-700 opacity-[0.04] pointer-events-none"
+          className="absolute top-[-5%] left-[-5%] w-[220px] h-[220px] sm:w-[320px] sm:h-[320px] md:w-[400px] md:h-[400px] text-theme-title opacity-[0.04] pointer-events-none"
           animate={{ rotate: 360 }}
           transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
         >
@@ -67,7 +67,7 @@ const PersonalizedGreeting = () => {
         </motion.div>
         
         <motion.div 
-          className="absolute bottom-[-5%] right-[-5%] w-[260px] h-[260px] sm:w-[380px] sm:h-[380px] md:w-[500px] md:h-[500px] text-gold-500 opacity-[0.05] pointer-events-none"
+          className="absolute bottom-[-5%] right-[-5%] w-[260px] h-[260px] sm:w-[380px] sm:h-[380px] md:w-[500px] md:h-[500px] text-theme-accent opacity-[0.05] pointer-events-none"
           animate={{ rotate: -360 }}
           transition={{ duration: 150, repeat: Infinity, ease: "linear" }}
         >
@@ -86,14 +86,14 @@ const PersonalizedGreeting = () => {
           className="max-w-4xl w-full relative z-10"
         >
           {/* Main Invitation Card */}
-          <div className="bg-white p-1 sm:p-2 shadow-[0_20px_60px_rgba(0,0,0,0.1)] sm:shadow-[0_40px_100px_rgba(0,0,0,0.12)] relative rounded-sm">
+          <div className="bg-theme-secondary p-1 sm:p-2 shadow-[0_20px_60px_rgba(0,0,0,0.1)] sm:shadow-[0_40px_100px_rgba(0,0,0,0.12)] relative rounded-sm">
             {/* Double Border Effect - tighter padding on mobile */}
-            <div className="border-[1px] border-gold-500/20 p-5 sm:p-8 md:p-12 lg:p-20 relative overflow-hidden">
+            <div className="border-[1px] border-theme-accent/20 p-5 sm:p-8 md:p-12 lg:p-20 relative overflow-hidden">
               {/* Corner Ornaments - smaller on mobile */}
-              <div className="absolute top-0 left-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 border-t-2 border-l-2 border-gold-500/30 rounded-tl-2xl sm:rounded-tl-3xl pointer-events-none" />
-              <div className="absolute top-0 right-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 border-t-2 border-r-2 border-gold-500/30 rounded-tr-2xl sm:rounded-tr-3xl pointer-events-none" />
-              <div className="absolute bottom-0 left-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 border-b-2 border-l-2 border-gold-500/30 rounded-bl-2xl sm:rounded-bl-3xl pointer-events-none" />
-              <div className="absolute bottom-0 right-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 border-b-2 border-r-2 border-gold-500/30 rounded-br-2xl sm:rounded-br-3xl pointer-events-none" />
+              <div className="absolute top-0 left-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 border-t-2 border-l-2 border-theme-accent/30 rounded-tl-2xl sm:rounded-tl-3xl pointer-events-none" />
+              <div className="absolute top-0 right-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 border-t-2 border-r-2 border-theme-accent/30 rounded-tr-2xl sm:rounded-tr-3xl pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 border-b-2 border-l-2 border-theme-accent/30 rounded-bl-2xl sm:rounded-bl-3xl pointer-events-none" />
+              <div className="absolute bottom-0 right-0 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 border-b-2 border-r-2 border-theme-accent/30 rounded-br-2xl sm:rounded-br-3xl pointer-events-none" />
 
               <div className="text-center relative z-10">
                 <motion.div
@@ -109,14 +109,14 @@ const PersonalizedGreeting = () => {
                       transition={{ duration: 1.2, ease: [0.34, 1.56, 0.64, 1] }}
                       className="inline-block"
                     >
-                      <span className="font-serif italic text-maroon-700 text-xl sm:text-2xl md:text-4xl mb-3 block gold-glow tracking-[0.08em] drop-shadow-[0_0_8px_rgba(128,0,0,0.15)]">
+                      <span className="font-serif italic text-theme-title text-xl sm:text-2xl md:text-4xl mb-3 block gold-glow tracking-[0.08em] drop-shadow-[0_0_8px_rgba(var(--color-primary-rgb),0.15)]">
                         {messages.atithiDevoBhava}
                       </span>
                       <motion.div
                         initial={{ width: 0, opacity: 0 }}
                         whileInView={{ width: "100%", opacity: 1 }}
                         transition={{ delay: 0.5, duration: 1.2 }}
-                        className="h-[2px] bg-gradient-to-r from-transparent via-gold-500 to-transparent shadow-[0_0_10px_rgba(255,215,0,0.3)]"
+                        className="h-[2px] bg-gradient-to-r from-transparent via-theme-accent to-transparent shadow-[0_0_10px_rgba(var(--color-accent-rgb),0.3)]"
                       />
                     </motion.div>
                   </div>
@@ -127,28 +127,28 @@ const PersonalizedGreeting = () => {
                       <>
                         <AnimatedText 
                           text={`प्रिय ${guest.name} जी,`}
-                          className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-serif text-gray-900 leading-[1.3] mb-6 gold-gradient-text tracking-[0.02em] drop-shadow-[0_0_15px_rgba(255,215,0,0.2)]"
+                          className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-serif text-theme-title leading-[1.3] mb-6 gold-gradient-text tracking-[0.02em] drop-shadow-[0_0_15px_rgba(var(--color-accent-rgb),0.2)]"
                           delay={0.5}
                         />
                         <motion.div
                           initial={{ width: 0, opacity: 0 }}
                           whileInView={{ width: "100px", opacity: 1 }}
                           transition={{ delay: 1, duration: 0.8 }}
-                          className="h-[1.5px] bg-gradient-to-r from-transparent via-gold-500 to-transparent mx-auto"
+                          className="h-[1.5px] bg-gradient-to-r from-transparent via-theme-accent to-transparent mx-auto"
                         />
                       </>
                     ) : (
                       <>
                         <AnimatedText 
                           text="Our Dear Guest,"
-                          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-gray-900 leading-[1.3] mb-6 tracking-[0.02em] drop-shadow-[0_0_12px_rgba(0,0,0,0.08)]"
+                          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-theme-title leading-[1.3] mb-6 tracking-[0.02em] drop-shadow-[0_0_12px_rgba(0,0,0,0.08)]"
                           delay={0.5}
                         />
                         <motion.div
                           initial={{ width: 0, opacity: 0 }}
                           whileInView={{ width: "100px", opacity: 1 }}
                           transition={{ delay: 1, duration: 0.8 }}
-                          className="h-[1.5px] bg-gradient-to-r from-transparent via-gold-500 to-transparent mx-auto"
+                          className="h-[1.5px] bg-gradient-to-r from-transparent via-theme-accent to-transparent mx-auto"
                         />
                       </>
                     )}
@@ -158,7 +158,7 @@ const PersonalizedGreeting = () => {
                   <div className="max-w-2xl mx-auto mb-20">
                     <AnimatedText 
                       text={guest?.family === 'Yes' ? 'आपको सपरिवार सादर आमंत्रित किया जाता है' : 'आपको सादर आमंत्रित किया जाता है'}
-                      className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-serif text-gray-700 mb-8 sm:mb-10 leading-[1.8] tracking-[0.01em] italic"
+                      className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-serif text-theme-text opacity-80 mb-8 sm:mb-10 leading-[1.8] tracking-[0.01em] italic"
                       delay={1.5}
                     />
                     
@@ -166,7 +166,7 @@ const PersonalizedGreeting = () => {
                       initial={{ opacity: 0, y: 10 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       transition={{ delay: 2.5, duration: 1, ease: [0.34, 1.56, 0.64, 1] }}
-                      className="text-maroon-700 font-serif text-base sm:text-lg md:text-xl lg:text-2xl mt-8 sm:mt-10 leading-[1.7] tracking-[0.02em] drop-shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+                      className="text-theme-title font-serif text-base sm:text-lg md:text-xl lg:text-2xl mt-8 sm:mt-10 leading-[1.7] tracking-[0.02em] drop-shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
                     >
                       "{messages.invitation}"
                     </motion.p>
@@ -184,16 +184,16 @@ const PersonalizedGreeting = () => {
                         initial={{ width: 0 }}
                         whileInView={{ width: "100%" }}
                         transition={{ delay: 2.8, duration: 1 }}
-                        className="h-[1px] w-8 sm:w-12 md:w-20 bg-gradient-to-r from-transparent to-gold-500/40"
+                        className="h-[1px] w-8 sm:w-12 md:w-20 bg-gradient-to-r from-transparent to-theme-accent/40"
                       />
-                      <span className="text-gold-500 tracking-[0.4em] sm:tracking-[0.5em] uppercase text-[10px] sm:text-xs md:text-sm font-light text-center max-w-xs leading-[2] drop-shadow-[0_0_8px_rgba(255,215,0,0.15)]">
+                      <span className="text-theme-accent tracking-[0.4em] sm:tracking-[0.5em] uppercase text-[10px] sm:text-xs md:text-sm font-light text-center max-w-xs leading-[2] drop-shadow-[0_0_8px_rgba(var(--color-accent-rgb),0.15)]">
                         {coupleNames.groom} <br/> & <br/> {coupleNames.bride}
                       </span>
                       <motion.div
                         initial={{ width: 0 }}
                         whileInView={{ width: "100%" }}
                         transition={{ delay: 3.2, duration: 1 }}
-                        className="h-[1px] w-8 sm:w-12 md:w-20 bg-gradient-to-l from-transparent to-gold-500/40"
+                        className="h-[1px] w-8 sm:w-12 md:w-20 bg-gradient-to-l from-transparent to-theme-accent/40"
                       />
                     </motion.div>
                     
@@ -201,11 +201,11 @@ const PersonalizedGreeting = () => {
                       initial={{ opacity: 0, scale: 0.9 }}
                       whileInView={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 3.5, duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
-                      whileHover={{ scale: 1.03, boxShadow: "0 20px 40px rgba(128, 0, 0, 0.2)" }}
+                      whileHover={{ scale: 1.03, boxShadow: "0 20px 40px rgba(var(--color-primary-rgb), 0.2)" }}
                       whileTap={{ scale: 0.97 }}
-                      className="bg-maroon-700 text-white px-8 sm:px-10 py-3.5 sm:py-4 rounded-sm shadow-[0_10px_30px_rgba(128,0,0,0.15)] border border-gold-500/40 relative group overflow-hidden transition-all"
+                      className="bg-theme-primary text-theme-secondary px-8 sm:px-10 py-3.5 sm:py-4 rounded-sm shadow-[0_10px_30px_rgba(var(--color-primary-rgb),0.15)] border border-theme-accent/40 relative group overflow-hidden transition-all"
                     >
-                      <div className="absolute inset-0 bg-gold-500/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                      <div className="absolute inset-0 bg-theme-accent/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
                       <span className="text-base sm:text-lg md:text-xl font-serif tracking-[0.15em] sm:tracking-[0.2em] relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]">
                         {weddingDate}
                       </span>
@@ -219,10 +219,10 @@ const PersonalizedGreeting = () => {
                     whileTap={{ scale: 0.98 }}
                     className="group relative flex flex-col items-center mx-auto mt-12 sm:mt-16 transition-all duration-500 py-3"
                   >
-                    <span className="text-gold-500 font-serif tracking-[0.3em] uppercase text-[10px] mb-4 group-hover:text-maroon-700 transition-colors">
+                    <span className="text-theme-accent font-serif tracking-[0.3em] uppercase text-[10px] mb-4 group-hover:text-theme-title transition-colors">
                       Discover the Celebration
                     </span>
-                    <div className="w-[1px] h-16 bg-gradient-to-b from-gold-500 to-transparent group-hover:h-20 transition-all duration-500" />
+                    <div className="w-[1px] h-16 bg-gradient-to-b from-theme-accent to-transparent group-hover:h-20 transition-all duration-500" />
                   </motion.button>
                 </motion.div>
               </div>
@@ -234,7 +234,7 @@ const PersonalizedGreeting = () => {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 0.5 }}
             transition={{ delay: 1 }}
-            className="text-center mt-12 sm:mt-16 font-serif italic text-gray-600 tracking-widest text-base sm:text-lg px-2"
+            className="text-center mt-12 sm:mt-16 font-serif italic text-theme-text opacity-60 tracking-widest text-base sm:text-lg px-2"
           >
             {messages.bottomQuote}
           </motion.p>
@@ -255,18 +255,18 @@ const PersonalizedGreeting = () => {
         <footer className="py-16 sm:py-20 md:py-24 text-center bg-gray-900 relative overflow-hidden">
           <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/vintage-speckle.png')" }} />
           <div className="container mx-auto px-4 sm:px-6 relative z-10">
-            <h4 className="text-gold-500 font-serif italic text-xl sm:text-2xl mb-4 sm:mb-6">{coupleNames.groom.split(' ')[0]} & {coupleNames.bride.split(' ')[0]}</h4>
+            <h4 className="text-theme-accent font-serif italic text-xl sm:text-2xl mb-4 sm:mb-6">{coupleNames.groom.split(' ')[0]} & {coupleNames.bride.split(' ')[0]}</h4>
             <p className="text-white/30 text-[10px] tracking-[0.8em] uppercase mb-8">Together Forever • {weddingDate.split(' ').pop()}</p>
             
             <div className="flex flex-col items-center gap-4 mb-12">
               <span className="text-white/40 text-[10px] uppercase tracking-[0.3em]">RSVP & Inquiries</span>
               <div className="flex gap-8">
-                <a href={`tel:${settings.contactNumbers.primary}`} className="text-gold-500 hover:text-white transition-colors font-serif tracking-widest">+91 {settings.contactNumbers.primary}</a>
-                <a href={`tel:${settings.contactNumbers.secondary}`} className="text-gold-500 hover:text-white transition-colors font-serif tracking-widest">+91 {settings.contactNumbers.secondary}</a>
+                <a href={`tel:${settings.contactNumbers.primary}`} className="text-theme-accent hover:text-white transition-colors font-serif tracking-widest">+91 {settings.contactNumbers.primary}</a>
+                <a href={`tel:${settings.contactNumbers.secondary}`} className="text-theme-accent hover:text-white transition-colors font-serif tracking-widest">+91 {settings.contactNumbers.secondary}</a>
               </div>
             </div>
 
-            <div className="h-[1px] w-32 bg-gold-500/20 mx-auto" />
+            <div className="h-[1px] w-32 bg-theme-accent/20 mx-auto" />
             <p className="text-white/10 text-[8px] mt-8 uppercase tracking-[0.2em]">Designed for a Cinematic Wedding Experience</p>
           </div>
         </footer>

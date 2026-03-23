@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
 import { useSettings } from '../context/SettingsContext';
-import { Plus, Loader2, Camera, Trash2 } from 'lucide-react';
+import { Plus, Loader2, Camera } from 'lucide-react';
 import axios from 'axios';
 
 const Gallery = () => {
@@ -9,12 +9,9 @@ const Gallery = () => {
   const { gallery: images } = settings;
   const [selectedImg, setSelectedImg] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [imageLoaded, setImageLoaded] = useState({});
+  const isAdminView = window.location.pathname.startsWith('/admin');
 
-  useEffect(() => {
-    setIsAdmin(!!localStorage.getItem('token'));
-  }, []);
 
   const handleUpload = async (e) => {
     const file = e.target.files[0];
@@ -73,7 +70,7 @@ const Gallery = () => {
   const duplicatedImages = [...images, ...images, ...images];
 
   return (
-    <section className="py-16 sm:py-20 md:py-24 bg-white overflow-hidden">
+    <section className="py-16 sm:py-20 md:py-24 bg-theme-bg overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 mb-12 sm:mb-16">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="text-left">
@@ -81,7 +78,7 @@ const Gallery = () => {
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="text-gold-500 uppercase tracking-[0.4em] text-xs font-semibold block mb-3"
+              className="text-theme-accent uppercase tracking-[0.4em] text-xs font-semibold block mb-3"
             >
               Capturing Moments
             </motion.span>
@@ -89,9 +86,9 @@ const Gallery = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl sm:text-4xl md:text-5xl font-serif text-maroon-700"
+              className="text-3xl sm:text-4xl md:text-5xl font-serif text-theme-title"
             >
-              {settings.messages.galleryTitle} <span className="text-gray-400 font-light mx-2">|</span> <span className="italic">{settings.messages.gallerySubtitle}</span>
+              {settings.messages.galleryTitle} <span className="text-theme-text-secondary opacity-40 font-light mx-2">|</span> <span className="italic">{settings.messages.gallerySubtitle}</span>
             </motion.h2>
           </div>
         </div>
@@ -116,7 +113,7 @@ const Gallery = () => {
             {duplicatedImages.map((image, index) => (
               <motion.div
                 key={index}
-                className="relative inline-block w-[280px] sm:w-[350px] md:w-[450px] aspect-[4/5] mx-3 sm:mx-4 md:mx-6 rounded-2xl overflow-hidden shadow-2xl shadow-black/10 cursor-pointer group/item"
+                className="relative inline-block w-[280px] sm:w-[350px] md:w-[450px] aspect-[4/5] mx-3 sm:mx-4 md:mx-6 rounded-2xl overflow-hidden shadow-2xl shadow-black/10 cursor-pointer group/item border border-theme-accent/10"
                 onClick={() => setSelectedImg(image)}
               >
                 <img
@@ -125,31 +122,22 @@ const Gallery = () => {
                   className="w-full h-full object-cover transition-transform duration-700 group-hover/item:scale-110"
                 />
                 
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover/item:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6 sm:p-8">
-                  <span className="text-gold-500 text-xs tracking-widest uppercase mb-2">{image.title}</span>
-                  <p className="text-white font-serif italic text-lg sm:text-xl">{settings.coupleNames.groom} & {settings.coupleNames.bride}</p>
-                  
-                  {isAdmin && index < images.length && (
-                    <button 
-                      onClick={(e) => removeImage(e, index)}
-                      className="absolute top-4 right-4 p-2 bg-rose-500 text-white rounded-full hover:bg-rose-600 transition-colors shadow-lg"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  )}
+                <div className="absolute inset-0 bg-gradient-to-t from-theme-bg/80 via-transparent to-transparent opacity-0 group-hover/item:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6 sm:p-8">
+                  <span className="text-theme-accent text-xs tracking-widest uppercase mb-2">{image.title}</span>
+                  <p className="text-theme-text font-serif italic text-lg sm:text-xl">{settings.coupleNames.groom} & {settings.coupleNames.bride}</p>
                 </div>
               </motion.div>
             ))}
           </motion.div>
           
           {/* Gradient Overlays for smooth edges */}
-          <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-          <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+          <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-theme-bg to-transparent z-10 pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-theme-bg to-transparent z-10 pointer-events-none" />
         </div>
       ) : (
         <div className="py-20 text-center">
-          <Camera className="mx-auto text-gray-200 mb-4" size={48} />
-          <p className="text-gray-400 font-serif italic">Gallery is being updated. Check back soon!</p>
+          <Camera className="mx-auto text-theme-text/20 mb-4" size={48} />
+          <p className="text-theme-text/40 font-serif italic">Gallery is being updated. Check back soon!</p>
         </div>
       )}
 

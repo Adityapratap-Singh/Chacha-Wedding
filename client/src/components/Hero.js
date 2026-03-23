@@ -35,12 +35,12 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative min-h-screen min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden bg-royal-maroon">
+    <section className="relative min-h-screen min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden bg-theme-gradient">
       <GoldDust count={40} />
       
       {/* Royal Mandala - smaller on mobile */}
       <motion.div 
-        className="absolute top-[-10%] right-[-5%] w-[220px] h-[220px] sm:w-[320px] sm:h-[320px] md:w-[400px] md:h-[400px] text-gold-500 opacity-[0.08] pointer-events-none"
+        className="absolute top-[-10%] right-[-5%] w-[220px] h-[220px] sm:w-[320px] sm:h-[320px] md:w-[400px] md:h-[400px] text-theme-accent opacity-[0.08] pointer-events-none"
         animate={{ rotate: 360 }}
         transition={{ duration: 100, repeat: Infinity, ease: "linear" }}
       >
@@ -48,7 +48,7 @@ const Hero = () => {
       </motion.div>
       
       <motion.div 
-        className="absolute bottom-[-15%] left-[-10%] w-[280px] h-[280px] sm:w-[450px] sm:h-[450px] md:w-[600px] md:h-[600px] text-gold-500 opacity-[0.05] pointer-events-none"
+        className="absolute bottom-[-15%] left-[-10%] w-[280px] h-[280px] sm:w-[450px] sm:h-[450px] md:w-[600px] md:h-[600px] text-theme-accent opacity-[0.05] pointer-events-none"
         animate={{ rotate: -360 }}
         transition={{ duration: 150, repeat: Infinity, ease: "linear" }}
       >
@@ -108,18 +108,18 @@ const Hero = () => {
             initial={{ width: 0, opacity: 0 }}
             animate={{ width: "100%", opacity: 1 }}
             transition={{ delay: 3, duration: 2.5 }}
-            className="h-[1px] bg-gradient-to-r from-transparent via-gold-500 to-transparent mt-12 mx-auto max-w-lg"
+            className="h-[1px] bg-gradient-to-r from-transparent via-theme-accent to-transparent mt-12 mx-auto max-w-lg"
           />
           
           <motion.div variants={item} className="space-y-4">
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-serif text-white/90 italic tracking-wide">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-serif text-theme-title italic tracking-wide">
               {settings.messages.saveTheDate}
             </h2>
             <div className="flex flex-col items-center gap-2">
               <div className="flex items-center justify-center gap-4">
-                <div className="h-[1px] w-8 bg-gold-500/20" />
-                <span className="text-gold-500/60 font-serif text-lg tracking-widest uppercase">{weddingDate}</span>
-                <div className="h-[1px] w-8 bg-gold-500/20" />
+                <div className="h-[1px] w-8 bg-theme-accent/20" />
+                <span className="text-theme-accent font-serif text-lg tracking-widest uppercase">{weddingDate}</span>
+                <div className="h-[1px] w-8 bg-theme-accent/20" />
               </div>
               <motion.div 
                 initial={{ opacity: 0 }}
@@ -127,8 +127,8 @@ const Hero = () => {
                 transition={{ delay: 3.5 }}
                 className="mt-4 flex flex-col items-center"
               >
-                <span className="text-[10px] uppercase tracking-[0.4em] text-white/40 mb-1">RSVP & Inquiry</span>
-                <a href={`tel:${settings.contactNumbers.primary}`} className="text-gold-500/80 font-serif tracking-widest hover:text-gold-500 transition-colors">
+                <span className="text-[10px] uppercase tracking-[0.4em] text-theme-text/40 mb-1">RSVP & Inquiry</span>
+                <a href={`tel:${settings.contactNumbers.primary}`} className="text-theme-accent/80 font-serif tracking-widest hover:text-theme-accent transition-colors">
                   +91 {settings.contactNumbers.primary}
                 </a>
               </motion.div>
@@ -144,15 +144,15 @@ const Hero = () => {
         transition={{ delay: 2.5, duration: 1 }}
         className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
       >
-        <span className="text-white/40 text-[10px] uppercase tracking-widest">Discover More</span>
-        <div className="w-[1px] h-12 bg-gradient-to-b from-gold-500/80 to-transparent" />
+        <span className="text-theme-text/40 text-[10px] uppercase tracking-widest">Discover More</span>
+        <div className="w-[1px] h-12 bg-gradient-to-b from-theme-accent/80 to-transparent" />
       </motion.div>
 
       {/* Corner Ornaments - smaller on mobile */}
-      <div className="absolute top-4 left-4 sm:top-10 sm:left-10 w-16 h-16 sm:w-24 sm:h-24 border-t-2 border-l-2 border-gold-500/20 pointer-events-none rounded-tl-lg" />
-      <div className="absolute top-4 right-4 sm:top-10 sm:right-10 w-16 h-16 sm:w-24 sm:h-24 border-t-2 border-r-2 border-gold-500/20 pointer-events-none rounded-tr-lg" />
-      <div className="absolute bottom-4 left-4 sm:bottom-10 sm:left-10 w-16 h-16 sm:w-24 sm:h-24 border-b-2 border-l-2 border-gold-500/20 pointer-events-none rounded-bl-lg" />
-      <div className="absolute bottom-4 right-4 sm:bottom-10 sm:right-10 w-16 h-16 sm:w-24 sm:h-24 border-b-2 border-r-2 border-gold-500/20 pointer-events-none rounded-br-lg" />
+      <div className="absolute top-4 left-4 sm:top-10 sm:left-10 w-16 h-16 sm:w-24 sm:h-24 border-t-2 border-l-2 border-theme-accent/20 pointer-events-none rounded-tl-lg" />
+      <div className="absolute top-4 right-4 sm:top-10 sm:right-10 w-16 h-16 sm:w-24 sm:h-24 border-t-2 border-r-2 border-theme-accent/20 pointer-events-none rounded-tr-lg" />
+      <div className="absolute bottom-4 left-4 sm:bottom-10 sm:left-10 w-16 h-16 sm:w-24 sm:h-24 border-b-2 border-l-2 border-theme-accent/20 pointer-events-none rounded-bl-lg" />
+      <div className="absolute bottom-4 right-4 sm:bottom-10 sm:right-10 w-16 h-16 sm:w-24 sm:h-24 border-b-2 border-r-2 border-theme-accent/20 pointer-events-none rounded-br-lg" />
     </section>
   );
 };

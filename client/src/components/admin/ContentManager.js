@@ -618,7 +618,9 @@ const ContentManager = () => {
           <p className="text-gray-500 text-sm mb-8">Toggle which sections are visible to your guests on the invitation page.</p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Object.keys(settings.visibility || {}).map((section) => (
+            {Object.keys(settings.visibility || {})
+              .filter(section => section !== 'adexPromo' && section !== 'adexPopup')
+              .map((section) => (
               <div 
                 key={section}
                 className={`p-6 rounded-2xl border transition-all flex items-center justify-between ${

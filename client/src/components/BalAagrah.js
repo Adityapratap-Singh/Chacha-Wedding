@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useSettings } from '../context/SettingsContext';
+import { useSettings, THEMES } from '../context/SettingsContext';
 
 const BalAagrah = () => {
   const { settings } = useSettings();
@@ -45,9 +45,9 @@ const BalAagrah = () => {
   const poemLines = poem.includes('\n') ? poem.split('\n') : [poem];
 
   return (
-    <section className="py-20 sm:py-28 bg-[#fefcf9] relative overflow-hidden">
+    <section className="py-20 sm:py-28 bg-theme-secondary relative overflow-hidden">
       {/* Decorative background elements */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-gold-500/20 to-transparent" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-theme-accent/20 to-transparent" />
       
       <div className="container mx-auto px-4 sm:px-6 max-w-4xl relative z-10">
         <motion.div
@@ -59,16 +59,16 @@ const BalAagrah = () => {
         >
           {/* Section Title */}
           <motion.div variants={itemVariants} className="mb-12">
-            <span className="text-gold-500 text-3xl mb-2 block">✨</span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-maroon-700 mb-4 tracking-wide">
+            <span className="text-theme-accent text-3xl mb-2 block">✨</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-theme-title mb-4 tracking-wide">
               बाल आग्रह
             </h2>
             <div className="flex items-center justify-center gap-4">
-              <div className="h-px w-12 bg-gold-500/30" />
-              <p className="text-xs sm:text-sm text-gold-600/60 uppercase tracking-[0.3em] font-light">
+              <div className="h-px w-12 bg-theme-accent/30" />
+              <p className="text-xs sm:text-sm text-theme-accent/60 uppercase tracking-[0.3em] font-light">
                 With Innocent Hearts
               </p>
-              <div className="h-px w-12 bg-gold-500/30" />
+              <div className="h-px w-12 bg-theme-accent/30" />
             </div>
           </motion.div>
 
@@ -78,16 +78,16 @@ const BalAagrah = () => {
             className="relative mb-16 group"
           >
             {/* Soft Glow Effect */}
-            <div className="absolute inset-0 bg-gold-500/5 blur-3xl rounded-full scale-75 group-hover:scale-90 transition-transform duration-1000" />
+            <div className="absolute inset-0 bg-theme-accent/5 blur-3xl rounded-full scale-75 group-hover:scale-90 transition-transform duration-1000" />
             
-            <div className="relative bg-white/70 backdrop-blur-md border border-gold-500/20 rounded-[2rem] p-8 sm:p-12 md:p-16 shadow-[0_20px_50px_rgba(184,134,11,0.05)] overflow-hidden">
+            <div className="relative bg-white/5 backdrop-blur-md border border-theme-accent/20 rounded-[2rem] p-8 sm:p-12 md:p-16 shadow-[0_20px_50px_rgba(var(--color-accent-rgb),0.05)] overflow-hidden">
               {/* Corner Accents */}
-              <div className="absolute top-0 left-0 w-24 h-24 border-t-2 border-l-2 border-gold-500/10 rounded-tl-[2rem]" />
-              <div className="absolute bottom-0 right-0 w-24 h-24 border-b-2 border-r-2 border-gold-500/10 rounded-br-[2rem]" />
+              <div className="absolute top-0 left-0 w-24 h-24 border-t-2 border-l-2 border-theme-accent/10 rounded-tl-[2rem]" />
+              <div className="absolute bottom-0 right-0 w-24 h-24 border-b-2 border-r-2 border-theme-accent/10 rounded-br-[2rem]" />
               
-              <div className="italic text-gray-800 leading-relaxed text-xl sm:text-2xl md:text-3xl font-serif font-medium space-y-4">
+              <div className="italic text-theme-text leading-relaxed text-xl sm:text-2xl md:text-3xl font-serif font-medium space-y-4">
                 {poemLines.map((line, idx) => (
-                  <p key={idx} className="drop-shadow-sm">{line}</p>
+                  <p key={idx} className="drop-shadow-sm opacity-90">{line}</p>
                 ))}
               </div>
             </div>
@@ -106,14 +106,14 @@ const BalAagrah = () => {
                 className="group flex flex-col items-center"
               >
                 {/* Child Photo Card */}
-                <div className="relative w-full aspect-square mb-4 rounded-2xl overflow-hidden border-2 border-gold-500/20 group-hover:border-gold-500/80 transition-all duration-500 shadow-lg group-hover:shadow-gold-500/20">
+                <div className="relative w-full aspect-square mb-4 rounded-2xl overflow-hidden border-2 border-theme-accent/20 group-hover:border-theme-accent/80 transition-all duration-500 shadow-lg group-hover:shadow-theme-accent/20">
                   <img 
-                    src={baalAagrah.images && baalAagrah.images[index] && baalAagrah.images[index].url ? baalAagrah.images[index].url : `https://res.cloudinary.com/do4z0pybd/image/upload/w_400,h_400,c_fill,r_max,a_center,g_center/v1/wedding-avatar-gold?text=${encodeURIComponent(name.split(' ')[0])}&bg_8B0000&co_FFFDD0&f_png`} 
+                    src={baalAagrah.images && baalAagrah.images[index] && baalAagrah.images[index].url ? baalAagrah.images[index].url : `https://res.cloudinary.com/do4z0pybd/image/upload/w_400,h_400,c_fill,r_max,a_center,g_center/v1/wedding-avatar-gold?text=${encodeURIComponent(name.split(' ')[0])}&bg_${THEMES['Royal Maroon'].primary.replace('#', '')}&co_${THEMES['Royal Maroon'].secondary.replace('#', '')}&f_png`} 
                     alt={name} 
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     style={{ objectPosition: `center ${baalAagrah.images && baalAagrah.images[index] ? baalAagrah.images[index].objectPosition || 'center' : 'center'}` }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-maroon-700/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-theme-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </div>
 
                 {/* Child Name */}
@@ -121,10 +121,10 @@ const BalAagrah = () => {
                   className="text-center"
                   whileHover={{ scale: 1.05 }}
                 >
-                  <span className="text-lg sm:text-xl font-serif text-maroon-700 group-hover:text-gold-600 transition-colors duration-300">
+                  <span className="text-lg sm:text-xl font-serif text-theme-title group-hover:text-theme-accent transition-colors duration-300">
                     {name}
                   </span>
-                  <div className="h-px w-0 group-hover:w-full bg-gold-500/40 transition-all duration-500 mx-auto mt-1" />
+                  <div className="h-px w-0 group-hover:w-full bg-theme-accent/40 transition-all duration-500 mx-auto mt-1" />
                 </motion.div>
               </motion.div>
             ))}
@@ -133,7 +133,7 @@ const BalAagrah = () => {
           {/* Bottom Sentiment */}
           <motion.div 
             variants={itemVariants}
-            className="mt-20 opacity-40 font-serif italic text-sm tracking-widest text-gray-500"
+            className="mt-20 opacity-40 font-serif italic text-sm tracking-widest text-theme-text/60"
           >
             "बच्चों की मासूमियत से किया गया निमंत्रण ❤️"
           </motion.div>
@@ -141,8 +141,8 @@ const BalAagrah = () => {
       </div>
 
       {/* Floating background petals/elements (Optional subtle feel) */}
-      <div className="absolute top-1/4 left-10 w-2 h-2 bg-gold-500/20 rounded-full blur-sm" />
-      <div className="absolute bottom-1/4 right-10 w-3 h-3 bg-maroon-700/10 rounded-full blur-sm" />
+      <div className="absolute top-1/4 left-10 w-2 h-2 bg-theme-accent/20 rounded-full blur-sm" />
+      <div className="absolute bottom-1/4 right-10 w-3 h-3 bg-theme-primary/10 rounded-full blur-sm" />
     </section>
   );
 };

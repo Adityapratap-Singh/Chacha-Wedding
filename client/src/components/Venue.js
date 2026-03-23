@@ -7,7 +7,7 @@ const Venue = () => {
   const { venue } = settings;
 
   return (
-    <section className="py-16 sm:py-20 md:py-24 bg-white relative overflow-hidden">
+    <section className="py-16 sm:py-20 md:py-24 bg-theme-bg relative overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
         <div className="text-center mb-14 sm:mb-16 md:mb-20">
           <motion.span 
@@ -15,7 +15,7 @@ const Venue = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="text-gold-500 uppercase tracking-[0.4em] text-xs font-semibold block mb-3"
+            className="text-theme-accent uppercase tracking-[0.4em] text-xs font-semibold block mb-3"
           >
             Location
           </motion.span>
@@ -24,7 +24,7 @@ const Venue = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.15 }}
-            className="text-2xl sm:text-3xl md:text-4xl font-serif text-maroon-700"
+            className="text-2xl sm:text-3xl md:text-4xl font-serif text-theme-title"
           >
             {settings.messages.venueTitle}
           </motion.h2>
@@ -33,7 +33,7 @@ const Venue = () => {
             whileInView={{ width: "4rem", opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 1, delay: 0.35 }}
-            className="h-[2px] bg-gradient-to-r from-transparent via-gold-500 to-transparent mx-auto mt-6" 
+            className="h-[2px] bg-gradient-to-r from-transparent via-theme-accent to-transparent mx-auto mt-6" 
           />
         </div>
 
@@ -42,7 +42,7 @@ const Venue = () => {
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9, ease: [0.34, 1.56, 0.64, 1] }}
-          className="relative bg-white p-6 sm:p-8 md:p-10 lg:p-14 text-center border border-gray-100/80 shadow-[0_8px_24px_rgba(0,0,0,0.05)] hover:shadow-[0_16px_48px_rgba(255,215,0,0.08)] transition-all duration-500 overflow-hidden group rounded-sm"
+          className="relative bg-theme-secondary/80 backdrop-blur-sm p-6 sm:p-8 md:p-10 lg:p-14 text-center border border-theme-accent/10 shadow-[0_8px_24px_rgba(0,0,0,0.05)] hover:shadow-[0_16px_48px_rgba(var(--color-accent-rgb),0.08)] transition-all duration-500 overflow-hidden group rounded-sm"
         >
           {/* Animated Top Border */}
           <motion.div 
@@ -51,7 +51,7 @@ const Venue = () => {
             viewport={{ once: true }}
             transition={{ delay: 0.4, duration: 1 }}
             style={{ transformOrigin: "left" }}
-            className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-gold-500/60 to-transparent"
+            className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-theme-accent/60 to-transparent"
           />
           
           <div className="relative z-10">
@@ -60,7 +60,7 @@ const Venue = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2, duration: 0.8 }}
-              className="text-2xl sm:text-3xl md:text-4xl font-serif text-maroon-700 mb-5 sm:mb-6 tracking-[0.02em]"
+              className="text-2xl sm:text-3xl md:text-4xl font-serif text-theme-title mb-5 sm:mb-6 tracking-[0.02em]"
             >
               {venue.name}
             </motion.h3>
@@ -70,15 +70,15 @@ const Venue = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.4, duration: 0.8 }}
-              className="space-y-2 sm:space-y-3 mb-8 sm:mb-10 pb-8 sm:pb-10 border-b border-gray-100/60"
+              className="space-y-2 sm:space-y-3 mb-8 sm:mb-10 pb-8 sm:pb-10 border-b border-white/10"
             >
-              <p className="text-lg sm:text-xl md:text-2xl text-maroon-700 font-serif italic tracking-[0.01em]">{venue.address}</p>
+              <p className="text-lg sm:text-xl md:text-2xl text-theme-title font-serif italic tracking-[0.01em]">{venue.address}</p>
               <motion.div 
                 initial={{ width: 0, opacity: 0 }}
                 whileInView={{ width: "60px", opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.6, duration: 0.8 }}
-                className="h-[1px] bg-gradient-to-r from-transparent via-gold-500/40 to-transparent mx-auto"
+                className="h-[1px] bg-gradient-to-r from-transparent via-theme-accent/40 to-transparent mx-auto"
               />
             </motion.div>
 
@@ -99,25 +99,25 @@ const Venue = () => {
                 href={venue.mapUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group/btn relative min-h-[52px] px-8 sm:px-12 py-3.5 sm:py-4 rounded-sm uppercase tracking-[0.15em] sm:tracking-[0.2em] text-xs sm:text-sm font-bold overflow-hidden flex items-center justify-center"
+                className="group/btn relative min-h-[52px] px-8 sm:px-12 py-3.5 sm:py-4 rounded-sm uppercase tracking-[0.15em] sm:tracking-[0.2em] text-xs sm:text-sm font-bold overflow-hidden flex items-center justify-center shadow-lg shadow-theme-primary/20"
               >
                 {/* Animated Background */}
-                <div className="absolute inset-0 bg-gradient-to-r from-maroon-700 via-maroon-700 to-maroon-700" />
-                <div className="absolute inset-0 bg-gradient-to-r from-gold-500 to-gold-500 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-theme-primary transition-colors duration-500" />
+                <div className="absolute inset-0 bg-theme-accent opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500" />
                 
                 {/* Animated Border */}
-                <div className="absolute inset-0 border border-gold-500/0 group-hover/btn:border-gold-500/40 transition-all duration-500" />
+                <div className="absolute inset-0 border border-theme-accent/0 group-hover/btn:border-theme-accent/40 transition-all duration-500" />
                 
                 {/* Glow Effect */}
                 <motion.div 
                   className="absolute inset-0 -z-10 blur-xl opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"
                   style={{ 
-                    background: "radial-gradient(circle, rgba(255,215,0,0.3) 0%, transparent 70%)"
+                    background: "radial-gradient(circle, rgba(var(--color-accent-rgb),0.3) 0%, transparent 70%)"
                   }}
                 />
                 
                 {/* Text */}
-                <span className="relative z-10 text-white group-hover/btn:text-gray-900 transition-colors duration-500 drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)] group-hover/btn:drop-shadow-none">
+                <span className="relative z-10 text-theme-bg group-hover/btn:text-theme-title transition-colors duration-500 drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)] group-hover/btn:drop-shadow-none">
                   {settings.messages.viewOnMap}
                 </span>
               </motion.a>
@@ -127,7 +127,7 @@ const Venue = () => {
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.9, duration: 0.8 }}
-                className="text-gray-500 font-serif italic text-sm tracking-[0.01em]"
+                className="text-theme-text/60 font-serif italic text-sm tracking-[0.01em]"
               >
                 {venue.transportInfo}
               </motion.p>
@@ -140,7 +140,7 @@ const Venue = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.6, duration: 1 }}
-            className="absolute -bottom-16 -right-16 w-48 h-48 bg-gradient-to-tl from-gold-500/8 to-transparent rounded-full blur-3xl group-hover:from-gold-500/12 transition-all duration-500"
+            className="absolute -bottom-16 -right-16 w-48 h-48 bg-gradient-to-tl from-theme-accent/8 to-transparent rounded-full blur-3xl group-hover:from-theme-accent/12 transition-all duration-500"
           />
           
           <motion.div 
@@ -148,7 +148,7 @@ const Venue = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.7, duration: 1 }}
-            className="absolute -top-16 -left-16 w-32 h-32 bg-gradient-to-br from-gold-500/5 to-transparent rounded-full blur-2xl"
+            className="absolute -top-16 -left-16 w-32 h-32 bg-gradient-to-br from-theme-accent/5 to-transparent rounded-full blur-2xl"
           />
         </motion.div>
       </div>

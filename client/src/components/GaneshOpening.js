@@ -7,7 +7,7 @@ const GaneshOpening = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1.5, ease: "easeOut" }}
-      className="py-16 bg-[#fdfbf7] flex flex-col items-center justify-center relative overflow-hidden"
+      className="py-16 bg-theme-secondary flex flex-col items-center justify-center relative overflow-hidden"
     >
       {/* Subtle background pattern */}
       <div className="absolute inset-0 opacity-[0.02] pointer-events-none"
@@ -30,12 +30,12 @@ const GaneshOpening = () => {
         transition={{ delay: 0.8, duration: 1.2, ease: "easeOut" }}
         className="text-4xl md:text-5xl lg:text-6xl font-serif text-center leading-tight"
         style={{
-          background: 'linear-gradient(45deg, #FFD700, #FFA500, #FFD700)',
+          background: 'linear-gradient(45deg, var(--color-accent), #FFA500, var(--color-accent))',
           backgroundClip: 'text',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
-          textShadow: '0 0 20px rgba(255, 215, 0, 0.5), 0 0 40px rgba(255, 215, 0, 0.3)',
-          filter: 'drop-shadow(0 0 10px rgba(255, 215, 0, 0.2))'
+          textShadow: '0 0 20px rgba(var(--color-accent-rgb), 0.5), 0 0 40px rgba(var(--color-accent-rgb), 0.3)',
+          filter: 'drop-shadow(0 0 10px rgba(var(--color-accent-rgb), 0.2))'
         }}
       >
         श्री गणेशाय नमः
@@ -46,7 +46,7 @@ const GaneshOpening = () => {
         initial={{ width: 0 }}
         animate={{ width: '200px' }}
         transition={{ delay: 1.5, duration: 1, ease: "easeOut" }}
-        className="h-[2px] bg-gradient-to-r from-transparent via-gold-500 to-transparent mt-8 mx-auto"
+        className="h-[2px] bg-gradient-to-r from-transparent via-theme-accent to-transparent mt-8 mx-auto"
       />
     </motion.section>
   );

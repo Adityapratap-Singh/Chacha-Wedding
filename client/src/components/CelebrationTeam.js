@@ -79,12 +79,12 @@ const CelebrationTeam = () => {
         viewport={{ once: true }}
         transition={{ duration: 1 }}
         style={{ transformOrigin: "center" }}
-        className="h-[2px] bg-gradient-to-r from-transparent via-gold-500/40 to-transparent mx-auto my-8 sm:my-12 md:my-16 max-w-3xl"
+        className="h-[2px] bg-gradient-to-r from-transparent via-theme-accent/40 to-transparent mx-auto my-8 sm:my-12 md:my-16 max-w-3xl"
       />
 
-      <section className="py-16 sm:py-20 md:py-24 bg-[#fdfaf5] relative overflow-hidden">
+      <section className="py-16 sm:py-20 md:py-24 bg-theme-bg relative overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
-          <div className="rounded-2xl border border-gold-500/20 bg-white/80 backdrop-blur-sm p-5 sm:p-8 md:p-10 shadow-[0_20px_45px_rgba(0,0,0,0.06)]">
+          <div className="rounded-2xl border border-theme-accent/20 bg-theme-secondary/80 backdrop-blur-sm p-5 sm:p-8 md:p-10 shadow-[0_20px_45px_rgba(0,0,0,0.06)]">
 
             {/* Teams Container */}
             <motion.div
@@ -104,10 +104,10 @@ const CelebrationTeam = () => {
                     transition={{ delay: teamIndex * 0.1 + 0.1, duration: 0.6 }}
                     className="text-center mb-12 sm:mb-14 md:mb-16"
                   >
-                    <h3 className="text-xl sm:text-2xl md:text-3xl font-serif text-maroon-700 mb-1">
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-serif text-theme-title mb-1">
                       {team.title}
                     </h3>
-                    <p className="text-sm text-gold-500 tracking-[0.1em] uppercase font-light">
+                    <p className="text-sm text-theme-accent tracking-[0.1em] uppercase font-light">
                       {team.titleEn}
                     </p>
                     <motion.div
@@ -115,7 +115,7 @@ const CelebrationTeam = () => {
                       whileInView={{ width: "60px" }}
                       viewport={{ once: true }}
                       transition={{ delay: teamIndex * 0.1 + 0.3, duration: 0.8 }}
-                      className="h-[1px] bg-gradient-to-r from-transparent via-gold-500/50 to-transparent mx-auto mt-3"
+                      className="h-[1px] bg-gradient-to-r from-transparent via-theme-accent/50 to-transparent mx-auto mt-3"
                     />
                   </motion.div>
 
@@ -131,7 +131,7 @@ const CelebrationTeam = () => {
                       <motion.div
                         key={memberIndex}
                         variants={itemVariants}
-                        className="group flex flex-col items-center rounded-3xl border-2 border-maroon-200/50 bg-gradient-to-b from-white/90 to-cream-50/80 p-6 transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl hover:shadow-gold-500/40 hover:border-gold-500/80 hover:bg-gradient-to-b hover:from-gold-50/60 hover:to-cream-50 cursor-pointer relative overflow-hidden hover:rotate-[0.5deg]"
+                        className="group flex flex-col items-center rounded-3xl border-2 border-theme-primary/10 bg-gradient-to-b from-white/5 to-theme-secondary/20 p-6 transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl hover:shadow-theme-accent/40 hover:border-theme-accent/80 hover:bg-gradient-to-b hover:from-theme-accent/60 hover:to-theme-secondary cursor-pointer relative overflow-hidden hover:rotate-[0.5deg]"
                       >
                         {/* Circular Photo */}
                         <motion.div
@@ -144,11 +144,11 @@ const CelebrationTeam = () => {
                             initial={{ opacity: 0 }}
                             whileHover={{ opacity: 1 }}
                             transition={{ duration: 0.4 }}
-                            className="absolute inset-0 rounded-full bg-gradient-to-br from-gold-500/30 to-transparent blur-lg -z-10 group-hover:blur-xl transition-all duration-500"
+                            className="absolute inset-0 rounded-full bg-gradient-to-br from-theme-accent/30 to-transparent blur-lg -z-10 group-hover:blur-xl transition-all duration-500"
                           />
 
                           {/* Photo Container */}
-                          <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 aspect-square rounded-xl overflow-hidden border-2 border-gold-500/20 group-hover:border-gold-500/80 ring-2 ring-transparent group-hover:ring-gold-500/30 transition-all duration-500 shadow-[0_8px_24px_rgba(128,0,0,0.1)] group-hover:shadow-[0_20px_40px_rgba(255,215,0,0.25)] relative bg-gradient-to-br from-white to-cream-50">
+                          <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 aspect-square rounded-xl overflow-hidden border-2 border-theme-accent/20 group-hover:border-theme-accent/80 ring-2 ring-transparent group-hover:ring-theme-accent/30 transition-all duration-500 shadow-[0_8px_24px_rgba(0,0,0,0.1)] group-hover:shadow-[0_20px_40px_rgba(var(--color-accent-rgb),0.25)] relative bg-gradient-to-br from-white/10 to-theme-secondary/10">
                             <img
                               src={member.photo}
                               alt={member.name}
@@ -160,11 +160,11 @@ const CelebrationTeam = () => {
                               onError={() => setImageErrors(prev => ({ ...prev, [`${teamIndex}-${memberIndex}`]: true }))}
                             />
                             {!imageLoaded[`${teamIndex}-${memberIndex}`] && (
-                              <div className="absolute inset-0 bg-gradient-to-r from-gray-200 to-gray-300 animate-pulse rounded-xl" />
+                              <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/20 animate-pulse rounded-xl" />
                             )}
                             {imageErrors[`${teamIndex}-${memberIndex}`] && (
-                              <div className="absolute inset-0 bg-gradient-to-br from-gold-500/20 to-maroon-700/20 flex items-center justify-center rounded-xl">
-                                <span className="text-xs text-gold-500 font-serif">👤</span>
+                              <div className="absolute inset-0 bg-gradient-to-br from-theme-accent/20 to-theme-primary/20 flex items-center justify-center rounded-xl">
+                                <span className="text-xs text-theme-accent font-serif">👤</span>
                               </div>
                             )}
 
@@ -173,7 +173,7 @@ const CelebrationTeam = () => {
                               initial={{ opacity: 0 }}
                               whileHover={{ opacity: 1 }}
                               transition={{ duration: 0.3 }}
-                              className="absolute inset-0 bg-gradient-to-t from-maroon-700/40 to-transparent"
+                              className="absolute inset-0 bg-gradient-to-t from-theme-primary/40 to-transparent"
                             />
                           </div>
                         </motion.div>
@@ -184,7 +184,7 @@ const CelebrationTeam = () => {
                           whileInView={{ opacity: 1, y: 0 }}
                           viewport={{ once: true }}
                           transition={{ delay: memberIndex * 0.05 + teamIndex * 0.1 + 0.2, duration: 0.5 }}
-                          className="text-sm sm:text-base md:text-lg font-serif text-maroon-700 text-center leading-snug tracking-[0.01em]"
+                          className="text-sm sm:text-base md:text-lg font-serif text-theme-title text-center leading-snug tracking-[0.01em]"
                         >
                           {member.name}
                         </motion.h4>
@@ -196,7 +196,7 @@ const CelebrationTeam = () => {
                             whileInView={{ opacity: 1 }}
                             viewport={{ once: true }}
                             transition={{ delay: memberIndex * 0.05 + teamIndex * 0.1 + 0.3, duration: 0.5 }}
-                            className="text-xs text-gray-600 font-light mt-0.5 text-center"
+                            className="text-xs text-theme-text/60 font-light mt-0.5 text-center"
                           >
                             {member.subtitle}
                           </motion.p>
@@ -210,7 +210,7 @@ const CelebrationTeam = () => {
                             viewport={{ once: true }}
                             transition={{ delay: memberIndex * 0.05 + teamIndex * 0.1 + 0.4, duration: 0.5 }}
                             href={`tel:${member.contact}`}
-                            className="text-xs text-gold-500 font-light tracking-widest mt-1 hover:text-gold-600 transition-colors duration-300"
+                            className="text-xs text-theme-accent font-light tracking-widest mt-1 hover:text-theme-accent-hover transition-colors duration-300"
                           >
                             📞 {member.contact}
                           </motion.a>
@@ -230,14 +230,14 @@ const CelebrationTeam = () => {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.5, duration: 1 }}
-          className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-gold-500/5 to-transparent rounded-full blur-3xl pointer-events-none"
+          className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-theme-accent/5 to-transparent rounded-full blur-3xl pointer-events-none"
         />
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.6, duration: 1 }}
-          className="absolute bottom-0 left-0 w-72 h-72 bg-gradient-to-tr from-maroon-700/3 to-transparent rounded-full blur-3xl pointer-events-none"
+          className="absolute bottom-0 left-0 w-72 h-72 bg-gradient-to-tr from-theme-primary/3 to-transparent rounded-full blur-3xl pointer-events-none"
         />
       </section>
     </>
