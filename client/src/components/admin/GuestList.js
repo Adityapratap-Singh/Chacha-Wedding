@@ -316,6 +316,7 @@ const GuestList = () => {
               <option value="None">None</option>
               <option value="Mr">Mr</option>
               <option value="Mrs">Mrs</option>
+              <option value="Ms">Ms</option>
             </select>
           </div>
           <div className="space-y-2">
