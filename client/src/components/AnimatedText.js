@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const AnimatedText = ({ text, className, delay = 0 }) => {
+  if (!text) return null;
   const words = text.split(" ");
 
   const container = {

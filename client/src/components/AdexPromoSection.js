@@ -68,9 +68,7 @@ const AdexPromoSection = () => {
         >
           Yeh sirf invitation nahi hai…
           <br />
-          <span className="text-maroon-700/80">yeh ek cinematic experience hai</span>
-          <br />
-          modern weddings ke liye 💍
+          <span className="text-maroon-700/80">yeh ek cinematic experience hai 💍</span>
         </motion.p>
 
         {/* By Adex branding */}

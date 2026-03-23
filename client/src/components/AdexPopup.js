@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const POPUP_STORAGE_KEY = 'adex_popup_seen';
-const DELAY_MS = 25000; // 25 seconds (between 20-30)
-const WHATSAPP_URL = 'https://wa.me/917355259901?text=I want a wedding website like this 😍';
+const DELAY_MS = 25000; // 25 seconds
+const WHATSAPP_URL = 'https://wa.me/917355259901?text=Yeh cinematic experience mujhe bhi chahiye 😍';
 
 const AdexPopup = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -34,33 +34,32 @@ const AdexPopup = () => {
     <AnimatePresence>
       {isVisible && (
         <>
-          {/* Backdrop - subtle blur overlay */}
+          {/* Backdrop - extremely subtle */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[9998] bg-black/20 backdrop-blur-[2px]"
+            transition={{ duration: 0.5 }}
+            className="fixed inset-0 z-[9998] bg-black/5 backdrop-blur-[1px] pointer-events-none sm:pointer-events-auto"
             onClick={handleClose}
           />
 
-          {/* Popup - bottom-right on desktop, bottom-center on mobile */}
+          {/* Popup */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.9, y: 40 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{
               type: 'spring',
-              stiffness: 300,
-              damping: 25,
-              mass: 0.8
+              stiffness: 260,
+              damping: 20
             }}
-                className="fixed z-[9999] left-3 right-3 sm:left-4 sm:right-4 md:left-auto md:right-6 md:w-[380px] bottom-4 sm:bottom-6 md:bottom-8"
+            className="fixed z-[9999] left-4 right-4 sm:left-auto sm:right-6 md:right-8 sm:w-[360px] bottom-6 sm:bottom-8 md:bottom-10"
           >
             <div
-              className="relative overflow-hidden rounded-xl border border-gold-500/20 shadow-[0_25px_80px_rgba(0,0,0,0.25),0_0_40px_rgba(255,215,0,0.06)]"
+              className="relative overflow-hidden rounded-2xl border border-gold-500/20 shadow-[0_20px_50px_rgba(0,0,0,0.15)] group"
               style={{
-                background: 'rgba(253, 251, 247, 0.85)',
+                background: 'rgba(255, 255, 255, 0.9)',
                 backdropFilter: 'blur(20px)',
                 WebkitBackdropFilter: 'blur(20px)'
               }}
@@ -68,41 +67,50 @@ const AdexPopup = () => {
               {/* Close button */}
               <button
                 onClick={handleClose}
-                className="absolute top-3 right-3 w-10 h-10 sm:w-8 sm:h-8 flex items-center justify-center rounded-full text-gray-500 hover:text-maroon-700 hover:bg-white/50 transition-colors z-10"
+                className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-maroon-700 hover:bg-maroon-700/5 transition-all duration-300 z-10"
                 aria-label="Close"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18" />
                   <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
               </button>
 
-              <div className="p-6 pt-8">
-                {/* Content */}
-                <p className="font-serif text-gray-800 text-base sm:text-lg md:text-xl leading-relaxed mb-5 sm:mb-6">
-                  Pasand aaya? 😄
-                  <br />
-                  <span className="text-maroon-700/90">Apni shaadi ke liye bhi aisa hi invite chahiye?</span>
-                </p>
+              <div className="p-7">
+                {/* Accent icon */}
+                <div className="text-gold-500 text-xl mb-3">🎬</div>
 
-                {/* CTA */}
-                <a
+                {/* Content */}
+                <div className="mb-6">
+                  <p className="font-serif text-gray-800 text-lg leading-relaxed italic">
+                    "Yeh sirf invitation nahi hai…
+                    <br />
+                    <span className="text-maroon-700 font-medium not-italic">yeh ek cinematic experience hai 💍</span>"
+                  </p>
+                </div>
+
+                {/* CTA - WhatsApp Button with hover effect */}
+                <motion.a
                   href={WHATSAPP_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={handleClose}
-                  className="block w-full min-h-[48px] py-3.5 px-5 text-center bg-maroon-700/90 hover:bg-maroon-700 text-white font-serif tracking-[0.15em] text-sm uppercase rounded-lg border border-gold-500/20 transition-all duration-300 hover:border-gold-500/40 flex items-center justify-center"
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="relative flex items-center justify-center gap-3 w-full py-4 px-6 bg-maroon-700 text-white font-serif tracking-[0.1em] text-sm uppercase rounded-xl shadow-lg shadow-maroon-700/20 overflow-hidden transition-all duration-300"
                 >
-                  Talk on WhatsApp
-                </a>
+                  <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                  <span className="relative z-10">Get Yours on WhatsApp</span>
+                  <span className="text-gold-500 relative z-10">→</span>
+                </motion.a>
               </div>
 
-              {/* Subtle gold accent line */}
-              <div
-                className="h-[2px] w-full"
-                style={{
-                  background: 'linear-gradient(to right, transparent, rgba(255,215,0,0.4), transparent)'
-                }}
+              {/* Progress bar animation for attention */}
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: '100%' }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+                className="h-[1px] bg-gradient-to-r from-transparent via-gold-500/50 to-transparent"
               />
             </div>
           </motion.div>
