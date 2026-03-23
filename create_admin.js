@@ -11,21 +11,23 @@ const createAdmin = async () => {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('Connected to MongoDB');
 
-    let user = await User.findOne({ username: 'admin' });
+    const adminEmail = 'admin@pr-wedding.com';
+
+    let user = await User.findOne({ email: adminEmail });
     if (!user) {
       const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash('admin123', salt);
+      const hashedPassword = await bcrypt.hash('12-05-2026', salt);
       user = new User({
-        username: 'admin',
+        email: adminEmail,
         password: hashedPassword,
       });
       await user.save();
       console.log('SUCCESS: Default admin created!');
-      console.log('Username: admin');
-      console.log('Password: admin123');
+      console.log('Email:', adminEmail);
+      console.log('Password: 12-05-2026');
     } else {
       console.log('Admin user already exists.');
-      console.log('Username: admin');
+      console.log('Email:', adminEmail);
     }
     process.exit(0);
   } catch (err) {
