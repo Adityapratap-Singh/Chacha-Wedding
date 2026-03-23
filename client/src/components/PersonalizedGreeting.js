@@ -203,14 +203,14 @@ const PersonalizedGreeting = () => {
                       transition={{ delay: 3.5, duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
                       whileHover={{ scale: 1.03, boxShadow: "0 20px 40px rgba(var(--color-primary-rgb), 0.2)" }}
                       whileTap={{ scale: 0.97 }}
-                      className="bg-theme-primary text-theme-secondary px-8 sm:px-10 py-3.5 sm:py-4 rounded-sm shadow-[0_10px_30px_rgba(var(--color-primary-rgb),0.15)] border border-theme-accent/40 relative group overflow-hidden transition-all"
+                      className="bg-theme-primary px-8 sm:px-10 py-3.5 sm:py-4 rounded-sm shadow-[0_10px_30px_rgba(var(--color-primary-rgb),0.2)] border border-theme-accent/40 relative group overflow-hidden transition-all"
                     >
-                      <div className="absolute inset-0 bg-theme-accent/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                      <span className="text-base sm:text-lg md:text-xl font-serif tracking-[0.15em] sm:tracking-[0.2em] relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]">
-                        {weddingDate}
-                      </span>
-                    </motion.div>
-                  </div>
+                      <div className=" inset-0 bg-theme-accent/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                        <span className="text-theme-accent font-serif text-lg sm:text-xl font-bold tracking-[0.3em] uppercase gold-glow drop-shadow-[0_0_12px_rgba(var(--color-accent-rgb),0.4)]">
+                          {weddingDate}
+                        </span>
+                        </motion.div>
+                      </div>
 
                   {/* Discover More Button */}
                   <motion.button

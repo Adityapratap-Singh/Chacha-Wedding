@@ -97,11 +97,16 @@ const AdexPopup = () => {
                   onClick={handleClose}
                   whileHover={{ scale: 1.02, y: -2 }}
                   whileTap={{ scale: 0.98 }}
-                  className="relative flex items-center justify-center gap-3 w-full py-4 px-6 bg-theme-primary text-theme-secondary font-serif tracking-[0.1em] text-sm uppercase rounded-xl shadow-lg shadow-theme-primary/20 overflow-hidden transition-all duration-300"
+                  className="group relative flex items-center justify-center gap-3 w-full py-4.5 px-6 bg-theme-primary text-gold-500 font-serif tracking-[0.1em] text-sm uppercase rounded-full shadow-xl shadow-theme-primary/30 overflow-hidden transition-all duration-500 border border-gold-500/20"
                 >
-                  <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                  {/* Animated Background */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-theme-primary via-maroon-800 to-theme-primary transition-all duration-500" />
+                  
+                  {/* Golden Sheen */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold-500/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
+                  
                   <span className="relative z-10">Get Yours on WhatsApp</span>
-                  <span className="text-theme-accent relative z-10">→</span>
+                  <span className="text-gold-500 relative z-10 group-hover:translate-x-1 transition-transform">→</span>
                 </motion.a>
               </div>
 

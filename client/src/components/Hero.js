@@ -117,9 +117,9 @@ const Hero = () => {
             </h2>
             <div className="flex flex-col items-center gap-2">
               <div className="flex items-center justify-center gap-4">
-                <div className="h-[1px] w-8 bg-theme-accent/20" />
-                <span className="text-theme-accent font-serif text-lg tracking-widest uppercase">{weddingDate}</span>
-                <div className="h-[1px] w-8 bg-theme-accent/20" />
+                <div className="h-[1px] w-8 bg-theme-accent/30 shadow-[0_0_8px_rgba(var(--color-accent-rgb),0.5)]" />
+                <span className="text-theme-accent font-serif text-lg sm:text-xl font-bold tracking-[0.3em] uppercase gold-glow drop-shadow-[0_0_12px_rgba(var(--color-accent-rgb),0.4)]">{weddingDate}</span>
+                <div className="h-[1px] w-8 bg-theme-accent/30 shadow-[0_0_8px_rgba(var(--color-accent-rgb),0.5)]" />
               </div>
               <motion.div 
                 initial={{ opacity: 0 }}

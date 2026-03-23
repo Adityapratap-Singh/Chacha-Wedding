@@ -279,7 +279,7 @@ const CinematicEntry = ({ onFinish }) => {
                     transition={{ delay: 5.2, duration: 1.2, ease: [0.34, 1.56, 0.64, 1] }}
                     className="mt-12"
                   >
-                    <button
+                    <motion.button
                       onClick={(e) => {
                         const rect = e.target.getBoundingClientRect();
                         setBurstPosition({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
@@ -287,11 +287,13 @@ const CinematicEntry = ({ onFinish }) => {
                         
                         setTimeout(() => onFinish(), 500);
                       }}
-                      className="group relative px-8 sm:px-10 py-3.5 sm:py-4 min-h-[48px] bg-transparent border border-gold-500/40 text-gold-500 font-serif tracking-[0.3em] sm:tracking-[0.4em] uppercase text-xs overflow-hidden transition-all duration-700 hover:border-gold-500 shadow-[0_0_20px_rgba(255,215,0,0.2)] hover:shadow-[0_0_30px_rgba(255,215,0,0.4)]"
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="group relative px-10 sm:px-14 py-4 sm:py-5 bg-gradient-to-r from-gold-600 via-gold-400 to-gold-600 text-royal-maroon font-serif tracking-[0.4em] sm:tracking-[0.5em] uppercase text-[10px] sm:text-xs font-bold overflow-hidden transition-all duration-500 rounded-full shadow-[0_10px_30px_rgba(218,165,32,0.3)] hover:shadow-[0_15px_40px_rgba(218,165,32,0.5)] border border-gold-300/50"
                     >
-                      <div className="absolute inset-0 bg-gold-500/10 translate-x-[-100%] group-hover:translate-x-[0%] transition-transform duration-700" />
-                      <span className="relative z-10 drop-shadow-[0_0_10px_rgba(255,215,0,0.2)]">Begin Experience</span>
-                    </button>
+                      <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
+                      <span className="relative z-10 drop-shadow-sm">Begin Experience</span>
+                    </motion.button>
                   </motion.div>
                 )}
               </AnimatePresence>

@@ -91,12 +91,20 @@ const AdexPromoSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.7 }}
-          whileHover={{ y: -4, scale: 1.02 }}
+          whileHover={{ y: -4, scale: 1.05 }}
           whileTap={{ scale: 0.98 }}
-          className="group inline-flex items-center justify-center gap-2 min-h-[48px] px-6 sm:px-8 py-3.5 sm:py-4 bg-theme-primary/90 hover:bg-theme-primary text-theme-secondary font-serif tracking-[0.15em] sm:tracking-[0.2em] uppercase text-sm rounded-sm border border-theme-accent/20 hover:border-theme-accent/40 transition-all duration-500 shadow-[0_20px_50px_rgba(var(--color-primary-rgb),0.2)] hover:shadow-[0_25px_60px_rgba(var(--color-primary-rgb),0.25)]"
+          className="group relative inline-flex items-center justify-center gap-3 min-h-[52px] px-10 sm:px-14 py-4 sm:py-5 bg-theme-primary text-gold-500 font-serif tracking-[0.2em] uppercase text-xs sm:text-sm font-bold rounded-full overflow-hidden shadow-[0_20px_40px_rgba(var(--color-primary-rgb),0.3)] hover:shadow-[0_25px_50px_rgba(var(--color-primary-rgb),0.45)] transition-all duration-500 border border-gold-500/20 hover:border-gold-500/40"
         >
-          <span>Create Yours</span>
-          <span className="text-theme-accent group-hover:translate-x-1 transition-transform">→</span>
+          {/* Animated Background */}
+          <div className="absolute inset-0 bg-gradient-to-r from-theme-primary via-maroon-800 to-theme-primary group-hover:from-maroon-800 group-hover:to-maroon-700 transition-all duration-500" />
+          
+          {/* Golden Sheen */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold-500/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
+          
+          <span className="relative z-10 flex items-center gap-2">
+            Create Yours
+            <span className="text-gold-500 group-hover:translate-x-1.5 transition-transform duration-300">→</span>
+          </span>
         </motion.a>
 
         {/* Bottom divider */}

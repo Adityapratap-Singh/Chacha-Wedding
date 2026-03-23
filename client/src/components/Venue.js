@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { MapPin } from 'lucide-react';
 import { useSettings } from '../context/SettingsContext';
 
 const Venue = () => {
@@ -99,25 +100,20 @@ const Venue = () => {
                 href={venue.mapUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group/btn relative min-h-[52px] px-8 sm:px-12 py-3.5 sm:py-4 rounded-sm uppercase tracking-[0.15em] sm:tracking-[0.2em] text-xs sm:text-sm font-bold overflow-hidden flex items-center justify-center shadow-lg shadow-theme-primary/20"
+                className="group/btn relative min-h-[52px] px-10 sm:px-16 py-4 rounded-full uppercase tracking-[0.2em] text-[10px] sm:text-xs font-bold overflow-hidden flex items-center justify-center shadow-[0_15px_35px_rgba(var(--color-primary-rgb),0.25)] hover:shadow-[0_20px_45px_rgba(var(--color-primary-rgb),0.35)] transition-all duration-500"
               >
                 {/* Animated Background */}
-                <div className="absolute inset-0 bg-theme-primary transition-colors duration-500" />
-                <div className="absolute inset-0 bg-theme-accent opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-r from-theme-primary via-maroon-800 to-theme-primary group-hover/btn:from-maroon-800 group-hover/btn:to-maroon-700 transition-all duration-500" />
+                
+                {/* Golden Sheen */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold-500/20 to-transparent translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
                 
                 {/* Animated Border */}
-                <div className="absolute inset-0 border border-theme-accent/0 group-hover/btn:border-theme-accent/40 transition-all duration-500" />
-                
-                {/* Glow Effect */}
-                <motion.div 
-                  className="absolute inset-0 -z-10 blur-xl opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"
-                  style={{ 
-                    background: "radial-gradient(circle, rgba(var(--color-accent-rgb),0.3) 0%, transparent 70%)"
-                  }}
-                />
+                <div className="absolute inset-0 border border-gold-500/30 rounded-full group-hover/btn:border-gold-400 transition-colors duration-500" />
                 
                 {/* Text */}
-                <span className="relative z-10 text-theme-bg group-hover/btn:text-theme-title transition-colors duration-500 drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)] group-hover/btn:drop-shadow-none">
+                <span className="relative z-10 text-gold-500 flex items-center gap-3">
+                  <MapPin size={16} />
                   {settings.messages.viewOnMap}
                 </span>
               </motion.a>

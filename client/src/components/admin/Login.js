@@ -244,11 +244,15 @@ const Login = () => {
             href="https://wa.me/917355259901?text=I want a wedding website like this 😍"
             target="_blank"
             rel="noopener noreferrer"
-            whileHover={{ scale: 1.03 }}
+            whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.98 }}
-            className="block w-full py-2.5 px-5 text-center bg-white/5 border border-gold-500/20 text-gold-500/90 font-serif tracking-[0.15em] text-xs uppercase rounded-xl transition-all duration-300 hover:bg-white/8 hover:border-gold-500/35 hover:shadow-[0_0_24px_rgba(255,215,0,0.08)]"
+            className="group relative flex items-center justify-center gap-3 w-full py-4 bg-white/5 border border-gold-500/20 text-gold-500 font-serif tracking-[0.2em] uppercase text-[10px] font-bold rounded-full overflow-hidden transition-all duration-300 hover:bg-white/10 hover:border-gold-500/40 hover:shadow-[0_0_24px_rgba(255,215,0,0.1)]"
           >
-            Create Yours
+            {/* Golden Sheen */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold-500/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
+            
+            <span className="relative z-10">Create Yours</span>
+            <span className="text-gold-500 relative z-10 group-hover:translate-x-1.5 transition-transform duration-300">→</span>
           </motion.a>
         </motion.div>
       </motion.div>
