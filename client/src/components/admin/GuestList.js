@@ -305,7 +305,7 @@ const GuestList = () => {
           <div className="space-y-2">
             <label className="text-sm font-semibold text-gray-700 ml-1">Honorific</label>
             <select name="honorific" value={formData.honorific} onChange={onChange}
-              className="w-full px-4 py-2.5 bg-white/70 border border-white/60 rounded-xl focus:ring-2 focus:ring-maroon-700/25 focus:border-maroon-700 outline-none transition-all shadow-sm"
+              className="w-full px-4 py-2.5 bg-white/70 border border-white/60 rounded-xl text-gray-900 focus:ring-2 focus:ring-maroon-700/25 focus:border-maroon-700 outline-none transition-all shadow-sm"
             >
               <option value="None">None</option>
               <option value="Mr">Mr</option>
@@ -315,13 +315,13 @@ const GuestList = () => {
           <div className="space-y-2">
             <label className="text-sm font-semibold text-gray-700 ml-1">Guest Name</label>
             <input type="text" name="name" placeholder="Full Name" value={formData.name} onChange={onChange} required
-              className="w-full px-4 py-2.5 bg-white/70 border border-white/60 rounded-xl focus:ring-2 focus:ring-maroon-700/25 focus:border-maroon-700 outline-none transition-all shadow-sm"
+              className="w-full px-4 py-2.5 bg-white/70 border border-white/60 rounded-xl text-gray-900 focus:ring-2 focus:ring-maroon-700/25 focus:border-maroon-700 outline-none transition-all shadow-sm"
             />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-semibold text-gray-700 ml-1">Family Invite?</label>
             <select name="family" value={formData.family} onChange={onChange}
-              className="w-full px-4 py-2.5 bg-white/70 border border-white/60 rounded-xl focus:ring-2 focus:ring-maroon-700/25 focus:border-maroon-700 outline-none transition-all shadow-sm"
+              className="w-full px-4 py-2.5 bg-white/70 border border-white/60 rounded-xl text-gray-900 focus:ring-2 focus:ring-maroon-700/25 focus:border-maroon-700 outline-none transition-all shadow-sm"
             >
               <option value="No">Individual</option>
               <option value="Yes">Family</option>
@@ -332,7 +332,7 @@ const GuestList = () => {
               <MapPin size={14} /> Location
             </label>
             <select name="location" value={formData.location} onChange={onChange}
-              className="w-full px-4 py-2.5 bg-white/70 border border-white/60 rounded-xl focus:ring-2 focus:ring-maroon-700/25 focus:border-maroon-700 outline-none transition-all shadow-sm"
+              className="w-full px-4 py-2.5 bg-white/70 border border-white/60 rounded-xl text-gray-900 focus:ring-2 focus:ring-maroon-700/25 focus:border-maroon-700 outline-none transition-all shadow-sm"
             >
               <option value="">Select location</option>
               {locations.map((loc) => (
@@ -347,7 +347,7 @@ const GuestList = () => {
                 placeholder="Type new location"
                 value={formData.locationOther}
                 onChange={onChange}
-                className="mt-2 w-full px-4 py-2.5 bg-white/70 border border-white/60 rounded-xl focus:ring-2 focus:ring-maroon-700/25 outline-none transition-all shadow-sm"
+                className="mt-2 w-full px-4 py-2.5 bg-white/70 border border-white/60 rounded-xl text-gray-900 focus:ring-2 focus:ring-maroon-700/25 outline-none transition-all shadow-sm"
               />
             )}
           </div>
@@ -398,7 +398,7 @@ const GuestList = () => {
               placeholder="Search guests..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2.5 min-h-[44px] bg-white/60 border border-white/70 rounded-xl w-full sm:w-64 focus:ring-2 focus:ring-maroon-700/25 outline-none shadow-sm"
+              className="pl-10 pr-4 py-2.5 min-h-[44px] bg-white/60 border border-white/70 rounded-xl w-full sm:w-64 text-gray-900 focus:ring-2 focus:ring-maroon-700/25 outline-none shadow-sm"
             />
           </div>
         </motion.div>

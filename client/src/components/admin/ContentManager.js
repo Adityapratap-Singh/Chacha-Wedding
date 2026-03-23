@@ -167,7 +167,7 @@ const ContentManager = () => {
                   type="text" 
                   value={settings.coupleNames.groom} 
                   onChange={(e) => updateField('coupleNames', 'groom', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
               <div>
@@ -176,7 +176,7 @@ const ContentManager = () => {
                   type="text" 
                   value={settings.coupleNames.bride} 
                   onChange={(e) => updateField('coupleNames', 'bride', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
               <div>
@@ -185,7 +185,7 @@ const ContentManager = () => {
                   type="text" 
                   value={settings.weddingDate} 
                   onChange={(e) => setSettings({...settings, weddingDate: e.target.value})}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                   placeholder="e.g. 12 May 2026"
                 />
               </div>
@@ -204,7 +204,7 @@ const ContentManager = () => {
                   type="text" 
                   value={settings.messages.atithiDevoBhava} 
                   onChange={(e) => updateField('messages', 'atithiDevoBhava', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
               <div>
@@ -213,7 +213,7 @@ const ContentManager = () => {
                   type="text" 
                   value={settings.messages.invitation} 
                   onChange={(e) => updateField('messages', 'invitation', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
               <div>
@@ -231,7 +231,7 @@ const ContentManager = () => {
                   type="text" 
                   value={settings.messages.heroSubtitle} 
                   onChange={(e) => updateField('messages', 'heroSubtitle', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
               <div>
@@ -240,7 +240,7 @@ const ContentManager = () => {
                   type="text" 
                   value={settings.messages.saveTheDate} 
                   onChange={(e) => updateField('messages', 'saveTheDate', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
               <div>
@@ -249,7 +249,7 @@ const ContentManager = () => {
                   type="text" 
                   value={settings.messages.venueTitle} 
                   onChange={(e) => updateField('messages', 'venueTitle', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
               <div>
@@ -258,7 +258,7 @@ const ContentManager = () => {
                   type="text" 
                   value={settings.messages.viewOnMap} 
                   onChange={(e) => updateField('messages', 'viewOnMap', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
               <div>
@@ -267,7 +267,7 @@ const ContentManager = () => {
                   type="text" 
                   value={settings.messages.galleryTitle} 
                   onChange={(e) => updateField('messages', 'galleryTitle', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
               <div>
@@ -276,7 +276,7 @@ const ContentManager = () => {
                   type="text" 
                   value={settings.messages.gallerySubtitle} 
                   onChange={(e) => updateField('messages', 'gallerySubtitle', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
               <div>
@@ -285,7 +285,7 @@ const ContentManager = () => {
                   type="text" 
                   value={settings.messages.eventsTitle} 
                   onChange={(e) => updateField('messages', 'eventsTitle', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
               <div>
@@ -294,7 +294,7 @@ const ContentManager = () => {
                   type="text" 
                   value={settings.messages.eventsSubtitle} 
                   onChange={(e) => updateField('messages', 'eventsSubtitle', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
               <div>
@@ -303,7 +303,7 @@ const ContentManager = () => {
                   type="text" 
                   value={settings.messages.eventsJourney} 
                   onChange={(e) => updateField('messages', 'eventsJourney', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
             </div>
@@ -321,7 +321,7 @@ const ContentManager = () => {
                   type="text" 
                   value={settings.venue.name} 
                   onChange={(e) => updateField('venue', 'name', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
               <div>
@@ -330,7 +330,7 @@ const ContentManager = () => {
                   type="text" 
                   value={settings.venue.address} 
                   onChange={(e) => updateField('venue', 'address', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
               <div>
@@ -339,7 +339,7 @@ const ContentManager = () => {
                   type="text" 
                   value={settings.venue.mapUrl} 
                   onChange={(e) => updateField('venue', 'mapUrl', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
               <div>
@@ -348,7 +348,7 @@ const ContentManager = () => {
                   type="text" 
                   value={settings.venue.transportInfo} 
                   onChange={(e) => updateField('venue', 'transportInfo', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
             </div>
@@ -383,7 +383,7 @@ const ContentManager = () => {
                         type="text" 
                         value={event.name} 
                         onChange={(e) => updateEvent(idx, 'name', e.target.value)}
-                        className="w-full px-3 py-2 bg-white border border-gray-100 rounded-lg outline-none focus:ring-2 focus:ring-maroon-700/20 text-sm"
+                        className="w-full px-3 py-2 bg-white border border-gray-100 rounded-lg text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 text-sm"
                       />
                     </div>
                     <div>
@@ -392,7 +392,7 @@ const ContentManager = () => {
                         type="text" 
                         value={event.date} 
                         onChange={(e) => updateEvent(idx, 'date', e.target.value)}
-                        className="w-full px-3 py-2 bg-white border border-gray-100 rounded-lg outline-none focus:ring-2 focus:ring-maroon-700/20 text-sm"
+                        className="w-full px-3 py-2 bg-white border border-gray-100 rounded-lg text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 text-sm"
                       />
                     </div>
                     <div>
@@ -401,7 +401,7 @@ const ContentManager = () => {
                         type="text" 
                         value={event.time} 
                         onChange={(e) => updateEvent(idx, 'time', e.target.value)}
-                        className="w-full px-3 py-2 bg-white border border-gray-100 rounded-lg outline-none focus:ring-2 focus:ring-maroon-700/20 text-sm"
+                        className="w-full px-3 py-2 bg-white border border-gray-100 rounded-lg text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 text-sm"
                       />
                     </div>
                     <div className="col-span-2">
@@ -516,7 +516,7 @@ const ContentManager = () => {
                   rows={4}
                   value={settings.baalAagrah.poem} 
                   onChange={(e) => updateField('baalAagrah', 'poem', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
               <div>
@@ -524,7 +524,7 @@ const ContentManager = () => {
                 <textarea 
                   value={settings.baalAagrah.names.join(', ')} 
                   onChange={(e) => updateField('baalAagrah', 'names', e.target.value.split(',').map(n => n.trim()))}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
             </div>
@@ -554,7 +554,7 @@ const ContentManager = () => {
                     type="text" 
                     value={settings.preshak.name} 
                     onChange={(e) => updateField('preshak', 'name', e.target.value)}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                   />
                 </div>
               </div>
@@ -564,7 +564,7 @@ const ContentManager = () => {
                   type="text" 
                   value={settings.preshak.quote} 
                   onChange={(e) => updateField('preshak', 'quote', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
             </div>
@@ -582,7 +582,7 @@ const ContentManager = () => {
                   type="text" 
                   value={settings.contactNumbers.primary} 
                   onChange={(e) => updateField('contactNumbers', 'primary', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
               <div>
@@ -591,7 +591,7 @@ const ContentManager = () => {
                   type="text" 
                   value={settings.contactNumbers.secondary} 
                   onChange={(e) => updateField('contactNumbers', 'secondary', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
                 />
               </div>
             </div>
