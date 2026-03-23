@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-primary: #8B0000;
+  --color-secondary: #FFFDD0;
+  --color-accent: #FFD700;
+  --color-accent-hover: #F0C419;
+  --color-text: #FFFDD0;
+  --color-text-secondary: #FFD700;
+  --color-bg: #8B0000;
+  --color-card-bg: rgba(139, 0, 0, 0.8);
+}
+
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;600&family=Dancing+Script:wght@700&display=swap');
 
 /* Mobile-first base */
@@ -14,8 +25,8 @@ body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #fdfbf7;
-  color: #1a1a1a;
+  background-color: var(--color-bg);
+  color: var(--color-text);
   overflow-x: hidden;
   /* Safe area for notched devices */
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
@@ -34,11 +45,11 @@ body {
 
 @layer components {
   .gold-glow {
-    text-shadow: 0 0 15px rgba(255, 215, 0, 0.4), 0 0 30px rgba(255, 215, 0, 0.2);
+    text-shadow: 0 0 15px rgba(var(--color-accent-rgb), 0.4), 0 0 30px rgba(var(--color-accent-rgb), 0.2);
   }
 
   .gold-gradient-text {
-    background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+    background: linear-gradient(to right, var(--color-accent), var(--color-text-secondary), var(--color-accent));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }

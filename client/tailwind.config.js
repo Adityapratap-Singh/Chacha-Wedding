@@ -7,6 +7,17 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        theme: {
+          primary: 'var(--color-primary)',
+          secondary: 'var(--color-secondary)',
+          accent: 'var(--color-accent)',
+          'accent-hover': 'var(--color-accent-hover)',
+          text: 'var(--color-text)',
+          'text-secondary': 'var(--color-text-secondary)',
+          bg: 'var(--color-bg)',
+          'card-bg': 'var(--color-card-bg)',
+          title: 'var(--color-title)',
+        },
         maroon: {
           700: '#800000',
         },
@@ -37,6 +48,8 @@ module.exports = {
         }
       },
       backgroundImage: {
+        'theme-bg': 'var(--color-bg)',
+        'theme-gradient': 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-bg) 50%, var(--color-primary) 100%)',
         'gold-silk': 'radial-gradient(circle at center, #FFD700 0%, #8B6508 100%)',
         'royal-maroon': 'linear-gradient(135deg, #4A0404 0%, #800000 50%, #4A0404 100%)',
       },

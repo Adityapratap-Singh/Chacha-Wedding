@@ -6,6 +6,20 @@ const SettingsContext = createContext();
 
 export const useSettings = () => useContext(SettingsContext);
 
+export const THEMES = {
+  'Royal Maroon': {
+    primary: '#5D0000',
+    secondary: '#4A0000',
+    accent: '#D4AF37',
+    accentHover: '#B8860B',
+    text: '#FFFFFF',
+    textSecondary: '#F3E5AB',
+    bg: '#5D0000',
+    cardBg: 'rgba(74, 4, 4, 0.9)',
+    title: '#D4AF37',
+  }
+};
+
 export const SettingsProvider = ({ children }) => {
   const [settings, setSettings] = useState({
     coupleNames: { bride: "Renu Singh", groom: "Pushpendra Kumar Singh (Lalla Bhaiya)" },
@@ -160,6 +174,33 @@ export const SettingsProvider = ({ children }) => {
 
   useEffect(() => {
     fetchSettings();
+  }, []);
+
+  useEffect(() => {
+    const theme = THEMES['Royal Maroon'];
+    const root = document.documentElement;
+    
+    const hexToRgb = (hex) => {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? 
+        `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : 
+        null;
+    };
+
+    root.style.setProperty('--color-primary', theme.primary);
+    root.style.setProperty('--color-primary-rgb', hexToRgb(theme.primary));
+    root.style.setProperty('--color-secondary', theme.secondary);
+    root.style.setProperty('--color-secondary-rgb', hexToRgb(theme.secondary));
+    root.style.setProperty('--color-accent', theme.accent);
+    root.style.setProperty('--color-accent-rgb', hexToRgb(theme.accent));
+    root.style.setProperty('--color-accent-hover', theme.accentHover);
+    root.style.setProperty('--color-text', theme.text);
+    root.style.setProperty('--color-text-rgb', hexToRgb(theme.text));
+    root.style.setProperty('--color-text-secondary', theme.textSecondary);
+    root.style.setProperty('--color-bg', theme.bg);
+    root.style.setProperty('--color-bg-rgb', hexToRgb(theme.bg));
+    root.style.setProperty('--color-card-bg', theme.cardBg);
+    root.style.setProperty('--color-title', theme.title || theme.accent);
   }, []);
 
   return (
