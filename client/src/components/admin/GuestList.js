@@ -24,7 +24,6 @@ const GuestList = () => {
   const [guests, setGuests] = useState([]);
   const [locations, setLocations] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Add/Edit Form State
@@ -39,12 +38,10 @@ const GuestList = () => {
 
   const [editingGuest, setEditingGuest] = useState(null);
   const [copyStatus, setCopyStatus] = useState({});
-  const [shareStatus, setShareStatus] = useState({});
   const [formFeedback, setFormFeedback] = useState(null);
   const [duplicateModal, setDuplicateModal] = useState(null);
 
   const fetchGuests = useCallback(async () => {
-    setIsLoading(true);
     try {
       const res = await axios.get('/api/guests', {
         headers: { 'x-auth-token': localStorage.getItem('token') },
@@ -57,8 +54,6 @@ const GuestList = () => {
         navigate('/admin/login');
       }
       setGuests([]);
-    } finally {
-      setIsLoading(false);
     }
   }, [navigate]);
 
@@ -201,8 +196,6 @@ const GuestList = () => {
     const link = getInviteLink(guestId);
     const text = encodeURIComponent(`You are cordially invited to Pushpendra & Renu's Wedding ✨\n\nClick here to view your personal invitation:\n${link}`);
     window.open(`https://wa.me/?text=${text}`, '_blank', 'noopener,noreferrer');
-    setShareStatus((prev) => ({ ...prev, [guestId]: true }));
-    setTimeout(() => setShareStatus((p) => ({ ...p, [guestId]: false })), 2200);
   };
 
   const filteredGuests = guests.filter(guest =>

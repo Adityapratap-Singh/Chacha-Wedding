@@ -1,70 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useSettings } from '../context/SettingsContext';
-import { Plus, Loader2, Camera } from 'lucide-react';
-import axios from 'axios';
+import { Camera } from 'lucide-react';
 
 const Gallery = () => {
-  const { settings, refreshSettings } = useSettings();
+  const { settings } = useSettings();
   const { gallery: images } = settings;
   const [selectedImg, setSelectedImg] = useState(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState({});
-  const isAdminView = window.location.pathname.startsWith('/admin');
 
-
-  const handleUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const title = prompt("Enter a title for this memory:");
-    if (!title) return;
-
-    setIsUploading(true);
-    const formData = new FormData();
-    formData.append('image', file);
-
-    try {
-      const res = await axios.post('/api/upload', formData, {
-        headers: { 
-          'Content-Type': 'multipart/form-data',
-          'x-auth-token': localStorage.getItem('token')
-        }
-      });
-
-      const updatedSettings = { ...settings };
-      updatedSettings.gallery = [...updatedSettings.gallery, { url: res.data.url, title }];
-
-      await axios.post('/api/content', { settings: updatedSettings }, {
-        headers: { 'x-auth-token': localStorage.getItem('token') }
-      });
-
-      refreshSettings();
-    } catch (err) {
-      console.error(err);
-      alert('Failed to upload image');
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const removeImage = async (e, idx) => {
-    e.stopPropagation();
-    if (!window.confirm("Are you sure you want to remove this memory?")) return;
-
-    try {
-      const updatedSettings = { ...settings };
-      updatedSettings.gallery = updatedSettings.gallery.filter((_, i) => i !== idx);
-
-      await axios.post('/api/content', { settings: updatedSettings }, {
-        headers: { 'x-auth-token': localStorage.getItem('token') }
-      });
-      refreshSettings();
-    } catch (err) {
-      console.error(err);
-      alert('Failed to remove image');
-    }
-  };
 
   // Duplicate images for seamless infinite scroll
   const duplicatedImages = [...images, ...images, ...images];

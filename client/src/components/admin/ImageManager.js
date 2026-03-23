@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { Upload, Trash2, Loader2, Image as ImageIcon, Users, Baby, UserCircle, Plus, CheckCircle, Move } from 'lucide-react';
+import { Upload, Trash2, Loader2, Image as ImageIcon, Users, Baby, UserCircle, Plus, Move } from 'lucide-react';
 import { useSettings } from '../../context/SettingsContext';
 
 const ImageManager = () => {

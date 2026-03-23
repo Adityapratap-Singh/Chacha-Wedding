@@ -30,18 +30,6 @@ const BalAagrah = () => {
     }
   };
 
-  const nameVariants = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.5
-      }
-    }
-  };
-
-  // Split poem by lines if it's a single string with newlines, or use it as is
   const poemLines = poem.includes('\n') ? poem.split('\n') : [poem];
 
   return (

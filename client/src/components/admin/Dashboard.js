@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Users, UserCheck, UserMinus, LayoutDashboard, LogOut, Menu, X, MapPin, CheckCircle, XCircle, Clock, Settings, Image, Palette } from 'lucide-react';
+import { Users, UserCheck, UserMinus, LayoutDashboard, LogOut, Menu, X, MapPin, CheckCircle, XCircle, Clock, Settings, Image } from 'lucide-react';
 import axios from 'axios';
 import { useSocket } from '../../context/SocketContext';
 

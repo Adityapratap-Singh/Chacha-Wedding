@@ -8,7 +8,6 @@ import { useSettings } from '../../context/SettingsContext';
 const ContentManager = () => {
   const { settings: initialSettings, refreshSettings } = useSettings();
   const [settings, setSettings] = useState(initialSettings);
-  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [feedback, setFeedback] = useState(null);
   const [activeTab, setActiveTab] = useState('general');
@@ -17,14 +16,12 @@ const ContentManager = () => {
     setSettings(initialSettings);
   }, [initialSettings]);
 
-  const [isUploading, setIsUploading] = useState(false);
-
   const handleDirectUpload = async (e, callback) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    setIsUploading(true);
     const formData = new FormData();
+
     formData.append('image', file);
 
     try {
@@ -38,8 +35,6 @@ const ContentManager = () => {
       setFeedback({ type: 'success', message: 'Image uploaded successfully!' });
     } catch (err) {
       setFeedback({ type: 'error', message: 'Upload failed.' });
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -110,14 +105,6 @@ const ContentManager = () => {
     const newEvents = settings.events.filter((_, i) => i !== index);
     setSettings(prev => ({ ...prev, events: newEvents }));
   };
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="animate-spin text-maroon-700" size={40} />
-      </div>
-    );
-  }
 
   return (
     <div className="p-4 sm:p-6 md:p-8 space-y-8">
