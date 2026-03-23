@@ -241,7 +241,7 @@ const Login = () => {
             Apni shaadi ke liye bhi aisa invite chahiye?
           </p>
           <motion.a
-            href="https://wa.me/917355259901?text=I want a wedding website like this 😍"
+            href={`https://wa.me/917355259901?text=${encodeURIComponent(`I want a wedding website like this 😍\n\nLink: ${typeof window !== 'undefined' ? window.location.href : ''}`)}`}
             target="_blank"
             rel="noopener noreferrer"
             whileHover={{ scale: 1.05, y: -2 }}

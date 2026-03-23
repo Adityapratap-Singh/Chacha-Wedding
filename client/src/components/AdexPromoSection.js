@@ -1,9 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const WHATSAPP_URL = 'https://wa.me/917355259901?text=I want a wedding website like this 😍';
-
 const AdexPromoSection = () => {
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const WHATSAPP_URL = `https://wa.me/917355259901?text=${encodeURIComponent(`I want a wedding website like this 😍\n\nLink: ${currentUrl}`)}`;
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 40 }}

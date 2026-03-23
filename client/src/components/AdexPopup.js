@@ -3,11 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const POPUP_STORAGE_KEY = 'adex_popup_seen';
 const DELAY_MS = 25000; // 25 seconds
-const WHATSAPP_URL = 'https://wa.me/917355259901?text=Yeh cinematic experience mujhe bhi chahiye 😍';
-
 const AdexPopup = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
+
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const WHATSAPP_URL = `https://wa.me/917355259901?text=${encodeURIComponent(`Yeh cinematic experience mujhe bhi chahiye 😍\n\nLink: ${currentUrl}`)}`;
 
   useEffect(() => {
     setMounted(true);
