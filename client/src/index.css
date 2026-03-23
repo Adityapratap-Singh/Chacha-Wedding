@@ -158,3 +158,15 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='160'%20height='160'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='.85'%20numOctaves='4'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='160'%20height='160'%20filter='url(%23n)'%20opacity='.35'/%3E%3C/svg%3E");
   border-radius: inherit;
 }
+
+/* Ensure all admin inputs and textareas have dark text */
+.dashboard-noise input,
+.dashboard-noise textarea,
+.dashboard-noise select {
+  color: #111827 !important; /* text-gray-900 */
+}
+
+/* Fix for specific components that might not inherit correctly */
+.dashboard-noise .text-gray-900 {
+  color: #111827 !important;
+}

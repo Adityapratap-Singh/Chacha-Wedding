@@ -222,7 +222,7 @@ const ContentManager = () => {
                   rows={2}
                   value={settings.messages.bottomQuote} 
                   onChange={(e) => updateField('messages', 'bottomQuote', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all resize-none"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all resize-none"
                 />
               </div>
               <div>
@@ -410,7 +410,7 @@ const ContentManager = () => {
                         rows={2}
                         value={event.description} 
                         onChange={(e) => updateEvent(idx, 'description', e.target.value)}
-                        className="w-full px-3 py-2 bg-white border border-gray-100 rounded-lg outline-none focus:ring-2 focus:ring-maroon-700/20 text-sm resize-none"
+                        className="w-full px-3 py-2 bg-white border border-gray-100 rounded-lg text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 text-sm resize-none"
                       />
                     </div>
                   </div>
@@ -435,7 +435,7 @@ const ContentManager = () => {
                         type="text" 
                         value={team.title} 
                         onChange={(e) => updateTeamTitle(teamIdx, 'title', e.target.value)}
-                        className="w-full px-3 py-2 bg-white border border-gray-100 rounded-lg outline-none focus:ring-2 focus:ring-maroon-700/20 font-bold"
+                        className="w-full px-3 py-2 bg-white border border-gray-100 rounded-lg text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 font-bold"
                       />
                     </div>
                   </div>
@@ -468,7 +468,7 @@ const ContentManager = () => {
                               placeholder="Name"
                               value={member.name} 
                               onChange={(e) => updateTeamMember(teamIdx, memberIdx, 'name', e.target.value)}
-                              className="w-full text-sm font-bold bg-transparent border-none outline-none focus:ring-0 p-0"
+                              className="w-full text-sm font-bold text-gray-900 bg-transparent border-none outline-none focus:ring-0 p-0"
                             />
                           </div>
                         </div>
@@ -479,14 +479,14 @@ const ContentManager = () => {
                             placeholder="Subtitle (e.g. IT Engineer)"
                             value={member.subtitle || ''} 
                             onChange={(e) => updateTeamMember(teamIdx, memberIdx, 'subtitle', e.target.value)}
-                            className="w-full text-[10px] bg-gray-50 px-2 py-1 rounded border border-transparent focus:border-gray-200 transition-all outline-none"
+                            className="w-full text-[10px] text-gray-900 bg-gray-50 px-2 py-1 rounded border border-transparent focus:border-gray-200 transition-all outline-none"
                           />
                           <input 
                             type="text" 
                             placeholder="Contact (optional)"
                             value={member.contact || ''} 
                             onChange={(e) => updateTeamMember(teamIdx, memberIdx, 'contact', e.target.value)}
-                            className="w-full text-[10px] bg-gray-50 px-2 py-1 rounded border border-transparent focus:border-gray-200 transition-all outline-none"
+                            className="w-full text-[10px] text-gray-900 bg-gray-50 px-2 py-1 rounded border border-transparent focus:border-gray-200 transition-all outline-none"
                           />
                         </div>
                       </div>
@@ -516,15 +516,16 @@ const ContentManager = () => {
                   rows={4}
                   value={settings.baalAagrah.poem} 
                   onChange={(e) => updateField('baalAagrah', 'poem', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all resize-none"
                 />
               </div>
               <div>
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1.5">Children's Names (Comma separated)</label>
                 <textarea 
+                  rows={2}
                   value={settings.baalAagrah.names.join(', ')} 
                   onChange={(e) => updateField('baalAagrah', 'names', e.target.value.split(',').map(n => n.trim()))}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 outline-none focus:ring-2 focus:ring-maroon-700/20 transition-all resize-none"
                 />
               </div>
             </div>
