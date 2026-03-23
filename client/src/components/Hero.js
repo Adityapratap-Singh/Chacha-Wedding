@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import GoldDust from './GoldDust';
 import AnimatedText from './AnimatedText';
+import { useSettings } from '../context/SettingsContext';
 
 const Mandala = ({ className }) => (
   <svg className={className} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -14,6 +15,8 @@ const Mandala = ({ className }) => (
 );
 
 const Hero = () => {
+  const { settings } = useSettings();
+  const { coupleNames, weddingDate } = settings;
 
   const container = {
     hidden: { opacity: 0 },
@@ -77,13 +80,13 @@ const Hero = () => {
       >
         <div className="flex flex-col items-center">
           <AnimatedText 
-            text="The Celebration of Love"
+            text={settings.messages.heroSubtitle}
             className="text-sm sm:text-base md:text-lg lg:text-xl font-serif tracking-[0.3em] sm:tracking-[0.4em] uppercase text-white/60 mb-6 sm:mb-8"
             delay={0.5}
           />
           <div className="flex flex-col items-center justify-center gap-y-4">
             <AnimatedText 
-              text="Pushpendra (Lalla Bhaiya)" 
+              text={coupleNames.groom} 
               className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-serif tracking-widest gold-gradient-text gold-glow italic px-2 sm:px-4"
               delay={1.5}
             />
@@ -94,7 +97,7 @@ const Hero = () => {
               &
             </motion.span>
             <AnimatedText 
-              text="Renu" 
+              text={coupleNames.bride} 
               className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-serif tracking-widest gold-gradient-text gold-glow italic px-2 sm:px-4"
               delay={2.5}
             />
@@ -110,14 +113,28 @@ const Hero = () => {
           
           <motion.div variants={item} className="space-y-4">
             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-serif text-white/90 italic tracking-wide">
-              Save the Date
+              {settings.messages.saveTheDate}
             </h2>
-            <div className="flex items-center justify-center gap-4">
-              <div className="h-[1px] w-8 bg-gold-500/20" />
-              <span className="text-gold-500/60 font-serif text-lg tracking-widest uppercase">12.05.2026</span>
-              <div className="h-[1px] w-8 bg-gold-500/20" />
+            <div className="flex flex-col items-center gap-2">
+              <div className="flex items-center justify-center gap-4">
+                <div className="h-[1px] w-8 bg-gold-500/20" />
+                <span className="text-gold-500/60 font-serif text-lg tracking-widest uppercase">{weddingDate}</span>
+                <div className="h-[1px] w-8 bg-gold-500/20" />
+              </div>
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 3.5 }}
+                className="mt-4 flex flex-col items-center"
+              >
+                <span className="text-[10px] uppercase tracking-[0.4em] text-white/40 mb-1">RSVP & Inquiry</span>
+                <a href={`tel:${settings.contactNumbers.primary}`} className="text-gold-500/80 font-serif tracking-widest hover:text-gold-500 transition-colors">
+                  +91 {settings.contactNumbers.primary}
+                </a>
+              </motion.div>
             </div>
           </motion.div>
+
       </motion.div>
 
       {/* Scroll indicator */}
@@ -141,3 +158,4 @@ const Hero = () => {
 };
 
 export default Hero;
+

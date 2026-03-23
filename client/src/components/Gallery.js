@@ -1,113 +1,200 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-
-const images = [
-  { url: '/images/image1.jpg', title: 'The Beginning' },
-  { url: '/images/image2.jpg', title: 'Love & Laughter' },
-  { url: '/images/image3.jpg', title: 'Eternal Bond' },
-  // Adding placeholders for better grid
-  { url: '/images/image1.jpg', title: 'Pre-Wedding' },
-  { url: '/images/image2.jpg', title: 'Haldi Moments' },
-  { url: '/images/image3.jpg', title: 'Together Forever' },
-];
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
+import { useSettings } from '../context/SettingsContext';
+import { Plus, Loader2, Camera, Trash2 } from 'lucide-react';
+import axios from 'axios';
 
 const Gallery = () => {
+  const { settings, refreshSettings } = useSettings();
+  const { gallery: images } = settings;
   const [selectedImg, setSelectedImg] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState({});
+
+  useEffect(() => {
+    setIsAdmin(!!localStorage.getItem('token'));
+  }, []);
+
+  const handleUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const title = prompt("Enter a title for this memory:");
+    if (!title) return;
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const res = await axios.post('/api/upload', formData, {
+        headers: { 
+          'Content-Type': 'multipart/form-data',
+          'x-auth-token': localStorage.getItem('token')
+        }
+      });
+
+      const updatedSettings = { ...settings };
+      updatedSettings.gallery = [...updatedSettings.gallery, { url: res.data.url, title }];
+
+      await axios.post('/api/content', { settings: updatedSettings }, {
+        headers: { 'x-auth-token': localStorage.getItem('token') }
+      });
+
+      refreshSettings();
+    } catch (err) {
+      console.error(err);
+      alert('Failed to upload image');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const removeImage = async (e, idx) => {
+    e.stopPropagation();
+    if (!window.confirm("Are you sure you want to remove this memory?")) return;
+
+    try {
+      const updatedSettings = { ...settings };
+      updatedSettings.gallery = updatedSettings.gallery.filter((_, i) => i !== idx);
+
+      await axios.post('/api/content', { settings: updatedSettings }, {
+        headers: { 'x-auth-token': localStorage.getItem('token') }
+      });
+      refreshSettings();
+    } catch (err) {
+      console.error(err);
+      alert('Failed to remove image');
+    }
+  };
+
+  // Duplicate images for seamless infinite scroll
+  const duplicatedImages = [...images, ...images, ...images];
 
   return (
-    <section className="py-16 sm:py-20 md:py-24 bg-white">
-      <div className="container mx-auto px-4 sm:px-6">
-        <div className="text-center mb-10 sm:mb-12 md:mb-16">
-          <motion.span 
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-gold-500 uppercase tracking-[0.4em] text-xs font-semibold block mb-4"
-          >
-            Capturing Moments
-          </motion.span>
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-serif text-gray-900"
-          >
-            Our Gallery
-          </motion.h2>
-          <motion.div 
-            initial={{ width: 0 }}
-            whileInView={{ width: "3rem" }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, delay: 0.5 }}
-            className="h-[1px] bg-gold-500 mx-auto mt-6" 
-          />
-        </div>
-
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 sm:gap-6 space-y-4 sm:space-y-6">
-          {images.map((image, index) => (
-            <motion.div
-              key={index}
+    <section className="py-16 sm:py-20 md:py-24 bg-white overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 mb-12 sm:mb-16">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="text-left">
+            <motion.span 
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="text-gold-500 uppercase tracking-[0.4em] text-xs font-semibold block mb-3"
+            >
+              Capturing Moments
+            </motion.span>
+            <motion.h2 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="relative group cursor-pointer overflow-hidden rounded-sm"
-              onClick={() => setSelectedImg(image)}
+              className="text-3xl sm:text-4xl md:text-5xl font-serif text-maroon-700"
             >
-              <motion.img
-                src={image.url}
-                alt={image.title}
-                className="w-full h-auto object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
-                <span className="text-gold-500 text-xs tracking-widest uppercase mb-1">{image.title}</span>
-                <p className="text-white font-serif italic">Pushpendra & Renu</p>
-              </div>
-            </motion.div>
-          ))}
+              {settings.messages.galleryTitle} <span className="text-gray-400 font-light mx-2">|</span> <span className="italic">{settings.messages.gallerySubtitle}</span>
+            </motion.h2>
+          </div>
         </div>
+      </div>
 
-        <AnimatePresence>
-          {selectedImg && (
+      {/* Infinite Horizontal Ticker */}
+      {images.length > 0 ? (
+        <div className="relative flex overflow-hidden group py-4">
+          <motion.div 
+            className="flex whitespace-nowrap"
+            animate={{ x: [0, "-33.333%"] }}
+            transition={{
+              x: {
+                repeat: Infinity,
+                repeatType: "loop",
+                duration: Math.max(images.length * 5, 10), 
+                ease: "linear",
+              },
+            }}
+            whileHover={{ animationPlayState: 'paused' }}
+          >
+            {duplicatedImages.map((image, index) => (
+              <motion.div
+                key={index}
+                className="relative inline-block w-[280px] sm:w-[350px] md:w-[450px] aspect-[4/5] mx-3 sm:mx-4 md:mx-6 rounded-2xl overflow-hidden shadow-2xl shadow-black/10 cursor-pointer group/item"
+                onClick={() => setSelectedImg(image)}
+              >
+                <img
+                  src={image.url}
+                  alt={image.title}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover/item:scale-110"
+                />
+                
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover/item:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6 sm:p-8">
+                  <span className="text-gold-500 text-xs tracking-widest uppercase mb-2">{image.title}</span>
+                  <p className="text-white font-serif italic text-lg sm:text-xl">{settings.coupleNames.groom} & {settings.coupleNames.bride}</p>
+                  
+                  {isAdmin && index < images.length && (
+                    <button 
+                      onClick={(e) => removeImage(e, index)}
+                      className="absolute top-4 right-4 p-2 bg-rose-500 text-white rounded-full hover:bg-rose-600 transition-colors shadow-lg"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+          
+          {/* Gradient Overlays for smooth edges */}
+          <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+        </div>
+      ) : (
+        <div className="py-20 text-center">
+          <Camera className="mx-auto text-gray-200 mb-4" size={48} />
+          <p className="text-gray-400 font-serif italic">Gallery is being updated. Check back soon!</p>
+        </div>
+      )}
+
+      {/* Lightbox / Modal */}
+      <AnimatePresence>
+        {selectedImg && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/95 flex items-center justify-center z-[100] p-3 sm:p-4 md:p-10"
               onClick={() => setSelectedImg(null)}
+              className="absolute inset-0 bg-black/95 backdrop-blur-md"
+            />
+            
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative max-w-5xl w-full max-h-[90vh] flex flex-col items-center"
             >
-              <motion.button 
-                className="absolute top-4 right-4 sm:top-10 sm:right-10 text-white/50 hover:text-white text-3xl sm:text-4xl min-w-[48px] min-h-[48px] flex items-center justify-center"
+              <button 
                 onClick={() => setSelectedImg(null)}
+                className="absolute -top-12 right-0 text-white/60 hover:text-white transition-colors"
               >
-                &times;
-              </motion.button>
+                CLOSE [X]
+              </button>
               
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                className="relative max-w-5xl w-full"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <img
-                  src={selectedImg.url}
-                  alt={selectedImg.title}
-                  className="w-full h-auto max-h-[85vh] object-contain shadow-2xl"
-                />
-                <div className="mt-6 text-center">
-                  <h3 className="text-white font-serif text-2xl tracking-wide">{selectedImg.title}</h3>
-                  <div className="w-8 h-[1px] bg-gold-500 mx-auto mt-2" />
-                </div>
-              </motion.div>
+              <img
+                src={selectedImg.url}
+                alt={selectedImg.title}
+                className="w-full h-full object-contain rounded-lg"
+              />
+              
+              <div className="mt-6 text-center">
+                <h3 className="text-white font-serif text-2xl mb-2">{selectedImg.title}</h3>
+                <div className="h-[1px] w-12 bg-gold-500 mx-auto" />
+              </div>
             </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+          </div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
 
 export default Gallery;
+

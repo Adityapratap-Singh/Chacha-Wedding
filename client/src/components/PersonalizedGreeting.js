@@ -8,9 +8,13 @@ import Hero from './Hero';
 import EventsTimeline from './EventsTimeline';
 import Venue from './Venue';
 import Gallery from './Gallery';
+import CelebrationTeam from './CelebrationTeam';
+import BalAagrah from './BalAagrah';
+import Presak from './Presak';
 import RSVP from './RSVP';
 import AdexPromoSection from './AdexPromoSection';
 import AdexPopup from './AdexPopup';
+import { useSettings } from '../context/SettingsContext';
 
 const Mandala = ({ className }) => (
   <svg className={className} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -26,6 +30,7 @@ const PersonalizedGreeting = () => {
   const { guestId } = useParams();
   const [guest, setGuest] = useState(null);
   const nextSectionRef = useRef(null);
+  const { settings } = useSettings();
 
   useEffect(() => {
     const fetchGuest = async () => {
@@ -45,10 +50,7 @@ const PersonalizedGreeting = () => {
     nextSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const coupleNames = {
-    bride: "Renu Singh",
-    groom: "Pushpendra Kumar Singh (Lalla Bhaiya)"
-  };
+  const { coupleNames, weddingDate, messages } = settings;
 
   return (
     <div className="bg-[#fdfbf7]">
@@ -100,79 +102,112 @@ const PersonalizedGreeting = () => {
                   transition={{ delay: 0.3 }}
                 >
                   {/* Atithi Devo Bhava Section */}
-                  <div className="mb-12">
+                  <div className="mb-16">
                     <motion.div
-                      initial={{ scale: 0.8, opacity: 0 }}
+                      initial={{ scale: 0.85, opacity: 0 }}
                       whileInView={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 1 }}
+                      transition={{ duration: 1.2, ease: [0.34, 1.56, 0.64, 1] }}
                       className="inline-block"
                     >
-                      <span className="font-serif italic text-maroon-700 text-xl sm:text-2xl md:text-4xl mb-2 block gold-glow">
-                        Atithi Devo Bhava
+                      <span className="font-serif italic text-maroon-700 text-xl sm:text-2xl md:text-4xl mb-3 block gold-glow tracking-[0.08em] drop-shadow-[0_0_8px_rgba(128,0,0,0.15)]">
+                        {messages.atithiDevoBhava}
                       </span>
-                      <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-gold-500 to-transparent" />
+                      <motion.div
+                        initial={{ width: 0, opacity: 0 }}
+                        whileInView={{ width: "100%", opacity: 1 }}
+                        transition={{ delay: 0.5, duration: 1.2 }}
+                        className="h-[2px] bg-gradient-to-r from-transparent via-gold-500 to-transparent shadow-[0_0_10px_rgba(255,215,0,0.3)]"
+                      />
                     </motion.div>
                   </div>
                   
                   {/* Guest Greeting */}
-                  <div className="mb-12 min-h-[100px] flex flex-col items-center justify-center">
+                  <div className="mb-16 min-h-[120px] flex flex-col items-center justify-center">
                     {guest ? (
                       <>
                         <AnimatedText 
                           text={`प्रिय ${guest.name} जी,`}
-                          className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-serif text-gray-900 leading-tight mb-4 gold-gradient-text"
+                          className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-serif text-gray-900 leading-[1.3] mb-6 gold-gradient-text tracking-[0.02em] drop-shadow-[0_0_15px_rgba(255,215,0,0.2)]"
                           delay={0.5}
                         />
-                        <div className="w-24 h-[1px] bg-gold-500/40 mx-auto" />
+                        <motion.div
+                          initial={{ width: 0, opacity: 0 }}
+                          whileInView={{ width: "100px", opacity: 1 }}
+                          transition={{ delay: 1, duration: 0.8 }}
+                          className="h-[1.5px] bg-gradient-to-r from-transparent via-gold-500 to-transparent mx-auto"
+                        />
                       </>
                     ) : (
                       <>
                         <AnimatedText 
                           text="Our Dear Guest,"
-                          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-gray-900 leading-tight mb-4"
+                          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-gray-900 leading-[1.3] mb-6 tracking-[0.02em] drop-shadow-[0_0_12px_rgba(0,0,0,0.08)]"
                           delay={0.5}
                         />
-                        <div className="w-24 h-[1px] bg-gold-500/40 mx-auto" />
+                        <motion.div
+                          initial={{ width: 0, opacity: 0 }}
+                          whileInView={{ width: "100px", opacity: 1 }}
+                          transition={{ delay: 1, duration: 0.8 }}
+                          className="h-[1.5px] bg-gradient-to-r from-transparent via-gold-500 to-transparent mx-auto"
+                        />
                       </>
                     )}
                   </div>
                   
                   {/* Invitation Message */}
-                  <div className="max-w-2xl mx-auto mb-16">
+                  <div className="max-w-2xl mx-auto mb-20">
                     <AnimatedText 
                       text={guest?.family === 'Yes' ? 'आपको सपरिवार सादर आमंत्रित किया जाता है' : 'आपको सादर आमंत्रित किया जाता है'}
-                      className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-serif text-gray-700 mb-6 sm:mb-8 leading-relaxed italic"
+                      className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-serif text-gray-700 mb-8 sm:mb-10 leading-[1.8] tracking-[0.01em] italic"
                       delay={1.5}
                     />
                     
                     <motion.p 
-                      initial={{ opacity: 0 }}
-                      whileInView={{ opacity: 1 }}
-                      transition={{ delay: 2.5 }}
-                      className="text-maroon-700 font-serif text-base sm:text-lg md:text-xl lg:text-2xl mt-4 sm:mt-6"
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 2.5, duration: 1, ease: [0.34, 1.56, 0.64, 1] }}
+                      className="text-maroon-700 font-serif text-base sm:text-lg md:text-xl lg:text-2xl mt-8 sm:mt-10 leading-[1.7] tracking-[0.02em] drop-shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
                     >
-                      "Join us as we celebrate the union of two hearts"
+                      "{messages.invitation}"
                     </motion.p>
                   </div>
 
                   {/* Couple Names & Date Banner */}
-                  <div className="flex flex-col items-center justify-center gap-6 sm:gap-8 mb-10 sm:mb-12">
-                    <div className="flex items-center gap-4 sm:gap-6">
-                      <div className="h-[1px] w-8 sm:w-12 md:w-20 bg-gold-500/30" />
-                      <span className="text-gold-500 tracking-[0.3em] sm:tracking-[0.4em] uppercase text-[10px] sm:text-xs md:text-sm font-light text-center max-w-xs">
+                  <div className="flex flex-col items-center justify-center gap-8 sm:gap-10 mb-14 sm:mb-16">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 3, duration: 1, ease: [0.34, 1.56, 0.64, 1] }}
+                      className="flex items-center gap-4 sm:gap-6"
+                    >
+                      <motion.div
+                        initial={{ width: 0 }}
+                        whileInView={{ width: "100%" }}
+                        transition={{ delay: 2.8, duration: 1 }}
+                        className="h-[1px] w-8 sm:w-12 md:w-20 bg-gradient-to-r from-transparent to-gold-500/40"
+                      />
+                      <span className="text-gold-500 tracking-[0.4em] sm:tracking-[0.5em] uppercase text-[10px] sm:text-xs md:text-sm font-light text-center max-w-xs leading-[2] drop-shadow-[0_0_8px_rgba(255,215,0,0.15)]">
                         {coupleNames.groom} <br/> & <br/> {coupleNames.bride}
                       </span>
-                      <div className="h-[1px] w-8 sm:w-12 md:w-20 bg-gold-500/30" />
-                    </div>
+                      <motion.div
+                        initial={{ width: 0 }}
+                        whileInView={{ width: "100%" }}
+                        transition={{ delay: 3.2, duration: 1 }}
+                        className="h-[1px] w-8 sm:w-12 md:w-20 bg-gradient-to-l from-transparent to-gold-500/40"
+                      />
+                    </motion.div>
                     
                     <motion.div 
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="bg-maroon-700 text-white px-8 sm:px-10 py-3.5 sm:py-4 rounded-sm shadow-xl shadow-maroon-700/20 border border-gold-500/30 relative group overflow-hidden"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 3.5, duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
+                      whileHover={{ scale: 1.03, boxShadow: "0 20px 40px rgba(128, 0, 0, 0.2)" }}
+                      whileTap={{ scale: 0.97 }}
+                      className="bg-maroon-700 text-white px-8 sm:px-10 py-3.5 sm:py-4 rounded-sm shadow-[0_10px_30px_rgba(128,0,0,0.15)] border border-gold-500/40 relative group overflow-hidden transition-all"
                     >
                       <div className="absolute inset-0 bg-gold-500/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                      <span className="text-base sm:text-lg md:text-xl font-serif tracking-[0.15em] sm:tracking-[0.2em] relative z-10">
-                        12 May 2026
+                      <span className="text-base sm:text-lg md:text-xl font-serif tracking-[0.15em] sm:tracking-[0.2em] relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]">
+                        {weddingDate}
                       </span>
                     </motion.div>
                   </div>
@@ -201,7 +236,7 @@ const PersonalizedGreeting = () => {
             transition={{ delay: 1 }}
             className="text-center mt-12 sm:mt-16 font-serif italic text-gray-600 tracking-widest text-base sm:text-lg px-2"
           >
-            Your presence will make our celebration complete.
+            {messages.bottomQuote}
           </motion.p>
         </motion.div>
       </div>
@@ -209,20 +244,33 @@ const PersonalizedGreeting = () => {
       {/* Remaining Sections */}
       <div ref={nextSectionRef} className="relative">
         <Hero />
-        <EventsTimeline />
-        <Venue />
-        <Gallery />
-        <RSVP guestId={guestId} guestName={guest?.name} />
+        {settings.visibility?.events !== false && <EventsTimeline />}
+        {settings.visibility?.venue !== false && <Venue />}
+        {settings.visibility?.gallery !== false && <Gallery />}
+        {settings.visibility?.celebrationTeam !== false && <CelebrationTeam />}
+        {settings.visibility?.baalAagrah !== false && <BalAagrah />}
+        {settings.visibility?.preshak !== false && <Presak />}
+        {settings.visibility?.rsvp !== false && <RSVP guestId={guestId} guest={guest} />}
         <AdexPromoSection />
         <footer className="py-16 sm:py-20 md:py-24 text-center bg-gray-900 relative overflow-hidden">
           <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/vintage-speckle.png')" }} />
           <div className="container mx-auto px-4 sm:px-6 relative z-10">
-            <h4 className="text-gold-500 font-serif italic text-xl sm:text-2xl mb-4 sm:mb-6">Pushpendra & Renu</h4>
-            <p className="text-white/30 text-[10px] tracking-[0.8em] uppercase">Together Forever • 2026</p>
-            <div className="mt-12 h-[1px] w-32 bg-gold-500/20 mx-auto" />
+            <h4 className="text-gold-500 font-serif italic text-xl sm:text-2xl mb-4 sm:mb-6">{coupleNames.groom.split(' ')[0]} & {coupleNames.bride.split(' ')[0]}</h4>
+            <p className="text-white/30 text-[10px] tracking-[0.8em] uppercase mb-8">Together Forever • {weddingDate.split(' ').pop()}</p>
+            
+            <div className="flex flex-col items-center gap-4 mb-12">
+              <span className="text-white/40 text-[10px] uppercase tracking-[0.3em]">RSVP & Inquiries</span>
+              <div className="flex gap-8">
+                <a href={`tel:${settings.contactNumbers.primary}`} className="text-gold-500 hover:text-white transition-colors font-serif tracking-widest">+91 {settings.contactNumbers.primary}</a>
+                <a href={`tel:${settings.contactNumbers.secondary}`} className="text-gold-500 hover:text-white transition-colors font-serif tracking-widest">+91 {settings.contactNumbers.secondary}</a>
+              </div>
+            </div>
+
+            <div className="h-[1px] w-32 bg-gold-500/20 mx-auto" />
             <p className="text-white/10 text-[8px] mt-8 uppercase tracking-[0.2em]">Designed for a Cinematic Wedding Experience</p>
           </div>
         </footer>
+
       </div>
 
       <AdexPopup />
@@ -231,3 +279,4 @@ const PersonalizedGreeting = () => {
 };
 
 export default PersonalizedGreeting;
+

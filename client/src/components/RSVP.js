@@ -1,130 +1,252 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
-import { Check, X, Heart } from 'lucide-react';
+import { Check, X, Heart, Loader2, Send, Edit2 } from 'lucide-react';
 
-const RSVP = ({ guestId, guestName }) => {
+const RSVP = ({ guestId, guest }) => {
   const [status, setStatus] = useState('Pending');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (guest && guest.rsvpStatus && guest.rsvpStatus !== 'Pending') {
+      setStatus(guest.rsvpStatus);
+      setIsSubmitted(true);
+    }
+  }, [guest]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (status === 'Pending') return;
+    
     setLoading(true);
+    setError(null);
     try {
-      await axios.post(`/api/guests/rsvp/${guestId}`, {
+      await axios.post(`/api/rsvp/${guestId}`, {
         rsvpStatus: status,
-        guestCount: 0
+        guestCount: guest?.guestCount || 0
       });
       setIsSubmitted(true);
     } catch (err) {
       console.error('RSVP Error:', err);
+      setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  if (isSubmitted) {
+  const handleEdit = () => {
+    setIsSubmitted(false);
+  };
+
+  if (isSubmitted && !loading) {
     return (
-      <section className="py-16 sm:py-20 md:py-24 bg-white flex items-center justify-center px-4">
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center p-6 sm:p-8 md:p-12 border border-gold-500/20 rounded-lg max-w-md w-full shadow-2xl"
-        >
-          <div className="w-20 h-20 bg-gold-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Heart className="text-maroon-700 w-10 h-10" fill="currentColor" />
-          </div>
-          <h3 className="text-2xl sm:text-3xl font-serif text-gray-900 mb-3 sm:mb-4">Thank You!</h3>
-          <p className="text-gray-600 font-light leading-relaxed">
-            {status === 'Attending' 
-              ? "We are delighted to know you'll be joining us. Your presence will make our celebration truly special."
-              : "We'll miss you at the celebration, but we appreciate you letting us know. Your blessings are always with us."}
-          </p>
-          <div className="mt-8 h-[1px] w-24 bg-gold-500/30 mx-auto" />
-        </motion.div>
+      <section className="py-20 sm:py-28 bg-white relative overflow-hidden">
+        <div className="container mx-auto px-4">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center p-8 sm:p-12 md:p-16 border border-gold-500/20 rounded-3xl max-w-2xl mx-auto shadow-[0_20px_50px_rgba(0,0,0,0.05)] bg-white relative z-10"
+          >
+            <motion.div 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", damping: 12, delay: 0.2 }}
+              className="w-24 h-24 bg-maroon-700/5 rounded-full flex items-center justify-center mx-auto mb-8"
+            >
+              <Heart className="text-maroon-700 w-12 h-12" fill="currentColor" />
+            </motion.div>
+            
+            <h3 className="text-3xl sm:text-4xl font-serif text-gray-900 mb-6">Thank You!</h3>
+            
+            <p className="text-lg text-gray-600 font-light leading-relaxed mb-10 italic">
+              {status === 'Attending' 
+                ? "We are delighted to know you'll be joining us! Your presence will make our celebration truly special and memorable."
+                : "We'll miss you at the celebration, but we truly appreciate you letting us know. Your blessings and well-wishes mean a lot to us."}
+            </p>
+
+            <div className="flex flex-col items-center gap-6">
+              <div className="h-[1px] w-32 bg-gradient-to-r from-transparent via-gold-500/40 to-transparent" />
+              
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleEdit}
+                className="flex items-center gap-2 text-gold-600 hover:text-maroon-700 transition-colors font-serif tracking-widest text-sm uppercase"
+              >
+                <Edit2 size={16} />
+                Update Response
+              </motion.button>
+            </div>
+          </motion.div>
+        </div>
+        
+        {/* Background Accents */}
+        <div className="absolute top-1/2 left-0 -translate-y-1/2 w-64 h-64 bg-gold-500/5 rounded-full blur-3xl -z-10" />
+        <div className="absolute bottom-0 right-0 w-80 h-80 bg-maroon-700/5 rounded-full blur-3xl -z-10" />
       </section>
     );
   }
 
   return (
-    <section className="py-16 sm:py-20 md:py-24 bg-[#fdfbf7] relative overflow-hidden">
-      {/* Decorative background */}
-      <div className="absolute top-0 left-0 w-full h-full opacity-[0.02] pointer-events-none" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/vintage-speckle.png')" }} />
+    <section className="py-20 sm:py-28 bg-[#fdfbf7] relative overflow-hidden">
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/vintage-speckle.png')" }} />
       
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
-        <div className="max-w-3xl mx-auto text-center mb-10 sm:mb-12 md:mb-16">
-          <motion.span 
+        <div className="max-w-3xl mx-auto text-center mb-16">
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-gold-500 uppercase tracking-[0.4em] text-xs font-medium mb-4 block"
+            viewport={{ once: true }}
           >
-            Will You Join Us?
-          </motion.span>
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-maroon-700 mb-4 sm:mb-6"
-          >
-            RSVP
-          </motion.h2>
-          <div className="h-[1px] w-24 bg-gold-500/40 mx-auto" />
+            <span className="text-gold-500 uppercase tracking-[0.5em] text-xs font-semibold mb-4 block">
+              Join the Celebration
+            </span>
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-serif text-maroon-700 mb-6">
+              RSVP
+            </h2>
+            <div className="h-[2px] w-24 bg-gradient-to-r from-transparent via-gold-500 to-transparent mx-auto" />
+          </motion.div>
         </div>
 
         <motion.div 
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="max-w-xl mx-auto bg-white p-5 sm:p-6 md:p-8 lg:p-12 shadow-[0_30px_60px_rgba(0,0,0,0.05)] rounded-sm border border-gray-100"
+          className="max-w-2xl mx-auto bg-white p-8 sm:p-12 md:p-16 shadow-[0_40px_100px_rgba(0,0,0,0.08)] rounded-2xl border border-gold-500/10 relative"
         >
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="text-center mb-10">
-              <p className="text-gray-500 font-light italic mb-2">Responding for</p>
-              <h4 className="text-2xl font-serif text-gray-900">{guestName || 'Our Guest'}</h4>
+          <form onSubmit={handleSubmit} className="space-y-12">
+            <div className="text-center">
+              <p className="text-gold-500/60 font-serif italic mb-2 tracking-widest">Responding for</p>
+              <h4 className="text-3xl sm:text-4xl font-serif text-maroon-700 drop-shadow-sm">
+                {guest?.name || 'Our Valued Guest'}
+              </h4>
+              <div className="mt-4 flex justify-center gap-2">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="w-1.5 h-1.5 rounded-full bg-gold-500/20" />
+                ))}
+              </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              <button
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <motion.button
                 type="button"
+                whileHover={{ y: -4 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => setStatus('Attending')}
-                className={`flex flex-col items-center justify-center min-h-[100px] sm:min-h-[120px] p-4 sm:p-6 rounded-lg border-2 transition-all duration-300 ${
+                className={`relative flex flex-col items-center justify-center p-8 rounded-2xl border-2 transition-all duration-500 overflow-hidden group ${
                   status === 'Attending' 
-                  ? 'border-maroon-700 bg-maroon-700/5 text-maroon-700' 
-                  : 'border-gray-100 hover:border-gold-500/30 text-gray-400'
+                  ? 'border-maroon-700 bg-maroon-700/5 text-maroon-700 shadow-lg shadow-maroon-700/10' 
+                  : 'border-gray-100 hover:border-gold-500/40 text-gray-400 bg-gray-50/50'
                 }`}
               >
-                <Check className={`w-6 h-6 mb-2 ${status === 'Attending' ? 'opacity-100' : 'opacity-20'}`} />
-                <span className="font-serif tracking-widest uppercase text-xs">Joyfully Attend</span>
-              </button>
+                <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-4 transition-colors duration-500 ${
+                  status === 'Attending' ? 'bg-maroon-700 text-white' : 'bg-white border border-gray-100 text-gray-300'
+                }`}>
+                  <Check className="w-7 h-7" />
+                </div>
+                <span className="font-serif tracking-[0.2em] uppercase text-xs font-bold">Joyfully Attend</span>
+                {status === 'Attending' && (
+                  <motion.div layoutId="status-glow" className="absolute inset-0 bg-gold-500/5 pointer-events-none" />
+                )}
+              </motion.button>
 
-              <button
+              <motion.button
                 type="button"
+                whileHover={{ y: -4 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => setStatus('Not Attending')}
-                className={`flex flex-col items-center justify-center min-h-[100px] sm:min-h-[120px] p-4 sm:p-6 rounded-lg border-2 transition-all duration-300 ${
+                className={`relative flex flex-col items-center justify-center p-8 rounded-2xl border-2 transition-all duration-500 overflow-hidden group ${
                   status === 'Not Attending' 
-                  ? 'border-gray-400 bg-gray-50 text-gray-600' 
-                  : 'border-gray-100 hover:border-gold-500/30 text-gray-400'
+                  ? 'border-gray-400 bg-gray-50 text-gray-700 shadow-lg shadow-gray-200/50' 
+                  : 'border-gray-100 hover:border-gold-500/40 text-gray-400 bg-gray-50/50'
                 }`}
               >
-                <X className={`w-6 h-6 mb-2 ${status === 'Not Attending' ? 'opacity-100' : 'opacity-20'}`} />
-                <span className="font-serif tracking-widest uppercase text-xs">Regretfully Decline</span>
-              </button>
+                <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-4 transition-colors duration-500 ${
+                  status === 'Not Attending' ? 'bg-gray-500 text-white' : 'bg-white border border-gray-100 text-gray-300'
+                }`}>
+                  <X className="w-7 h-7" />
+                </div>
+                <span className="font-serif tracking-[0.2em] uppercase text-xs font-bold">Regretfully Decline</span>
+              </motion.button>
             </div>
 
-            <button
+            <AnimatePresence mode="wait">
+              {error && (
+                <motion.p 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="text-red-500 text-center text-sm font-light italic"
+                >
+                  {error}
+                </motion.p>
+              )}
+            </AnimatePresence>
+
+            <motion.button
               type="submit"
               disabled={loading || status === 'Pending'}
-              className={`w-full min-h-[48px] py-3.5 sm:py-4 rounded-sm font-serif tracking-[0.2em] sm:tracking-[0.3em] uppercase transition-all duration-500 ${
+              whileHover={status !== 'Pending' ? { scale: 1.02 } : {}}
+              whileTap={status !== 'Pending' ? { scale: 0.98 } : {}}
+              className={`w-full py-5 rounded-xl font-serif tracking-[0.3em] uppercase text-sm flex items-center justify-center gap-3 transition-all duration-500 relative overflow-hidden group ${
                 status === 'Pending'
                 ? 'bg-gray-100 text-gray-300 cursor-not-allowed'
-                : 'bg-maroon-700 text-white shadow-xl shadow-maroon-700/20 hover:scale-[1.02]'
+                : 'bg-maroon-700 text-white shadow-2xl shadow-maroon-700/30'
               }`}
             >
-              {loading ? 'Processing...' : 'Submit Response'}
-            </button>
+              {loading ? (
+                <Loader2 className="animate-spin w-5 h-5" />
+              ) : (
+                <>
+                  <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />
+                  <span>{guest?.rsvpStatus && guest.rsvpStatus !== 'Pending' ? 'Update Response' : 'Confirm RSVP'}</span>
+                </>
+              )}
+              
+              {status !== 'Pending' && (
+                <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+              )}
+            </motion.button>
           </form>
+
+          {/* RSVP via Call Section */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+            className="mt-12 pt-10 border-t border-gray-100 text-center"
+          >
+            <p className="text-gray-400 font-serif italic text-sm mb-6 uppercase tracking-widest">
+              Need assistance? Reach out to us
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12">
+              <a 
+                href={`tel:${7355259901}`} 
+                className="group flex flex-col items-center gap-2"
+              >
+                <span className="text-xs text-gold-500 uppercase tracking-[0.2em] font-bold group-hover:text-maroon-700 transition-colors">Call For RSVP</span>
+                <span className="text-xl font-serif text-maroon-700 border-b border-transparent group-hover:border-maroon-700/30 transition-all tracking-wider">
+                  +91 9198065015
+                </span>
+              </a>
+              <div className="hidden sm:block w-[1px] h-10 bg-gray-100" />
+              <a 
+                href={`tel:${8953731369}`} 
+                className="group flex flex-col items-center gap-2"
+              >
+                <span className="text-xs text-gold-500 uppercase tracking-[0.2em] font-bold group-hover:text-maroon-700 transition-colors">Alternative Contact</span>
+                <span className="text-xl font-serif text-maroon-700 border-b border-transparent group-hover:border-maroon-700/30 transition-all tracking-wider">
+                  +91 9001787742
+                </span>
+              </a>
+            </div>
+          </motion.div>
         </motion.div>
       </div>
+
     </section>
   );
 };
