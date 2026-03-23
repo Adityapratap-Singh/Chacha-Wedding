@@ -20,7 +20,7 @@ const AnimatedRoutes = () => {
         key={location.pathname}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        exit={{ opacity: 2 }}
+        exit={{ opacity: 0 }}
         transition={{ duration: 0.8, ease: "easeInOut" }}
       >
         <Routes location={location} key={location.pathname}>
@@ -49,7 +49,10 @@ function App() {
   );
 
   const handleFinishLoading = () => {
-    setLoading(false);
+    // Add a small extra delay for the exit animation to breathe
+    setTimeout(() => {
+      setLoading(false);
+    }, 100);
   };
 
   useEffect(() => {
@@ -87,40 +90,48 @@ function App() {
   return (
     <SettingsProvider>
       <Router>
-        <div className="App">
-          {!serverReady ? (
-            <div className="min-h-screen min-h-[100dvh] flex items-center justify-center px-4 sm:px-6 py-8 bg-[#070203]">
-              <div className="w-full max-w-md rounded-3xl bg-white/5 border border-white/10 backdrop-blur-xl p-8 text-center shadow-[0_0_80px_rgba(255,215,0,0.07)]">
-                <div className="mx-auto mb-5 w-12 h-12 rounded-2xl bg-maroon-700/60 border border-white/10 flex items-center justify-center shadow-[0_0_30px_rgba(128,0,0,0.25)]">
-                  <div className="w-6 h-6 border-2 border-white/20 border-t-gold-500/80 rounded-full animate-spin" />
+        <div className="App overflow-x-hidden">
+          <AnimatePresence mode="wait">
+            {!serverReady ? (
+              <motion.div
+                key="server-wait"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
+                transition={{ duration: 0.8, ease: "easeInOut" }}
+                className="min-h-screen min-h-[100dvh] flex items-center justify-center px-4 sm:px-6 py-8 bg-[#070203] fixed inset-0 z-[100]"
+              >
+                <div className="w-full max-w-md rounded-3xl bg-white/5 border border-white/10 backdrop-blur-xl p-8 text-center shadow-[0_0_80px_rgba(255,215,0,0.07)]">
+                  <div className="mx-auto mb-5 w-12 h-12 rounded-2xl bg-maroon-700/60 border border-white/10 flex items-center justify-center shadow-[0_0_30px_rgba(128,0,0,0.25)]">
+                    <div className="w-6 h-6 border-2 border-white/20 border-t-gold-500/80 rounded-full animate-spin" />
+                  </div>
+                  <div className="text-white text-lg font-bold">Waiting for the server…</div>
+                  <div className="text-white/60 mt-2 text-sm">Please keep this tab open.</div>
                 </div>
-                <div className="text-white text-lg font-bold">Waiting for the server…</div>
-                <div className="text-white/60 mt-2 text-sm">Please keep this tab open.</div>
-              </div>
-            </div>
-          ) : (
-            <AnimatePresence mode="wait">
-              {loading ? (
-                <motion.div
-                  key="loader"
-                  initial={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 1.5 }}
-                >
-                  <CinematicEntry onFinish={handleFinishLoading} />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="content"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 1.5 }}
-                >
-                  <AnimatedRoutes />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          )}
+              </motion.div>
+            ) : loading ? (
+              <motion.div
+                key="loader"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0, scale: 1.1, filter: 'blur(20px)' }}
+                transition={{ duration: 1.2, ease: "easeInOut" }}
+                className="fixed inset-0 z-[90]"
+              >
+                <CinematicEntry onFinish={handleFinishLoading} />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="content"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
+                className="relative z-10"
+              >
+                <AnimatedRoutes />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </Router>
     </SettingsProvider>

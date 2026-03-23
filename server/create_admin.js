@@ -1,48 +1,53 @@
-
 const mongoose = require('mongoose');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 const User = require('./models/user');
 const bcrypt = require('bcryptjs');
 
-const createAdmin = async () => {
+const admins = [
+  { email: 'admin@pr-wedding.com', password: '12-05-2026' }, // Primary
+  { email: 'pushpendra@pr-wedding.com', password: 'wedding-admin-1' },
+  { email: 'renu@pr-wedding.com', password: 'wedding-admin-2' },
+  { email: 'moderator1@pr-wedding.com', password: 'wedding-admin-3' },
+  { email: 'moderator2@pr-wedding.com', password: 'wedding-admin-4' }
+];
+
+const createAdmins = async () => {
   try {
     if (mongoose.connection.readyState === 0) {
-      console.log('Connecting to:', process.env.MONGODB_URI);
+      console.log('Connecting to MongoDB...');
       await mongoose.connect(process.env.MONGODB_URI);
-      console.log('Connected to MongoDB');
+      console.log('Connected!');
     }
 
-    // Default admin email
-    const adminEmail = 'admin@pr-wedding.com';
+    const salt = await bcrypt.genSalt(10);
 
-    let user = await User.findOne({ email: adminEmail });
-    if (!user) {
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash('12-05-2026', salt);
-      user = new User({
-        email: adminEmail,
-        password: hashedPassword,
-      });
-      await user.save();
-      console.log('SUCCESS: Default admin created!');
-      console.log('Email:', adminEmail);
-      console.log('Password: 12-05-2026');
-    } else {
-      console.log('Admin user already exists.');
-      console.log('Email:', adminEmail);
+    for (const admin of admins) {
+      let user = await User.findOne({ email: admin.email });
+      if (!user) {
+        const hashedPassword = await bcrypt.hash(admin.password, salt);
+        user = new User({
+          email: admin.email,
+          password: hashedPassword,
+        });
+        await user.save();
+        console.log(`SUCCESS: Admin created: ${admin.email} / ${admin.password}`);
+      } else {
+        console.log(`SKIP: Admin already exists: ${admin.email}`);
+      }
     }
+    
+    console.log('\nAll admin accounts are ready.');
   } catch (err) {
     console.error('ERROR:', err.message);
     throw err;
   }
 };
 
-module.exports = createAdmin;
+module.exports = createAdmins;
 
-// Allow running directly: `node create_admin.js`
 if (require.main === module) {
-  createAdmin()
+  createAdmins()
     .then(() => process.exit(0))
     .catch(() => process.exit(1));
 }

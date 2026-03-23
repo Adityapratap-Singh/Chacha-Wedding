@@ -9,6 +9,7 @@ router.get('/', auth, guestController.getGuests);
 router.get('/locations', auth, guestController.getLocations);
 router.put('/:id', auth, guestController.editGuest);
 router.delete('/:id', auth, guestController.deleteGuest);
+router.post('/notify-open', guestController.notifyOpen);
 router.get('/:guestId', guestController.getGuest);
 router.post('/rsvp/:guestId', guestController.rsvpGuest);
 

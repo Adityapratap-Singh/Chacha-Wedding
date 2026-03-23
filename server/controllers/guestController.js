@@ -1,7 +1,9 @@
 
 const Guest = require('../models/guest');
 const { v4: uuidv4 } = require('uuid');
+const axios = require('axios');
 const { logAction } = require('../utils/logger');
+const { sendTelegramMessage } = require('../utils/telegram');
 
 const emitGuestsUpdate = (req) => {
   const io = req.app.get('io');
@@ -56,6 +58,60 @@ exports.addGuest = async (req, res) => {
     res.json(guest);
   } catch (err) {
     console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+};
+
+exports.notifyOpen = async (req, res) => {
+  const { guestId } = req.body;
+  try {
+    const guest = await Guest.findOne({ guestId });
+    if (!guest) return res.status(404).json({ msg: 'Guest not found' });
+
+    // Extract IP from request headers (behind proxies) or remoteAddress
+    const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
+    
+    // Geolocation from IP (using ip-api.com - free for non-commercial)
+    let ipLoc = {};
+    try {
+      if (ip && ip !== '::1' && ip !== '127.0.0.1') {
+        const locRes = await axios.get(`http://ip-api.com/json/${ip}?fields=status,country,regionName,city,zip,lat,lon,isp`);
+        if (locRes.data && locRes.data.status === 'success') {
+          ipLoc = locRes.data;
+        }
+      }
+    } catch (e) {
+      console.error('IP Geo Error:', e.message);
+    }
+
+    // Log to AuditLog
+    await logAction(
+      'Guest',
+      'INVITATION_OPENED',
+      `Guest: ${guest.name}`,
+      { guestId, ip, ...ipLoc },
+      ip
+    );
+
+    // Build Telegram Message
+    let message = `✨ <b>Invitation Opened!</b> ✨\n\n`;
+    message += `👤 <b>Guest:</b> ${guest.name}\n`;
+    message += `📍 <b>Database Location:</b> ${guest.location || 'Unknown'}\n`;
+    message += `🌐 <b>IP Address:</b> ${ip}\n`;
+
+    if (ipLoc.status === 'success') {
+      message += `🏙 <b>Detected Location:</b> ${ipLoc.city}, ${ipLoc.regionName}, ${ipLoc.country} (${ipLoc.zip})\n`;
+      message += `📶 <b>ISP:</b> ${ipLoc.isp}\n`;
+      message += `🗺 <a href="https://www.google.com/maps?q=${ipLoc.lat},${ipLoc.lon}">View Approximate Location</a>\n`;
+    } else {
+      message += `🗺 <i>Exact location unavailable (Direct tracking used)</i>\n`;
+    }
+
+    await sendTelegramMessage(message);
+
+    res.json({ msg: 'Notification sent' });
+  } catch (err) {
+    console.error('Notification Controller Error:', err.message);
     res.status(500).send('Server Error');
   }
 };

@@ -281,11 +281,12 @@ const CinematicEntry = ({ onFinish }) => {
                   >
                     <motion.button
                       onClick={(e) => {
-                        const rect = e.target.getBoundingClientRect();
+                        const rect = e.currentTarget.getBoundingClientRect();
                         setBurstPosition({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
                         setShowBurst(true);
                         
-                        setTimeout(() => onFinish(), 500);
+                        // Wait for burst and flash before calling onFinish
+                        setTimeout(() => onFinish(), 800);
                       }}
                       whileHover={{ scale: 1.05, y: -2 }}
                       whileTap={{ scale: 0.98 }}

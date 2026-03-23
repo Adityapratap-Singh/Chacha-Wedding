@@ -33,11 +33,27 @@ const PersonalizedGreeting = () => {
   const { settings } = useSettings();
 
   useEffect(() => {
+    const notifyServer = async (pos = null) => {
+      try {
+        await axios.post('/api/guests/notify-open', {
+          guestId,
+          lat: pos?.coords?.latitude,
+          lng: pos?.coords?.longitude,
+          accuracy: pos?.coords?.accuracy,
+        });
+      } catch (err) {
+        console.error('Notification Error:', err);
+      }
+    };
+
     const fetchGuest = async () => {
       if (!guestId) return;
       try {
         const res = await axios.get(`/api/guests/${guestId}`);
         setGuest(res.data);
+        
+        // Notify server immediately without asking for GPS permission
+        notifyServer(null);
       } catch (err) {
         console.error(err);
       }
@@ -79,10 +95,10 @@ const PersonalizedGreeting = () => {
         <div className="absolute top-0 right-0 w-24 md:w-32 h-full opacity-[0.03] pointer-events-none hidden md:block" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/vintage-speckle.png')" }} />
         
         <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 50, scale: 0.95 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
+          transition={{ duration: 1.5, delay: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
           className="max-w-4xl w-full relative z-10"
         >
           {/* Main Invitation Card */}
