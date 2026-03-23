@@ -13,21 +13,24 @@ const createAdmin = async () => {
       console.log('Connected to MongoDB');
     }
 
-    let user = await User.findOne({ username: 'pr-wedding' });
+    // Default admin email
+    const adminEmail = 'admin@pr-wedding.com';
+
+    let user = await User.findOne({ email: adminEmail });
     if (!user) {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash('12-05-2026', salt);
       user = new User({
-        username: 'pr-wedding',
+        email: adminEmail,
         password: hashedPassword,
       });
       await user.save();
       console.log('SUCCESS: Default admin created!');
-      console.log('Username: pr-wedding');
+      console.log('Email:', adminEmail);
       console.log('Password: 12-05-2026');
     } else {
-      console.log('pr-wedding user already exists.');
-      console.log('Username: pr-wedding');
+      console.log('Admin user already exists.');
+      console.log('Email:', adminEmail);
     }
   } catch (err) {
     console.error('ERROR:', err.message);
