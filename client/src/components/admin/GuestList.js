@@ -440,22 +440,22 @@ const GuestList = () => {
                     <td className="px-4 sm:px-6 py-4 text-sm text-gray-700">{guest.location || '-'}</td>
                     <td className="px-4 sm:px-6 py-4">{rsvpBadge(guest.rsvpStatus)}</td>
                     <td className="px-4 sm:px-6 py-4">
-                      <div className="flex flex-wrap gap-3">
+                      <div className="flex items-center gap-2">
                         <button
                           onClick={() => copyInviteLink(guest.guestId)}
-                          className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold ${
-                            copyStatus[guest.guestId] ? 'bg-emerald-500 text-white' : 'bg-white/60 text-gray-700 border border-white/70 hover:bg-white/80'
+                          title="Copy Link"
+                          className={`p-2 rounded-xl transition-all shadow-sm ${
+                            copyStatus[guest.guestId] ? 'bg-emerald-500 text-white shadow-emerald-500/20' : 'bg-white/60 text-gray-600 border border-white/70 hover:bg-white/80'
                           }`}
                         >
-                          {copyStatus[guest.guestId] ? <CheckCircle size={14} /> : <Copy size={14} />}
-                          {copyStatus[guest.guestId] ? 'Copied' : 'Copy'}
+                          {copyStatus[guest.guestId] ? <CheckCircle size={18} /> : <Copy size={18} />}
                         </button>
                         <button
                           onClick={() => shareInviteLink(guest.guestId)}
-                          className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/60 text-emerald-600 border border-white/70 hover:bg-emerald-50 transition-colors`}
+                          title="Share on WhatsApp"
+                          className="p-2 rounded-xl bg-white/60 text-emerald-600 border border-white/70 hover:bg-emerald-50 transition-all shadow-sm"
                         >
-                          <MessageCircle size={14} />
-                          WhatsApp
+                          <MessageCircle size={18} />
                         </button>
                       </div>
                     </td>
