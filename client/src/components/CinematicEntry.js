@@ -123,15 +123,23 @@ const CinematicEntry = ({ onFinish }) => {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.5,
+        staggerChildren: 0.2,
+        delayChildren: 0.6,
+        ease: [0.34, 1.56, 0.64, 1],
       },
     },
   };
 
   const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { duration: 1.5, ease: "easeOut" } },
+    hidden: { opacity: 0, y: 30 },
+    show: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { 
+        duration: 1.8, 
+        ease: [0.34, 1.56, 0.64, 1]
+      } 
+    },
   };
 
   return (
@@ -149,9 +157,10 @@ const CinematicEntry = ({ onFinish }) => {
         ) : (
           <motion.div
             key="cinematic"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.9, ease: [0.34, 1.56, 0.64, 1] }}
             className="w-full h-full flex items-center justify-center"
           >
             <GoldDust count={60} />
@@ -167,18 +176,19 @@ const CinematicEntry = ({ onFinish }) => {
             
             {/* Background Mandala - smaller on mobile */}
             <motion.div
-              className="absolute w-[400px] h-[400px] sm:w-[600px] sm:h-[600px] md:w-[800px] md:h-[800px] text-gold-500 opacity-[0.05]"
+              className="absolute w-[400px] h-[400px] sm:w-[600px] sm:h-[600px] md:w-[800px] md:h-[800px] text-gold-500 opacity-[0.08]"
               style={{ 
                 translateX: parallaxOffset.x * 2, 
-                translateY: parallaxOffset.y * 2 
+                translateY: parallaxOffset.y * 2,
+                filter: "drop-shadow(0 0 30px rgba(255, 215, 0, 0.1))"
               }}
               animate={{ 
                 rotate: 360,
-                scale: [1, 1.1, 1],
+                scale: [1, 1.08, 1],
               }}
               transition={{ 
                 rotate: { duration: 120, repeat: Infinity, ease: "linear" },
-                scale: { duration: 20, repeat: Infinity, ease: "easeInOut" }
+                scale: { duration: 25, repeat: Infinity, ease: "easeInOut" }
               }}
             >
               <Mandala className="w-full h-full" analyser={null} />
@@ -193,8 +203,8 @@ const CinematicEntry = ({ onFinish }) => {
             <motion.div 
               className="absolute inset-0 opacity-10"
               initial={{ scale: 1.3, opacity: 0 }}
-              animate={{ scale: 1, opacity: 0.15 }}
-              transition={{ duration: 10, ease: "linear" }}
+              animate={{ scale: 1, opacity: 0.12 }}
+              transition={{ duration: 12, ease: "easeInOut" }}
               style={{
                 background: "url('https://www.transparenttextures.com/patterns/black-paper.png')"
               }}
@@ -204,8 +214,8 @@ const CinematicEntry = ({ onFinish }) => {
               variants={container}
               initial="hidden"
               animate="show"
-              exit={{ opacity: 0, scale: 1.3, filter: "blur(30px) brightness(3)" }}
-              transition={{ duration: 2, ease: [0.6, 0.01, -0.05, 0.9] }}
+              exit={{ opacity: 0, scale: 1.2, filter: "blur(20px) brightness(2)" }}
+              transition={{ duration: 2.2, ease: [0.34, 1.56, 0.64, 1] }}
               className="text-center px-4 sm:px-6 relative z-10 w-full max-w-[95vw]"
               style={{
                 translateX: parallaxOffset.x,
@@ -221,7 +231,7 @@ const CinematicEntry = ({ onFinish }) => {
                 <div className="flex flex-col items-center justify-center gap-y-4">
                   <AnimatedText 
                     text={coupleNames.groom} 
-                    className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-serif tracking-widest gold-gradient-text gold-glow italic px-2 sm:px-4"
+                    className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-serif tracking-widest gold-gradient-text gold-glow italic px-2 sm:px-4 drop-shadow-[0_0_20px_rgba(255,215,0,0.3)]"
                     delay={1.5}
                   />
                   <motion.span 
@@ -232,7 +242,7 @@ const CinematicEntry = ({ onFinish }) => {
                   </motion.span>
                   <AnimatedText 
                     text={coupleNames.bride} 
-                    className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-serif tracking-widest gold-gradient-text gold-glow italic px-2 sm:px-4"
+                    className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-serif tracking-widest gold-gradient-text gold-glow italic px-2 sm:px-4 drop-shadow-[0_0_20px_rgba(255,215,0,0.3)]"
                     delay={2.5}
                   />
                 </div>
@@ -241,22 +251,22 @@ const CinematicEntry = ({ onFinish }) => {
               <motion.div
                 initial={{ width: 0, opacity: 0 }}
                 animate={{ width: "100%", opacity: 1 }}
-                transition={{ delay: 3, duration: 2.5 }}
-                className="h-[1px] bg-gradient-to-r from-transparent via-gold-500 to-transparent mt-12 mx-auto max-w-lg"
+                transition={{ delay: 3.2, duration: 2.2, ease: "easeInOut" }}
+                className="h-[2px] bg-gradient-to-r from-transparent via-gold-500 to-transparent mt-12 mx-auto max-w-lg shadow-[0_0_15px_rgba(255,215,0,0.4)]"
               />
               
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 4.5, duration: 1.5 }}
+                transition={{ delay: 4.7, duration: 1.4, ease: [0.34, 1.56, 0.64, 1] }}
                 className="mt-10"
               >
-                <p className="text-white/40 text-[10px] md:text-xs tracking-[0.6em] uppercase font-light">
+                <p className="text-white/40 text-[10px] md:text-xs tracking-[0.6em] uppercase font-light drop-shadow-[0_0_10px_rgba(255,215,0,0.1)]">
                   An Unforgettable Journey Begins
                 </p>
                 <div className="mt-6 flex items-center justify-center gap-4">
                   <div className="h-[1px] w-8 bg-gold-500/20" />
-                  <span className="text-gold-500/60 font-serif text-lg tracking-widest uppercase">12.05.2026</span>
+                  <span className="text-gold-500/60 font-serif text-lg tracking-widest uppercase drop-shadow-[0_0_12px_rgba(255,215,0,0.2)]">12.05.2026</span>
                   <div className="h-[1px] w-8 bg-gold-500/20" />
                 </div>
               </motion.div>
@@ -264,9 +274,9 @@ const CinematicEntry = ({ onFinish }) => {
               <AnimatePresence>
                 {showButton && (
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 1 }}
+                    initial={{ opacity: 0, scale: 0.85, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ delay: 5.2, duration: 1.2, ease: [0.34, 1.56, 0.64, 1] }}
                     className="mt-12"
                   >
                     <button
@@ -277,10 +287,10 @@ const CinematicEntry = ({ onFinish }) => {
                         
                         setTimeout(() => onFinish(), 500);
                       }}
-                      className="group relative px-8 sm:px-10 py-3.5 sm:py-4 min-h-[48px] bg-transparent border border-gold-500/30 text-gold-500 font-serif tracking-[0.3em] sm:tracking-[0.4em] uppercase text-xs overflow-hidden transition-all duration-700 hover:border-gold-500"
+                      className="group relative px-8 sm:px-10 py-3.5 sm:py-4 min-h-[48px] bg-transparent border border-gold-500/40 text-gold-500 font-serif tracking-[0.3em] sm:tracking-[0.4em] uppercase text-xs overflow-hidden transition-all duration-700 hover:border-gold-500 shadow-[0_0_20px_rgba(255,215,0,0.2)] hover:shadow-[0_0_30px_rgba(255,215,0,0.4)]"
                     >
                       <div className="absolute inset-0 bg-gold-500/10 translate-x-[-100%] group-hover:translate-x-[0%] transition-transform duration-700" />
-                      <span className="relative z-10">Begin Experience</span>
+                      <span className="relative z-10 drop-shadow-[0_0_10px_rgba(255,215,0,0.2)]">Begin Experience</span>
                     </button>
                   </motion.div>
                 )}

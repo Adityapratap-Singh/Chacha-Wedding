@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import GoldDust from './GoldDust';
+import { useSettings } from '../context/SettingsContext';
 
 const Mandala = ({ className }) => (
   <svg className={className} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -12,38 +13,10 @@ const Mandala = ({ className }) => (
   </svg>
 );
 
-const events = [
-  { 
-    name: 'Haldi', 
-    date: '10 May 2026', 
-    time: '10:00 AM', 
-    description: 'A ceremony of vibrant colors and joyous beginnings.',
-    icon: '✨'
-  },
-  { 
-    name: 'Sangeet', 
-    date: '11 May 2026', 
-    time: '07:00 PM', 
-    description: 'An evening of music, dance, and celebration.',
-    icon: '🎵'
-  },
-  { 
-    name: 'Wedding', 
-    date: '12 May 2026', 
-    time: '08:00 PM', 
-    description: 'The sacred union under the stars.',
-    icon: '💍'
-  },
-  { 
-    name: 'Reception', 
-    date: '13 May 2026', 
-    time: '07:30 PM', 
-    description: 'A formal dinner to celebrate our new journey.',
-    icon: '🥂'
-  },
-];
-
 const EventsTimeline = () => {
+  const { settings } = useSettings();
+  const { events } = settings;
+
   return (
     <section className="py-16 sm:py-20 md:py-24 bg-[#fdfbf7] relative overflow-hidden">
       <GoldDust count={15} />
@@ -66,70 +39,112 @@ const EventsTimeline = () => {
       </motion.div>
 
       <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
-        <div className="text-center mb-12 sm:mb-16 md:mb-20">
+        <div className="text-center mb-16 sm:mb-20 md:mb-24">
           <motion.span 
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="text-gold-500 uppercase tracking-[0.4em] text-xs font-semibold block mb-4"
+            className="text-gold-500 uppercase tracking-[0.4em] text-xs font-semibold block mb-3"
           >
-            The Journey
+            {settings.messages.eventsJourney}
           </motion.span>
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-gray-900"
+            transition={{ duration: 0.8, delay: 0.15 }}
+            className="text-2xl sm:text-3xl md:text-4xl font-serif text-maroon-700 mb-2"
           >
-            Wedding Events
+            {settings.messages.eventsTitle}
           </motion.h2>
-          <motion.div 
-            initial={{ width: 0 }}
-            whileInView={{ width: "3rem" }}
+          <motion.h3 
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 1, delay: 0.5 }}
-            className="h-[2px] bg-gold-500 mx-auto mt-6" 
+            transition={{ duration: 0.8, delay: 0.25 }}
+            className="text-xl sm:text-2xl md:text-3xl font-serif text-gray-700 mb-8"
+          >
+            {settings.messages.eventsSubtitle}
+          </motion.h3>
+          <motion.div 
+            initial={{ width: 0, opacity: 0 }}
+            whileInView={{ width: "4rem", opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, delay: 0.4 }}
+            className="h-[2px] bg-gradient-to-r from-transparent via-gold-500 to-transparent mx-auto" 
           />
         </div>
 
         <div className="relative">
           {/* Vertical Line */}
-          <div className="absolute left-1/2 -translate-x-1/2 w-[1px] h-full bg-gradient-to-b from-transparent via-gold-500/30 to-transparent hidden md:block" />
+          <motion.div 
+            initial={{ scaleY: 0, opacity: 0 }}
+            whileInView={{ scaleY: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+            style={{ transformOrigin: "top" }}
+            className="absolute left-1/2 -translate-x-1/2 w-[1px] h-full bg-gradient-to-b from-gold-500/40 via-gold-500/20 to-transparent hidden md:block" 
+          />
 
-          <div className="space-y-8 sm:space-y-12 md:space-y-16 md:space-y-0">
+          <div className="space-y-10 sm:space-y-14 md:space-y-0">
             {events.map((event, index) => (
-              <div key={index} className={`flex flex-col md:flex-row items-stretch md:items-center justify-between gap-6 ${index % 2 === 0 ? 'md:flex-row-reverse' : ''} mb-8 sm:mb-12`}>
+              <motion.div 
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.1 * index, ease: [0.34, 1.56, 0.64, 1] }}
+                className={`flex flex-col md:flex-row items-stretch md:items-center justify-between gap-6 sm:gap-8 ${index % 2 === 0 ? 'md:flex-row-reverse' : ''} mb-10 sm:mb-14`}
+              >
                 {/* Content Side */}
                 <motion.div 
-                  initial={{ opacity: 0, x: index % 2 === 0 ? 50 : -50 }}
+                  initial={{ opacity: 0, x: index % 2 === 0 ? 40 : -40 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.8 }}
-                  className="w-full md:w-[45%] bg-white p-5 sm:p-6 md:p-8 rounded-sm shadow-[0_10px_30px_rgba(0,0,0,0.03)] border border-gray-100 hover:border-gold-500/30 transition-colors group"
+                  transition={{ duration: 0.8, delay: 0.2 + 0.1 * index }}
+                  className="w-full md:w-[45%] bg-white p-6 sm:p-7 md:p-8 rounded-sm shadow-[0_8px_24px_rgba(0,0,0,0.06)] border border-gray-100/50 hover:border-gold-500/40 hover:shadow-[0_12px_36px_rgba(255,215,0,0.08)] transition-all duration-500 group"
                 >
-                  <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-                    <span className="text-xl sm:text-2xl">{event.icon}</span>
-                    <h3 className="text-xl sm:text-2xl font-serif text-maroon-700">{event.name}</h3>
+                  <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-5">
+                    <span className="text-2xl sm:text-3xl group-hover:scale-110 transition-transform duration-300">{event.icon}</span>
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-serif text-maroon-700 tracking-[0.02em]">{event.name}</h3>
                   </div>
-                  <div className="flex items-center justify-between mb-4 border-b border-gray-50 pb-2">
-                    <span className="text-sm font-semibold text-gray-900 tracking-wider uppercase">{event.date}</span>
-                    <span className="text-xs text-gold-500 font-light tracking-widest uppercase">{event.time}</span>
+                  
+                  <motion.div 
+                    initial={{ width: 0, opacity: 0 }}
+                    whileInView={{ width: "100%", opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, delay: 0.3 + 0.1 * index }}
+                    className="h-[1px] bg-gradient-to-r from-transparent via-gold-500/40 to-transparent mb-4"
+                  />
+                  
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-5 pb-4 border-b border-gray-50/80">
+                    <span className="text-sm font-semibold text-gray-900 tracking-[0.05em] uppercase">{event.date}</span>
+                    <span className="text-xs text-gold-500 font-light tracking-[0.08em] uppercase">{event.time}</span>
                   </div>
-                  <p className="text-gray-600 font-serif italic text-base sm:text-lg leading-relaxed">
+                  
+                  <p className="text-gray-600 font-serif italic text-base sm:text-lg leading-[1.8] tracking-[0.005em]">
                     {event.description}
                   </p>
                 </motion.div>
 
                 {/* Center Marker */}
-                <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center z-10">
-                  <div className="w-4 h-4 rounded-full bg-white border-2 border-gold-500 shadow-[0_0_10px_rgba(255,215,0,0.3)] group-hover:scale-125 transition-transform" />
-                </div>
+                <motion.div 
+                  initial={{ scale: 0, opacity: 0 }}
+                  whileInView={{ scale: 1, opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.3 + 0.1 * index }}
+                  className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center z-10"
+                >
+                  <motion.div 
+                    whileHover={{ scale: 1.3, boxShadow: "0 0 20px rgba(255, 215, 0, 0.5)" }}
+                    className="w-4 h-4 rounded-full bg-white border-[2.5px] border-gold-500 shadow-[0_0_12px_rgba(255,215,0,0.4)] transition-all"
+                  />
+                </motion.div>
 
                 {/* Spacer for empty side */}
                 <div className="hidden md:block w-[45%]" />
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -139,3 +154,4 @@ const EventsTimeline = () => {
 };
 
 export default EventsTimeline;
+

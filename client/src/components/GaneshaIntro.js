@@ -4,17 +4,17 @@ import { motion } from 'framer-motion';
 const GaneshaIntro = () => {
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 1 }}
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 1.03, filter: 'blur(2px)' }}
+      transition={{ duration: 0.9, ease: 'easeInOut' }}
       className="fixed inset-0 flex items-center justify-center overflow-hidden"
       style={{
         background: 'linear-gradient(to right top, #38438b, #944b94, #d75a88, #ff7e71, #ffb25f, #ffeb68)',
         zIndex: 100
       }}
     >
-      <div className="relative w-full max-w-[90vw] max-h-[90vw] aspect-square flex items-center justify-center scale-[0.4] sm:scale-50 md:scale-75 lg:scale-100">
+      <div className="relative w-[340px] h-[340px] sm:w-[420px] sm:h-[420px] md:w-[520px] md:h-[520px] lg:w-[620px] lg:h-[620px] max-w-[90vw] max-h-[90vw] aspect-square flex items-center justify-center">
         {/* Outer Rotating SVG Background */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center opacity-40"
@@ -37,7 +37,7 @@ const GaneshaIntro = () => {
         <motion.img
           src="https://1.bp.blogspot.com/-zbTJP7CFU1o/XXiYo8bj14I/AAAAAAAATLc/YgdiMIILXq0LwaDbbyN-0Ew9katTRDUQQCLcBGAsYHQ/s1600/second_circle.png"
           alt="decoration"
-          className="absolute w-[530px] h-[530px] z-10"
+          className="absolute w-[180px] h-[180px] sm:w-[240px] sm:h-[240px] md:w-[300px] md:h-[300px] lg:w-[360px] lg:h-[360px] z-10"
           animate={{ rotate: -360 }}
           transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
         />
@@ -46,7 +46,7 @@ const GaneshaIntro = () => {
         <motion.img
           src="https://1.bp.blogspot.com/-_COGVBH4WyY/XXijt_rn5FI/AAAAAAAATL0/sCQhgcmjUl8amPCCquFtjEmmsxc_y_fyACLcBGAsYHQ/s1600/circle_third.png"
           alt="decoration"
-          className="absolute w-[470px] h-[470px] z-20"
+          className="absolute w-[170px] h-[170px] sm:w-[220px] sm:h-[220px] md:w-[270px] md:h-[270px] lg:w-[330px] lg:h-[330px] z-20"
           animate={{ rotate: 360 }}
           transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
         />
@@ -55,7 +55,7 @@ const GaneshaIntro = () => {
         <motion.img
           src="https://1.bp.blogspot.com/-SE1b77kYVek/XXnnVNN95NI/AAAAAAAATNY/44JshUd59xs9BG-jTUN-E6s3dgR0C3Q5ACLcBGAsYHQ/s1600/Ganesh.png"
           alt="Ganesh Jee"
-          className="absolute w-[730px] h-[730px] z-30"
+          className="absolute w-[260px] h-[260px] sm:w-[340px] sm:h-[340px] md:w-[440px] md:h-[440px] lg:w-[520px] lg:h-[520px] z-30 object-contain"
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 1.5, ease: "easeOut" }}

@@ -1,17 +1,21 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useSettings } from '../context/SettingsContext';
 
 const Venue = () => {
+  const { settings } = useSettings();
+  const { venue } = settings;
+
   return (
-    <section className="py-16 sm:py-20 md:py-24 bg-white relative">
+    <section className="py-16 sm:py-20 md:py-24 bg-white relative overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
-        <div className="text-center mb-10 sm:mb-12 md:mb-16">
+        <div className="text-center mb-14 sm:mb-16 md:mb-20">
           <motion.span 
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="text-gold-500 uppercase tracking-[0.4em] text-xs font-semibold block mb-4"
+            className="text-gold-500 uppercase tracking-[0.4em] text-xs font-semibold block mb-3"
           >
             Location
           </motion.span>
@@ -19,55 +23,133 @@ const Venue = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-serif text-gray-900"
+            transition={{ duration: 0.8, delay: 0.15 }}
+            className="text-2xl sm:text-3xl md:text-4xl font-serif text-maroon-700"
           >
-            The Venue
+            {settings.messages.venueTitle}
           </motion.h2>
           <motion.div 
-            initial={{ width: 0 }}
-            whileInView={{ width: "3rem" }}
+            initial={{ width: 0, opacity: 0 }}
+            whileInView={{ width: "4rem", opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 1, delay: 0.5 }}
-            className="h-[1px] bg-gold-500 mx-auto mt-6" 
+            transition={{ duration: 1, delay: 0.35 }}
+            className="h-[2px] bg-gradient-to-r from-transparent via-gold-500 to-transparent mx-auto mt-6" 
           />
         </div>
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
-          whileInView={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, y: 30, scale: 0.98 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true }}
-          className="relative bg-[#fdfbf7] p-5 sm:p-6 md:p-8 lg:p-12 text-center border border-gray-100 shadow-sm overflow-hidden group"
+          transition={{ duration: 0.9, ease: [0.34, 1.56, 0.64, 1] }}
+          className="relative bg-white p-6 sm:p-8 md:p-10 lg:p-14 text-center border border-gray-100/80 shadow-[0_8px_24px_rgba(0,0,0,0.05)] hover:shadow-[0_16px_48px_rgba(255,215,0,0.08)] transition-all duration-500 overflow-hidden group rounded-sm"
         >
-          {/* Decorative Background Element */}
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold-500/50 to-transparent" />
+          {/* Animated Top Border */}
+          <motion.div 
+            initial={{ scaleX: 0, opacity: 0 }}
+            whileInView={{ scaleX: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4, duration: 1 }}
+            style={{ transformOrigin: "left" }}
+            className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-gold-500/60 to-transparent"
+          />
           
           <div className="relative z-10">
-            <h3 className="text-xl sm:text-2xl md:text-3xl font-serif text-maroon-700 mb-3 sm:mb-4">Mohan Bakshu Guest House</h3>
-            <div className="space-y-1 sm:space-y-2 mb-6 sm:mb-8">
-              <p className="text-gray-600 text-base sm:text-lg">Hansi, Near Petrol Pump</p>
-              <p className="text-gray-600 text-lg">Biwar Road, District Hamirpur</p>
-            </div>
+            <motion.h3 
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.8 }}
+              className="text-2xl sm:text-3xl md:text-4xl font-serif text-maroon-700 mb-5 sm:mb-6 tracking-[0.02em]"
+            >
+              {venue.name}
+            </motion.h3>
+            
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4, duration: 0.8 }}
+              className="space-y-2 sm:space-y-3 mb-8 sm:mb-10 pb-8 sm:pb-10 border-b border-gray-100/60"
+            >
+              <p className="text-lg sm:text-xl md:text-2xl text-maroon-700 font-serif italic tracking-[0.01em]">{venue.address}</p>
+              <motion.div 
+                initial={{ width: 0, opacity: 0 }}
+                whileInView={{ width: "60px", opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.6, duration: 0.8 }}
+                className="h-[1px] bg-gradient-to-r from-transparent via-gold-500/40 to-transparent mx-auto"
+              />
+            </motion.div>
 
-            <div className="flex flex-col items-center gap-6">
+            <motion.div 
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.5, duration: 0.8 }}
+              className="flex flex-col items-center gap-6"
+            >
               <motion.a
-                whileHover={{ y: -5 }}
-                href="https://www.google.com/maps/search/?api=1&query=Mohan+Bakshu+Guest+House,+Hansi"
+                whileHover={{ scale: 1.05, y: -3 }}
+                whileTap={{ scale: 0.98 }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.7, duration: 0.6 }}
+                href={venue.mapUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block min-h-[48px] bg-white border border-gold-500 text-gold-500 px-8 sm:px-10 py-3.5 sm:py-4 rounded-sm uppercase tracking-[0.15em] sm:tracking-[0.2em] text-xs font-bold hover:bg-gold-500 hover:text-white transition-all duration-500 flex items-center justify-center"
+                className="group/btn relative min-h-[52px] px-8 sm:px-12 py-3.5 sm:py-4 rounded-sm uppercase tracking-[0.15em] sm:tracking-[0.2em] text-xs sm:text-sm font-bold overflow-hidden flex items-center justify-center"
               >
-                View on Google Maps
+                {/* Animated Background */}
+                <div className="absolute inset-0 bg-gradient-to-r from-maroon-700 via-maroon-700 to-maroon-700" />
+                <div className="absolute inset-0 bg-gradient-to-r from-gold-500 to-gold-500 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500" />
+                
+                {/* Animated Border */}
+                <div className="absolute inset-0 border border-gold-500/0 group-hover/btn:border-gold-500/40 transition-all duration-500" />
+                
+                {/* Glow Effect */}
+                <motion.div 
+                  className="absolute inset-0 -z-10 blur-xl opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"
+                  style={{ 
+                    background: "radial-gradient(circle, rgba(255,215,0,0.3) 0%, transparent 70%)"
+                  }}
+                />
+                
+                {/* Text */}
+                <span className="relative z-10 text-white group-hover/btn:text-gray-900 transition-colors duration-500 drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)] group-hover/btn:drop-shadow-none">
+                  {settings.messages.viewOnMap}
+                </span>
               </motion.a>
               
-              <p className="text-gray-400 font-serif italic text-sm">
-                Valet parking available for all guests.
-              </p>
-            </div>
+              <motion.p 
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.9, duration: 0.8 }}
+                className="text-gray-500 font-serif italic text-sm tracking-[0.01em]"
+              >
+                {venue.transportInfo}
+              </motion.p>
+            </motion.div>
           </div>
 
-          {/* Abstract corner ornament */}
-          <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-gold-500/5 rounded-full blur-3xl group-hover:bg-gold-500/10 transition-colors" />
+          {/* Animated Corner Accent */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.6, duration: 1 }}
+            className="absolute -bottom-16 -right-16 w-48 h-48 bg-gradient-to-tl from-gold-500/8 to-transparent rounded-full blur-3xl group-hover:from-gold-500/12 transition-all duration-500"
+          />
+          
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.7, duration: 1 }}
+            className="absolute -top-16 -left-16 w-32 h-32 bg-gradient-to-br from-gold-500/5 to-transparent rounded-full blur-2xl"
+          />
         </motion.div>
       </div>
     </section>
@@ -75,3 +157,4 @@ const Venue = () => {
 };
 
 export default Venue;
+
