@@ -194,7 +194,13 @@ const GuestList = () => {
 
   const shareInviteLink = (guestId) => {
     const link = getInviteLink(guestId);
-    const text = encodeURIComponent(`You are cordially invited to Pushpendra & Renu's Wedding ✨\n\nClick here to view your personal invitation:\n${link}`);
+    const guest = guests.find(g => g._id === guestId);
+    const guestName = guest ? guest.name : '';
+    
+    const englishMsg = `You are cordially invited to the wedding of Mr. Pushpendra & Renu ✨`;
+    const hindiMsg = `आप श्री पुष्पेंद्र और रेनू के विवाह में सादर आमंत्रित हैं ✨`;
+    
+    const text = encodeURIComponent(`${englishMsg}\n${hindiMsg}\n\n${guestName ? `Dear ${guestName}, ` : ''}Click here to view your personal invitation:\n${link}`);
     window.open(`https://wa.me/?text=${text}`, '_blank', 'noopener,noreferrer');
   };
 
