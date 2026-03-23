@@ -5,11 +5,13 @@ const { Server } = require('socket.io');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const createAdmin = require('./create_admin');
+const connectDB = require('./config/db');
 const path = require('path');
 
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 const startServer = async () => {
+  await connectDB();
   await createAdmin();
 
   const app = express();
@@ -28,6 +30,10 @@ const startServer = async () => {
 
   app.use('/api/guests', require('./routes/guests'));
   app.use('/api/auth', require('./routes/auth'));
+  app.use('/api/rsvp', require('./routes/rsvp'));
+  app.use('/api/content', require('./routes/content'));
+  app.use('/api/settings', require('./routes/settings'));
+  app.use('/api/upload', require('./routes/upload'));
 
   const PORT = process.env.PORT || 5000;
 
