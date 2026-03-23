@@ -59,6 +59,10 @@ const GaneshaIntro = () => {
             0%, 100% { transform: scale(1); opacity: 0.03; }
             50% { transform: scale(1.05); opacity: 0.05; }
           }
+          @keyframes ganesha-pulsate {
+            0%, 100% { transform: scale(1) translateY(0); filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5)); }
+            50% { transform: scale(1.05) translateY(-10px); filter: drop-shadow(0 0 50px rgba(255, 215, 0, 0.8)); }
+          }
           .animate-blob-move-1 { animation: blob-move-1 25s infinite alternate ease-in-out; }
           .animate-blob-move-2 { animation: blob-move-2 30s infinite alternate ease-in-out; }
           .animate-blob-move-3 { animation: blob-move-3 28s infinite alternate ease-in-out; }
@@ -81,6 +85,9 @@ const GaneshaIntro = () => {
           }
           .ganesha-glow {
             filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5)) drop-shadow(0 0 60px rgba(255, 255, 255, 0.3));
+          }
+          .ganesha-pulsating {
+            animation: ganesha-pulsate 4s infinite ease-in-out;
           }
         `}
       </style>
@@ -126,7 +133,7 @@ const GaneshaIntro = () => {
         <motion.img
           src="https://1.bp.blogspot.com/-SE1b77kYVek/XXnnVNN95NI/AAAAAAAATNY/44JshUd59xs9BG-jTUN-E6s3dgR0C3Q5ACLcBGAsYHQ/s1600/Ganesh.png"
           alt="Ganesh Jee"
-          className="absolute w-[280px] h-[280px] sm:w-[360px] sm:h-[360px] md:w-[460px] md:h-[460px] lg:w-[540px] lg:h-[540px] z-30 object-contain ganesha-glow"
+          className="absolute w-[280px] h-[280px] sm:w-[360px] sm:h-[360px] md:w-[460px] md:h-[460px] lg:w-[540px] lg:h-[540px] z-30 object-contain ganesha-glow ganesha-pulsating"
           initial={{ scale: 0.7, opacity: 0, y: 30 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           transition={{ duration: 1.8, ease: "easeOut" }}
