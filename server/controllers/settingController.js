@@ -26,6 +26,14 @@ exports.updateSettings = async (req, res) => {
   const { settings } = req.body; // Expecting an object of key-value pairs
 
   try {
+    // Get current settings before update for logging
+    const keys = Object.keys(settings);
+    const oldSettingsDocs = await Setting.find({ key: { $in: keys } });
+    const oldSettings = {};
+    oldSettingsDocs.forEach(s => {
+      oldSettings[s.key] = s.value;
+    });
+
     const promises = Object.entries(settings).map(([key, value]) => {
       return Setting.findOneAndUpdate(
         { key },
@@ -36,12 +44,15 @@ exports.updateSettings = async (req, res) => {
 
     await Promise.all(promises);
     
-    // Log the change
+    // Log the change with before and after states
     await logAction(
       req.user ? req.user.email : 'System',
       'UPDATE_SETTING',
-      'Site Content',
-      { settings: Object.keys(settings) }, // Log keys changed
+      `Updated ${keys.length} setting(s)`,
+      'SETTINGS',
+      oldSettings,
+      settings,
+      { affectedKeys: keys },
       req.ip
     );
 

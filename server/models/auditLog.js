@@ -13,8 +13,17 @@ const auditLogSchema = new mongoose.Schema({
     type: String, // 'Guest: Pushpendra', 'Setting: coupleNames'
     required: true,
   },
+  segment: {
+    type: String, // 'GUESTS', 'SETTINGS', 'CONTENT', 'IMAGES', 'RSVP', 'AUTH'
+  },
+  before: {
+    type: mongoose.Schema.Types.Mixed, // Previous state
+  },
+  after: {
+    type: mongoose.Schema.Types.Mixed, // New state
+  },
   details: {
-    type: mongoose.Schema.Types.Mixed, // Stores old/new values or other relevant data
+    type: mongoose.Schema.Types.Mixed, // Stores other relevant data
   },
   ip: {
     type: String,

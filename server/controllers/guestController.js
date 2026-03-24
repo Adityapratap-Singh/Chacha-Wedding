@@ -50,6 +50,9 @@ exports.addGuest = async (req, res) => {
       req.user ? req.user.email : 'System',
       'ADD_GUEST',
       `Guest: ${guest.name}`,
+      'GUESTS',
+      null,
+      guest.toObject(),
       { guestId: guest.guestId, family: guest.family },
       req.ip
     );
@@ -84,15 +87,6 @@ exports.notifyOpen = async (req, res) => {
       console.error('IP Geo Error:', e.message);
     }
 
-    // Log to AuditLog
-    await logAction(
-      'Guest',
-      'INVITATION_OPENED',
-      `Guest: ${guest.name}`,
-      { guestId, ip, ...ipLoc },
-      ip
-    );
-
     // Build Telegram Message
     let message = `✨ <b>Invitation Opened!</b> ✨\n\n`;
     message += `👤 <b>Guest:</b> ${guest.name}\n`;
@@ -124,6 +118,8 @@ exports.rsvpGuest = async (req, res) => {
       return res.status(404).json({ msg: 'Guest not found' });
     }
 
+    const before = guest.toObject();
+
     guest.rsvpStatus = rsvpStatus;
     guest.guestCount = guestCount || 0;
     guest.rsvpDate = Date.now();
@@ -135,6 +131,9 @@ exports.rsvpGuest = async (req, res) => {
       'Guest',
       'RSVP_SUBMIT',
       `Guest: ${guest.name}`,
+      'RSVP',
+      before,
+      guest.toObject(),
       { status: rsvpStatus, count: guestCount },
       req.ip
     );
@@ -176,6 +175,8 @@ exports.editGuest = async (req, res) => {
       return res.status(404).json({ msg: 'Guest not found' });
     }
 
+    const before = guest.toObject();
+
     const update = { name, family, honorific, specialMessage };
     if (location !== undefined) update.location = location;
 
@@ -190,6 +191,9 @@ exports.editGuest = async (req, res) => {
       req.user ? req.user.email : 'System',
       'EDIT_GUEST',
       `Guest: ${guest.name}`,
+      'GUESTS',
+      before,
+      guest.toObject(),
       { update },
       req.ip
     );
@@ -216,6 +220,9 @@ exports.deleteGuest = async (req, res) => {
       req.user ? req.user.email : 'System',
       'DELETE_GUEST',
       `Guest: ${guest.name}`,
+      'GUESTS',
+      guest.toObject(),
+      null,
       { guestId: guest.guestId },
       req.ip
     );

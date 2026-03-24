@@ -34,7 +34,10 @@ exports.uploadImage = [
         req.user ? req.user.email : 'System',
         'UPLOAD_IMAGE',
         'Cloudinary',
-        { url: req.file.path, public_id: req.file.filename, originalName: req.file.originalname },
+        'IMAGES',
+        null,
+        { url: req.file.path, public_id: req.file.filename },
+        { originalName: req.file.originalname },
         req.ip
       );
 

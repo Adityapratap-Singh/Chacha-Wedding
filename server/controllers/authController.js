@@ -51,13 +51,13 @@ exports.login = async (req, res) => {
   try {
     let user = await User.findOne({ email });
     if (!user) {
-      await logAction(email, 'LOGIN_FAILED', 'User Account', { msg: 'User not found' }, req.ip);
+      await logAction(email, 'LOGIN_FAILED', 'User Account', 'AUTH', null, null, { msg: 'User not found' }, req.ip);
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      await logAction(email, 'LOGIN_FAILED', 'User Account', { msg: 'Password mismatch' }, req.ip);
+      await logAction(email, 'LOGIN_FAILED', 'User Account', 'AUTH', null, null, { msg: 'Password mismatch' }, req.ip);
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
 
@@ -74,7 +74,7 @@ exports.login = async (req, res) => {
       { expiresIn: '30d' },
       async (err, token) => {
         if (err) throw err;
-        await logAction(email, 'LOGIN_SUCCESS', 'User Account', {}, req.ip);
+        await logAction(email, 'LOGIN_SUCCESS', 'User Account', 'AUTH', null, null, {}, req.ip);
         res.json({ token });
       }
     );

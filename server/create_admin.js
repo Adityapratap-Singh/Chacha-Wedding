@@ -6,10 +6,10 @@ const bcrypt = require('bcryptjs');
 
 const admins = [
   { email: 'admin@pr-wedding.com', password: '12-05-2026' }, // Primary
-  { email: 'pushpendra@pr-wedding.com', password: 'wedding-admin-1' },
-  { email: 'renu@pr-wedding.com', password: 'wedding-admin-2' },
-  { email: 'moderator1@pr-wedding.com', password: 'wedding-admin-3' },
-  { email: 'moderator2@pr-wedding.com', password: 'wedding-admin-4' }
+  { email: 'pushpendra@pr-wedding.com', password: '12-05-2026' },
+  { email: 'renu@pr-wedding.com', password: '12-05-2026' },
+  { email: 'moderator1@pr-wedding.com', password: '12-05-2026' },
+  { email: 'moderator2@pr-wedding.com', password: '12-05-2026' }
 ];
 
 const createAdmins = async () => {
