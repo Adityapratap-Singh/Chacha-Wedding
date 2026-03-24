@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import Hero from './Hero';
-import EventsTimeline from './EventsTimeline';
-import Venue from './Venue';
-import Gallery from './Gallery';
-import RSVP from './RSVP';
-import CelebrationTeam from './CelebrationTeam';
-import BalAagrah from './BalAagrah';
-import Presak from './Presak';
-import AdexPromoSection from './AdexPromoSection';
-import AdexPopup from './AdexPopup';
 import { useSettings } from '../context/SettingsContext';
+
+const Hero = lazy(() => import('./Hero'));
+const EventsTimeline = lazy(() => import('./EventsTimeline'));
+const Venue = lazy(() => import('./Venue'));
+const Gallery = lazy(() => import('./Gallery'));
+const RSVP = lazy(() => import('./RSVP'));
+const CelebrationTeam = lazy(() => import('./CelebrationTeam'));
+const BalAagrah = lazy(() => import('./BalAagrah'));
+const Presak = lazy(() => import('./Presak'));
+const AdexPromoSection = lazy(() => import('./AdexPromoSection'));
+const AdexPopup = lazy(() => import('./AdexPopup'));
 
 const Home = () => {
   const { guestId } = useParams();
@@ -35,16 +36,18 @@ const Home = () => {
 
   return (
     <div>
-      <Hero />
-      {visibility.events && <EventsTimeline />}
-      {visibility.venue && <Venue />}
-      {visibility.gallery && <Gallery />}
-      {visibility.celebrationTeam && <CelebrationTeam />}
-      {visibility.baalAagrah && <BalAagrah />}
-      {visibility.preshak && <Presak />}
-      {visibility.rsvp && <RSVP guestId={guestId} guest={guest} />}
-      {visibility.adexPromo && <AdexPromoSection />}
-      {visibility.adexPopup && <AdexPopup />}
+      <Suspense fallback={<div className="h-screen flex items-center justify-center">Loading...</div>}>
+        <Hero />
+        {visibility.events && <EventsTimeline />}
+        {visibility.venue && <Venue />}
+        {visibility.gallery && <Gallery />}
+        {visibility.celebrationTeam && <CelebrationTeam />}
+        {visibility.baalAagrah && <BalAagrah />}
+        {visibility.preshak && <Presak />}
+        {visibility.rsvp && <RSVP guestId={guestId} guest={guest} />}
+        {visibility.adexPromo && <AdexPromoSection />}
+        {visibility.adexPopup && <AdexPopup />}
+      </Suspense>
     </div>
   );
 };

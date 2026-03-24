@@ -6,11 +6,23 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { SocketProvider } from './context/SocketContext';
 
-const fallbackServerUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5001';
-const socketUrl = process.env.REACT_APP_SERVER_URL || fallbackServerUrl;
+const getBaseUrl = () => {
+  if (process.env.REACT_APP_SERVER_URL) {
+    return process.env.REACT_APP_SERVER_URL;
+  }
+  return typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5001';
+};
 
-// Ensure all requests like axios.post('/api/...') go to the configured backend.
+const socketUrl = getBaseUrl();
+
+// Global Axios Configuration
 axios.defaults.baseURL = socketUrl;
+axios.defaults.headers.post['Content-Type'] = 'application/json';
+
+// Performance monitoring (optional: could send to an endpoint)
+const logVitals = (metric) => {
+  // console.log(metric); 
+};
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -21,7 +33,4 @@ root.render(
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+reportWebVitals(logVitals);
