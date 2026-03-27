@@ -11,28 +11,9 @@ const emitGuestsUpdate = (req) => {
 };
 
 exports.addGuest = async (req, res) => {
-  const { name, family, honorific, specialMessage, location, forceCreate } = req.body;
+  const { name, family, honorific, specialMessage, location } = req.body;
 
   try {
-    if (!forceCreate && name) {
-      const escaped = String(name).trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const existing = await Guest.findOne({
-        name: { $regex: new RegExp(`^${escaped}$`, 'i') }
-      });
-      if (existing) {
-        return res.status(409).json({
-          duplicate: true,
-          existing: {
-            _id: existing._id,
-            name: existing.name,
-            family: existing.family,
-            honorific: existing.honorific,
-            location: existing.location,
-          }
-        });
-      }
-    }
-
     const guestId = uuidv4();
     const newGuest = new Guest({
       name: name?.trim() || name,
@@ -121,7 +102,9 @@ exports.rsvpGuest = async (req, res) => {
     const before = guest.toObject();
 
     guest.rsvpStatus = rsvpStatus;
-    guest.guestCount = guestCount || 0;
+    if (typeof guestCount === 'number') {
+      guest.guestCount = guestCount;
+    }
     guest.rsvpDate = Date.now();
 
     await guest.save();
@@ -134,7 +117,7 @@ exports.rsvpGuest = async (req, res) => {
       'RSVP',
       before,
       guest.toObject(),
-      { status: rsvpStatus, count: guestCount },
+      { status: rsvpStatus, count: guestCount, familyInvite: guest.family === 'Yes' },
       req.ip
     );
 

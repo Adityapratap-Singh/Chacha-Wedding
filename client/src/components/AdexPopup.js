@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowRight, MessageCircle, Sparkles, X } from 'lucide-react';
 
 const POPUP_STORAGE_KEY = 'adex_popup_seen';
 const DELAY_MS = 25000;
@@ -10,18 +10,23 @@ const AdexPopup = () => {
   const [mounted, setMounted] = useState(false);
 
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
-  const WHATSAPP_URL = `https://wa.me/917355259901?text=${encodeURIComponent(`Yeh cinematic experience mujhe bhi chahiye 😍\n\nLink: ${currentUrl}`)}`;
+  const whatsappUrl = `https://wa.me/917355259901?text=${encodeURIComponent(`Mujhe bhi apni shaadi ke liye aisa premium, personalized wedding invite chahiye ✨\n\nLink: ${currentUrl}`)}`;
 
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!mounted) return;
+
     const seen = sessionStorage.getItem(POPUP_STORAGE_KEY);
     if (seen) return;
+
     const timer = setTimeout(() => {
       setIsVisible(true);
       sessionStorage.setItem(POPUP_STORAGE_KEY, 'true');
     }, DELAY_MS);
+
     return () => clearTimeout(timer);
   }, [mounted]);
 
@@ -29,89 +34,126 @@ const AdexPopup = () => {
     <AnimatePresence>
       {isVisible && (
         <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="fixed inset-0 z-[9998] bg-black/20 backdrop-blur-[2px] pointer-events-none sm:pointer-events-auto"
+          <motion.button
+            type="button"
+            aria-label="Close promotional popup"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-[9998] bg-black/55 backdrop-blur-md"
             onClick={() => setIsVisible(false)}
           />
 
-          {/* Popup */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.88, y: 40 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.92, y: 20 }}
-            transition={{ type: 'spring', stiffness: 240, damping: 22 }}
-            className="fixed z-[9999] left-4 right-4 sm:left-auto sm:right-6 md:right-8 sm:w-[340px] bottom-6 sm:bottom-8"
+          <motion.aside
+            initial={{ opacity: 0, y: 32, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 24, scale: 0.98 }}
+            transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed inset-x-4 bottom-4 z-[9999] sm:inset-x-auto sm:right-6 sm:bottom-6 sm:w-[380px]"
           >
-            <div
-              className="panel-luxe relative overflow-hidden rounded-2xl"
-            >
-              {/* Gold top bar */}
-              <div className="absolute top-0 left-0 right-0 h-[1px]"
-                style={{ background: 'linear-gradient(90deg, transparent, rgba(229,168,48,0.7), transparent)' }} />
-
-              {/* Progress bottom bar */}
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-                className="absolute bottom-0 left-0 right-0 h-[1px]"
+            <div className="panel-luxe relative overflow-hidden rounded-[28px] border border-yellow-400/15 shadow-[0_30px_80px_rgba(0,0,0,0.58)]">
+              <div
+                className="absolute inset-0 pointer-events-none"
                 style={{
-                  background: 'linear-gradient(90deg, transparent, rgba(229,168,48,0.4), transparent)',
-                  transformOrigin: 'left',
+                  background:
+                    'radial-gradient(circle at top right, rgba(229,168,48,0.18), transparent 34%), radial-gradient(circle at bottom left, rgba(118,10,36,0.22), transparent 42%)',
                 }}
               />
 
-              {/* Corner ornaments */}
-              {['top-3 left-3 border-t border-l', 'top-3 right-10 border-t border-r'].map((c, i) => (
-                <div key={i} className={`absolute w-5 h-5 border-yellow-400/20 pointer-events-none ${c}`} />
-              ))}
+              <div className="absolute left-5 right-5 top-0 h-px bg-gradient-to-r from-transparent via-yellow-300/70 to-transparent" />
 
-              {/* Close button */}
               <button
+                type="button"
                 onClick={() => setIsVisible(false)}
-                className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full transition-all duration-300 z-10"
-                style={{ color: 'rgba(229,168,48,0.4)', border: '1px solid rgba(229,168,48,0.12)' }}
-                onMouseEnter={e => { e.currentTarget.style.color = 'rgba(229,168,48,0.85)'; e.currentTarget.style.background = 'rgba(229,168,48,0.06)'; }}
-                onMouseLeave={e => { e.currentTarget.style.color = 'rgba(229,168,48,0.4)'; e.currentTarget.style.background = ''; }}
+                className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/65 transition-colors duration-200 hover:bg-white/10 hover:text-yellow-200"
                 aria-label="Close"
               >
                 <X size={16} />
               </button>
 
-              <div className="p-6 pt-7">
-                {/* Icon */}
-                <div className="text-2xl mb-4" style={{ filter: 'drop-shadow(0 0 8px rgba(229,168,48,0.4))' }}>🎬</div>
+              <div className="relative z-10 p-5 sm:p-6">
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-yellow-400/15 bg-white/5 px-3 py-1.5">
+                  <Sparkles size={14} className="text-yellow-300/80" />
+                  <span className="section-label !text-[9px] !tracking-[0.32em] !text-yellow-200/75">
+                    Crafted by Adex
+                  </span>
+                </div>
 
-                {/* Content */}
-                <p
-                  className="italic leading-relaxed mb-5 text-yellow-100/75"
-                  style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem' }}
-                >
-                  "Yeh sirf invitation nahi hai…
-                  <br />
-                  <span className="text-yellow-300/80 not-italic">yeh ek cinematic experience hai 💍"</span>
+                <div className="mb-5 flex items-start gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-yellow-300/20 bg-gradient-to-br from-yellow-300/20 to-yellow-500/5 text-yellow-200 shadow-[0_0_30px_rgba(229,168,48,0.12)]">
+                    <MessageCircle size={20} />
+                  </div>
+
+                  <div className="pr-8">
+                    <h3
+                      className="gold-text mb-1"
+                      style={{
+                        fontFamily: "'Cormorant Garamond', serif",
+                        fontSize: 'clamp(1.7rem, 4vw, 2.15rem)',
+                        fontWeight: 600,
+                        lineHeight: 1,
+                      }}
+                    >
+                      Want this style for your wedding?
+                    </h3>
+                    <p className="text-sm leading-6 text-yellow-100/62 sm:text-[0.95rem]">
+                      A tailored wedding invite with elegant motion, thoughtful details, and a guest journey that feels truly special.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="panel-soft mb-5 rounded-[22px] px-4 py-4 sm:px-5">
+                  <p
+                    className="italic text-yellow-50/86"
+                    style={{
+                      fontFamily: "'Cormorant Garamond', serif",
+                      fontSize: '1.15rem',
+                      lineHeight: 1.55,
+                    }}
+                  >
+                    "Yeh sirf ek invite nahi..."
+                  </p>
+                  <p
+                    className="mt-1 text-yellow-300/82"
+                    style={{
+                      fontFamily: "'Cormorant Garamond', serif",
+                      fontSize: '1.05rem',
+                    }}
+                  >
+                    yeh aapki shaadi ka pehla impression hai.
+                  </p>
+                </div>
+
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <motion.a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setIsVisible(false)}
+                    whileHover={{ y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="btn-luxury flex flex-1 items-center justify-center gap-2 rounded-full px-5 py-3.5 text-[11px]"
+                  >
+                    Chat on WhatsApp
+                    <ArrowRight size={14} />
+                  </motion.a>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsVisible(false)}
+                    className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-xs font-medium uppercase tracking-[0.24em] text-white/60 transition-colors duration-200 hover:bg-white/[0.07] hover:text-white/85"
+                  >
+                    Maybe later
+                  </button>
+                </div>
+
+                <p className="mt-4 text-center text-[10px] uppercase tracking-[0.28em] text-white/28">
+                  Custom wedding invite websites
                 </p>
-
-                {/* CTA */}
-                <motion.a
-                  href={WHATSAPP_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setIsVisible(false)}
-                  whileHover={{ scale: 1.02, y: -2 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="btn-luxury flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-sm"
-                >
-                  Get Yours on WhatsApp →
-                </motion.a>
-
-                <p className="section-label text-center mt-4 text-[8px] opacity-50">By Adex · adityaprataps406@gmail.com</p>
               </div>
             </div>
-          </motion.div>
+          </motion.aside>
         </>
       )}
     </AnimatePresence>

@@ -8,6 +8,8 @@ const RSVP = ({ guestId, guest }) => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const isFamilyInvite = guest?.family === 'Yes';
+  const responseLabel = isFamilyInvite ? `${guest?.name || 'Our Valued Guest'} & Family` : (guest?.name || 'Our Valued Guest');
 
   useEffect(() => {
     if (guest?.rsvpStatus && guest.rsvpStatus !== 'Pending') {
@@ -21,7 +23,7 @@ const RSVP = ({ guestId, guest }) => {
     if (status === 'Pending') return;
     setLoading(true); setError(null);
     try {
-      await axios.post(`/api/rsvp/${guestId}`, { rsvpStatus: status, guestCount: guest?.guestCount || 0 });
+      await axios.post(`/api/rsvp/${guestId}`, { rsvpStatus: status });
       setSubmitted(true);
     } catch {
       setError('Something went wrong. Please try again.');
@@ -76,8 +78,12 @@ const RSVP = ({ guestId, guest }) => {
         <p className="text-yellow-100/55 italic leading-relaxed mb-8"
           style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(1rem, 2vw, 1.2rem)' }}>
           {status === 'Attending'
-            ? 'We are overjoyed you will be joining us. Your presence will make this celebration truly unforgettable.'
-            : 'We\'ll miss you dearly. Your blessings and warm wishes mean the world to us.'}
+            ? (isFamilyInvite
+              ? 'We are overjoyed that your family will be joining us. Your presence will make this celebration truly unforgettable.'
+              : 'We are overjoyed you will be joining us. Your presence will make this celebration truly unforgettable.')
+            : (isFamilyInvite
+              ? 'We will miss your family dearly. Your blessings and warm wishes mean the world to us.'
+              : 'We\'ll miss you dearly. Your blessings and warm wishes mean the world to us.')}
         </p>
         <div className="gold-divider mx-auto mb-6" style={{ width: '60px', opacity: 0.4 }} />
         <button
@@ -103,15 +109,23 @@ const RSVP = ({ guestId, guest }) => {
           <p className="section-label mb-2 text-[9px]">Responding for</p>
           <h4 className="text-yellow-100/90 italic"
             style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: 'clamp(1.5rem, 4vw, 2.2rem)' }}>
-            {guest?.name || 'Our Valued Guest'}
+            {responseLabel}
           </h4>
+          {isFamilyInvite && (
+            <p
+              className="mt-3 text-yellow-100/55 italic"
+              style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(0.98rem, 2vw, 1.08rem)' }}
+            >
+              One RSVP here will be recorded for the full family invitation.
+            </p>
+          )}
         </div>
 
         {/* Choice buttons */}
         <div className="grid grid-cols-2 gap-4">
           {[
-            { val: 'Attending', icon: <Check className="w-6 h-6" />, label: 'Joyfully\nAttend' },
-            { val: 'Not Attending', icon: <X className="w-6 h-6" />, label: 'Regretfully\nDecline' },
+            { val: 'Attending', icon: <Check className="w-6 h-6" />, label: isFamilyInvite ? 'Joyfully\nAttend Together' : 'Joyfully\nAttend' },
+            { val: 'Not Attending', icon: <X className="w-6 h-6" />, label: isFamilyInvite ? 'Regretfully\nDecline Together' : 'Regretfully\nDecline' },
           ].map(({ val, icon, label }) => {
             const active = status === val;
             return (
@@ -170,7 +184,11 @@ const RSVP = ({ guestId, guest }) => {
           {loading ? <Loader2 className="animate-spin w-5 h-5" /> : (
             <>
               <Send size={16} className={status !== 'Pending' ? 'group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform' : ''} />
-              <span>{guest?.rsvpStatus && guest.rsvpStatus !== 'Pending' ? 'Update Response' : 'Confirm RSVP'}</span>
+              <span>
+                {guest?.rsvpStatus && guest.rsvpStatus !== 'Pending'
+                  ? (isFamilyInvite ? 'Update Family RSVP' : 'Update Response')
+                  : (isFamilyInvite ? 'Confirm Family RSVP' : 'Confirm RSVP')}
+              </span>
             </>
           )}
         </motion.button>

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useSocket } from '../../context/SocketContext';
 import {
   UserPlus, Trash2, Copy, CheckCircle, XCircle, Clock,
-  MessageCircle, Search, MapPin, Edit, X, FileText
+  MessageCircle, Search, MapPin, Edit, X, FileText, Upload, Download, Sheet
 } from 'lucide-react';
 
 /* ── PDF helpers ── */
@@ -16,6 +16,76 @@ const escapeHtml = (value = '') =>
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+
+const csvHeaders = ['name', 'family', 'honorific', 'location', 'specialMessage'];
+
+const escapeCsvValue = (value = '') => {
+  const stringValue = String(value ?? '');
+  if (/[",\n]/.test(stringValue)) {
+    return `"${stringValue.replace(/"/g, '""')}"`;
+  }
+  return stringValue;
+};
+
+const parseCsv = (text) => {
+  const rows = [];
+  let current = '';
+  let row = [];
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i += 1) {
+    const char = text[i];
+    const next = text[i + 1];
+
+    if (char === '"') {
+      if (inQuotes && next === '"') {
+        current += '"';
+        i += 1;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === ',' && !inQuotes) {
+      row.push(current);
+      current = '';
+    } else if ((char === '\n' || char === '\r') && !inQuotes) {
+      if (char === '\r' && next === '\n') i += 1;
+      row.push(current);
+      if (row.some((cell) => cell.trim() !== '')) rows.push(row);
+      row = [];
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+
+  if (current.length > 0 || row.length > 0) {
+    row.push(current);
+    if (row.some((cell) => cell.trim() !== '')) rows.push(row);
+  }
+
+  if (!rows.length) return [];
+
+  const headers = rows[0].map((h) => h.trim());
+  return rows.slice(1).map((cells) => {
+    const entry = {};
+    headers.forEach((header, index) => {
+      entry[header] = (cells[index] || '').trim();
+    });
+    return entry;
+  });
+};
+
+const downloadTextFile = (filename, content, mimeType = 'text/plain;charset=utf-8;') => {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+};
 
 const generateInviteText = (guest, inviteUrl) => {
   const honorific = guest.honorific && guest.honorific !== 'None' ? guest.honorific + ' ' : '';
@@ -411,7 +481,7 @@ const GuestList = () => {
   const [editingGuest, setEditingGuest] = useState(null);
   const [copyStatus, setCopyStatus] = useState({});
   const [formFeedback, setFormFeedback] = useState(null);
-  const [duplicateModal, setDuplicateModal] = useState(null);
+  const [isImporting, setIsImporting] = useState(false);
 
   const fetchGuests = useCallback(async () => {
     try {
@@ -458,12 +528,11 @@ const GuestList = () => {
     setFormData({ name: '', family: 'No', honorific: 'None', specialMessage: '', location: '', locationOther: '' });
   };
 
-  const doAddGuest = async (forceCreate = false) => {
+  const doAddGuest = async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
     setFormFeedback(null);
-    setDuplicateModal(null);
-    const payload = { ...formData, location: getLocationValue(), forceCreate };
+    const payload = { ...formData, location: getLocationValue() };
     delete payload.locationOther;
     try {
       if (editingGuest) {
@@ -481,9 +550,7 @@ const GuestList = () => {
       setFormData({ name: '', family: 'No', honorific: 'None', specialMessage: '', location: '', locationOther: '' });
     } catch (err) {
       if (err.response?.status === 401) { localStorage.removeItem('token'); navigate('/admin/login'); }
-      else if (err.response?.status === 409 && err.response.data.duplicate) {
-        setDuplicateModal({ existing: err.response.data.existing, pendingData: { ...formData, location: getLocationValue() } });
-      } else {
+      else {
         setFormFeedback({ type: 'error', message: err.response?.data?.msg || 'Error saving guest.' });
       }
     } finally { setIsSubmitting(false); }
@@ -514,6 +581,112 @@ const GuestList = () => {
 
   const filteredGuests = guests.filter(g => g?.name?.toLowerCase().includes(searchTerm.toLowerCase()));
 
+  const downloadCsvTemplate = () => {
+    const templateRows = [
+      csvHeaders.join(','),
+      [
+        escapeCsvValue('Aditya Pratap Singh'),
+        escapeCsvValue('No'),
+        escapeCsvValue('Mr'),
+        escapeCsvValue('Lucknow'),
+        escapeCsvValue('Please join us for the celebration.')
+      ].join(','),
+      [
+        escapeCsvValue('Rajesh Singh'),
+        escapeCsvValue('Yes'),
+        escapeCsvValue('Mr'),
+        escapeCsvValue('Kanpur'),
+        escapeCsvValue('Saparivaar aamantrit hain.')
+      ].join(',')
+    ].join('\n');
+
+    downloadTextFile('guest-import-template.csv', templateRows, 'text/csv;charset=utf-8;');
+  };
+
+  const exportGuestsCsv = () => {
+    const rows = [
+      ['name', 'family', 'honorific', 'location', 'specialMessage', 'guestId', 'rsvpStatus', 'createdAt'].join(','),
+      ...guests.map((guest) => ([
+        escapeCsvValue(guest.name),
+        escapeCsvValue(guest.family),
+        escapeCsvValue(guest.honorific),
+        escapeCsvValue(guest.location || ''),
+        escapeCsvValue(guest.specialMessage || ''),
+        escapeCsvValue(guest.guestId || ''),
+        escapeCsvValue(guest.rsvpStatus || 'Pending'),
+        escapeCsvValue(guest.createdAt || '')
+      ].join(',')))
+    ].join('\n');
+
+    const today = new Date().toISOString().slice(0, 10);
+    downloadTextFile(`guests-export-${today}.csv`, rows, 'text/csv;charset=utf-8;');
+  };
+
+  const handleCsvImport = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file || isImporting) return;
+
+    setIsImporting(true);
+    setFormFeedback(null);
+
+    try {
+      const text = await file.text();
+      const records = parseCsv(text)
+        .map((row) => ({
+          name: row.name || '',
+          family: row.family === 'Yes' ? 'Yes' : 'No',
+          honorific: ['Mr', 'Mrs', 'None'].includes(row.honorific) ? row.honorific : 'None',
+          location: row.location || '',
+          specialMessage: row.specialMessage || '',
+        }))
+        .filter((row) => row.name.trim());
+
+      if (!records.length) {
+        setFormFeedback({ type: 'error', message: 'No valid guest rows found in the CSV file.' });
+        return;
+      }
+
+      const headers = { 'x-auth-token': localStorage.getItem('token') };
+      let imported = 0;
+      let failed = 0;
+      const importedLocations = new Set();
+
+      for (const record of records) {
+        try {
+          await axios.post('/api/guests', record, { headers });
+          imported += 1;
+          if (record.location) importedLocations.add(record.location);
+        } catch (err) {
+          if (err.response?.status === 401) {
+            localStorage.removeItem('token');
+            navigate('/admin/login');
+            return;
+          }
+          failed += 1;
+        }
+      }
+
+      await fetchGuests();
+      if (importedLocations.size) {
+        setLocations((prev) => Array.from(new Set([...prev, ...importedLocations])).sort());
+      } else {
+        await fetchLocations();
+      }
+
+      setFormFeedback({
+        type: failed ? 'error' : 'success',
+        message: failed
+          ? `Imported ${imported} guest(s). ${failed} row(s) could not be imported.`
+          : `Imported ${imported} guest(s) successfully.`
+      });
+    } catch {
+      setFormFeedback({ type: 'error', message: 'Unable to read the CSV file. Please use the provided template.' });
+    } finally {
+      setIsImporting(false);
+    }
+  };
+
   const rsvpBadge = (status) => {
     const s = status || 'Pending';
     const base = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider';
@@ -528,37 +701,6 @@ const GuestList = () => {
 
   return (
     <div className="p-4 sm:p-6 md:p-8 space-y-8 dashboard-noise">
-
-      {/* ── Duplicate modal ── */}
-      <AnimatePresence>
-        {duplicateModal && (
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)' }}
-            onClick={() => setDuplicateModal(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-              onClick={e => e.stopPropagation()}
-              className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 border border-white/70"
-            >
-              <h4 className="text-base font-bold text-gray-900 mb-2">Same person?</h4>
-              <p className="text-sm text-gray-600 mb-4">Found existing guest: <strong>{duplicateModal.existing.name}</strong>. Is this the same person?</p>
-              <div className="flex gap-3">
-                <button onClick={() => setDuplicateModal(null)}
-                  className="flex-1 py-2.5 rounded-xl bg-gray-100 text-gray-700 text-sm font-semibold hover:bg-gray-200 transition-colors">
-                  Yes, same person
-                </button>
-                <button onClick={() => doAddGuest(true)} disabled={isSubmitting}
-                  className="flex-1 py-2.5 rounded-xl bg-yellow-500 text-white text-sm font-semibold hover:bg-yellow-600 transition-colors">
-                  No, add as new
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* ── Add / Edit Form ── */}
       <section>
@@ -576,7 +718,7 @@ const GuestList = () => {
         </div>
 
         <motion.form
-          onSubmit={(e) => { e.preventDefault(); doAddGuest(false); }}
+          onSubmit={(e) => { e.preventDefault(); doAddGuest(); }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 bg-white/50 backdrop-blur-xl border border-white/70 rounded-2xl p-4 sm:p-5 shadow-sm"
         >
           {/* Honorific */}
@@ -640,21 +782,57 @@ const GuestList = () => {
 
       {/* ── Guest List Table ── */}
       <section>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white"
-              style={{ background: 'linear-gradient(135deg, #c8860e, #fde68a)' }}>
-              <Search size={16} />
+        <div className="flex flex-col gap-4 mb-5">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white"
+                style={{ background: 'linear-gradient(135deg, #c8860e, #fde68a)' }}>
+                <Search size={16} />
+              </div>
+              <h3 className="text-base font-bold text-gray-900">Guest List ({guests.length})</h3>
             </div>
-            <h3 className="text-base font-bold text-gray-900">Guest List ({guests.length})</h3>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+              <input
+                type="text" placeholder="Search guests..."
+                value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
+                className="pl-9 pr-4 py-2.5 bg-white/60 border border-white/70 rounded-xl w-full sm:w-56 text-sm text-gray-800 focus:ring-2 focus:ring-yellow-400/30 outline-none shadow-sm"
+              />
+            </div>
           </div>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-            <input
-              type="text" placeholder="Search guests..."
-              value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
-              className="pl-9 pr-4 py-2.5 bg-white/60 border border-white/70 rounded-xl w-full sm:w-56 text-sm text-gray-800 focus:ring-2 focus:ring-yellow-400/30 outline-none shadow-sm"
-            />
+
+          <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={downloadCsvTemplate}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/70 border border-white/80 text-sm font-semibold text-gray-700 hover:bg-white transition-colors shadow-sm"
+            >
+              <Sheet size={16} />
+              Download CSV Template
+            </button>
+            <label className={`inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-semibold shadow-sm transition-colors cursor-pointer ${
+              isImporting
+                ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed'
+                : 'bg-white/70 border-white/80 text-gray-700 hover:bg-white'
+            }`}>
+              <Upload size={16} />
+              {isImporting ? 'Importing CSV...' : 'Import CSV'}
+              <input
+                type="file"
+                accept=".csv,text/csv"
+                onChange={handleCsvImport}
+                className="hidden"
+                disabled={isImporting}
+              />
+            </label>
+            <button
+              type="button"
+              onClick={exportGuestsCsv}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/70 border border-white/80 text-sm font-semibold text-gray-700 hover:bg-white transition-colors shadow-sm"
+            >
+              <Download size={16} />
+              Export Guests CSV
+            </button>
           </div>
         </div>
 
