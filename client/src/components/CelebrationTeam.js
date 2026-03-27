@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useSettings } from '../context/SettingsContext';
 
@@ -8,49 +8,25 @@ const C = {
 };
 
 const MemberCard = ({ member, teamIndex, memberIndex }) => {
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const [hovered, setHovered] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgErr, setImgErr] = useState(false);
-
-  const onMove = useCallback((e) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    setTilt({ x: ((e.clientY - r.top) / r.height - 0.5) * -10, y: ((e.clientX - r.left) / r.width - 0.5) * 10 });
-  }, []);
-
-  const onLeave = useCallback(() => { setTilt({ x: 0, y: 0 }); setHovered(false); }, []);
 
   return (
     <motion.div
       variants={C.item}
-      onMouseMove={onMove}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={onLeave}
       className="flex flex-col items-center p-4 sm:p-5 rounded-2xl relative overflow-hidden cursor-default"
       style={{
-        transform: `perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-        transition: 'transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.35s ease, border-color 0.35s ease',
-        background: hovered ? 'rgba(229,168,48,0.04)' : 'rgba(255,255,255,0.015)',
-        border: `1px solid ${hovered ? 'rgba(229,168,48,0.3)' : 'rgba(229,168,48,0.07)'}`,
-        boxShadow: hovered ? '0 20px 50px rgba(0,0,0,0.4), 0 0 20px rgba(229,168,48,0.08)' : '0 4px 15px rgba(0,0,0,0.2)',
+        background: 'rgba(255,255,255,0.015)',
+        border: '1px solid rgba(229,168,48,0.07)',
+        boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
       }}
     >
       {/* Photo */}
       <div className="relative mb-4">
-        {/* Rotating dashed ring on hover */}
-        {hovered && (
-          <div
-            className="absolute inset-[-5px] rounded-xl border border-dashed border-yellow-400/50"
-            style={{ animation: 'ring-rotate 4s linear infinite' }}
-          />
-        )}
         <div
-          className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-xl overflow-hidden relative"
+          className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-xl overflow-hidden relative"
           style={{
-            border: `2px solid ${hovered ? 'rgba(229,168,48,0.5)' : 'rgba(229,168,48,0.12)'}`,
-            boxShadow: hovered ? '0 0 20px rgba(229,168,48,0.2)' : 'none',
-            transform: hovered ? 'scale(1.06)' : 'scale(1)',
-            transition: 'all 0.4s ease',
+            border: '2px solid rgba(229,168,48,0.12)',
           }}
         >
           {!imgLoaded && !imgErr && (
@@ -80,7 +56,7 @@ const MemberCard = ({ member, teamIndex, memberIndex }) => {
           fontFamily: "'Cormorant Garamond', serif",
           fontWeight: 600,
           fontSize: 'clamp(0.85rem, 2vw, 1rem)',
-          color: hovered ? 'rgba(253,230,138,0.95)' : 'rgba(240,230,208,0.80)',
+          color: 'rgba(240,230,208,0.80)',
         }}
       >
         {member.name}
@@ -93,7 +69,7 @@ const MemberCard = ({ member, teamIndex, memberIndex }) => {
       )}
 
       {member.contact && (
-        <a href={`tel:${member.contact}`} className="mt-1.5 text-yellow-400/60 hover:text-yellow-300 transition-colors"
+        <a href={`tel:${member.contact}`} className="mt-1.5 text-yellow-400/60"
           style={{ fontFamily: "'Cinzel', serif", fontSize: '0.6rem', letterSpacing: '0.1em' }}>
           {member.contact}
         </a>

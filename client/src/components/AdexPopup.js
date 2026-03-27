@@ -33,26 +33,30 @@ const AdexPopup = () => {
   return (
     <AnimatePresence>
       {isVisible && (
-        <>
-          <motion.button
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          className="fixed inset-0 z-[9999]"
+        >
+          <button
             type="button"
             aria-label="Close promotional popup"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[9998] bg-black/55 backdrop-blur-md"
+            className="absolute inset-0 bg-black/55 backdrop-blur-md"
             onClick={() => setIsVisible(false)}
           />
-
           <motion.aside
             initial={{ opacity: 0, y: 32, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.98 }}
             transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-x-4 bottom-4 z-[9999] sm:inset-x-auto sm:right-6 sm:bottom-6 sm:w-[380px]"
+            className="absolute inset-x-4 bottom-4 sm:inset-x-auto sm:right-6 sm:bottom-6 sm:w-[380px]"
           >
-            <div className="panel-luxe relative overflow-hidden rounded-[28px] border border-yellow-400/15 shadow-[0_30px_80px_rgba(0,0,0,0.58)]">
+            <div
+              className="panel-luxe relative overflow-hidden rounded-[28px] border border-yellow-400/15 shadow-[0_30px_80px_rgba(0,0,0,0.58)]"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div
                 className="absolute inset-0 pointer-events-none"
                 style={{
@@ -66,10 +70,10 @@ const AdexPopup = () => {
               <button
                 type="button"
                 onClick={() => setIsVisible(false)}
-                className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/65 transition-colors duration-200 hover:bg-white/10 hover:text-yellow-200"
+                className="absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/30 text-white/75 transition-colors duration-200 hover:bg-white/10 hover:text-yellow-200"
                 aria-label="Close"
               >
-                <X size={16} />
+                <X size={18} />
               </button>
 
               <div className="relative z-10 p-5 sm:p-6">
@@ -154,7 +158,7 @@ const AdexPopup = () => {
               </div>
             </div>
           </motion.aside>
-        </>
+        </motion.div>
       )}
     </AnimatePresence>
   );
