@@ -5,249 +5,193 @@ import { Check, X, Heart, Loader2, Send, Edit2 } from 'lucide-react';
 
 const RSVP = ({ guestId, guest }) => {
   const [status, setStatus] = useState('Pending');
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (guest && guest.rsvpStatus && guest.rsvpStatus !== 'Pending') {
+    if (guest?.rsvpStatus && guest.rsvpStatus !== 'Pending') {
       setStatus(guest.rsvpStatus);
-      setIsSubmitted(true);
+      setSubmitted(true);
     }
   }, [guest]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (status === 'Pending') return;
-    
-    setLoading(true);
-    setError(null);
+    setLoading(true); setError(null);
     try {
-      await axios.post(`/api/rsvp/${guestId}`, {
-        rsvpStatus: status,
-        guestCount: guest?.guestCount || 0
-      });
-      setIsSubmitted(true);
-    } catch (err) {
-      console.error('RSVP Error:', err);
+      await axios.post(`/api/rsvp/${guestId}`, { rsvpStatus: status, guestCount: guest?.guestCount || 0 });
+      setSubmitted(true);
+    } catch {
       setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleEdit = () => {
-    setIsSubmitted(false);
-  };
-
-  if (isSubmitted && !loading) {
-    return (
-      <section className="py-20 sm:py-28 bg-theme-bg relative overflow-hidden">
-        <div className="container mx-auto px-4">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center p-8 sm:p-12 md:p-16 border border-theme-accent/20 rounded-3xl max-w-2xl mx-auto shadow-[0_20px_50px_rgba(0,0,0,0.05)] bg-theme-secondary relative z-10"
-          >
-            <motion.div 
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", damping: 12, delay: 0.2 }}
-              className="w-24 h-24 bg-theme-primary/5 rounded-full flex items-center justify-center mx-auto mb-8"
-            >
-              <Heart className="text-theme-title w-12 h-12" fill="currentColor" />
-            </motion.div>
-            
-            <h3 className="text-3xl sm:text-4xl font-serif text-theme-text mb-6">Thank You!</h3>
-            
-            <p className="text-lg text-theme-text/80 font-light leading-relaxed mb-10 italic">
-              {status === 'Attending' 
-                ? "We are delighted to know you'll be joining us! Your presence will make our celebration truly special and memorable."
-                : "We'll miss you at the celebration, but we truly appreciate you letting us know. Your blessings and well-wishes mean a lot to us."}
-            </p>
-
-            <div className="flex flex-col items-center gap-6">
-              <div className="h-[1px] w-32 bg-gradient-to-r from-transparent via-theme-accent/40 to-transparent" />
-              
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleEdit}
-                className="flex items-center gap-2 text-theme-accent hover:text-theme-title transition-colors font-serif tracking-widest text-sm uppercase"
-              >
-                <Edit2 size={16} />
-                Update Response
-              </motion.button>
-            </div>
-          </motion.div>
+  const sharedSection = (children) => (
+    <section
+      className="section-shell relative py-20 sm:py-28 overflow-hidden"
+      style={{ background: 'linear-gradient(180deg, var(--bg-0) 0%, var(--bg-2) 50%, var(--bg-0) 100%)' }}
+    >
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full pointer-events-none"
+        style={{ background: 'radial-gradient(circle, rgba(229,168,48,0.04) 0%, transparent 70%)', animation: 'orb-pulse 12s ease-in-out infinite' }} />
+      <div className="section-inner relative z-10 max-w-3xl">
+        {/* Title */}
+        <div className="text-center mb-12">
+          <div className="mb-5 inline-flex eyebrow-chip">
+            <p className="section-label">Join the Celebration</p>
+          </div>
+          <h2 className="gold-text text-glow-gold italic"
+            style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: 'clamp(2.5rem, 6vw, 4rem)' }}>
+            RSVP
+          </h2>
+          <div className="gold-divider mx-auto mt-4" style={{ width: '80px', opacity: 0.5 }} />
         </div>
-        
-        {/* Background Accents */}
-        <div className="absolute top-1/2 left-0 -translate-y-1/2 w-64 h-64 bg-theme-accent/5 rounded-full blur-3xl -z-10" />
-        <div className="absolute bottom-0 right-0 w-80 h-80 bg-theme-primary/5 rounded-full blur-3xl -z-10" />
-      </section>
+        {children}
+      </div>
+    </section>
+  );
+
+  if (submitted && !loading) {
+    return sharedSection(
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="panel-luxe p-8 sm:p-12 text-center"
+      >
+        <motion.div
+          initial={{ scale: 0 }} animate={{ scale: 1 }}
+          transition={{ type: 'spring', damping: 12, delay: 0.2 }}
+          className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 glow-gold"
+          style={{ background: 'linear-gradient(135deg, rgba(229,168,48,0.15), rgba(200,134,14,0.08))', border: '1px solid rgba(229,168,48,0.3)' }}
+        >
+          <Heart className="text-yellow-400 w-9 h-9" fill="currentColor" />
+        </motion.div>
+        <h3 className="text-yellow-100/90 italic mb-4"
+          style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: 'clamp(1.6rem, 4vw, 2.5rem)' }}>
+          Thank You!
+        </h3>
+        <p className="text-yellow-100/55 italic leading-relaxed mb-8"
+          style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(1rem, 2vw, 1.2rem)' }}>
+          {status === 'Attending'
+            ? 'We are overjoyed you will be joining us. Your presence will make this celebration truly unforgettable.'
+            : 'We\'ll miss you dearly. Your blessings and warm wishes mean the world to us.'}
+        </p>
+        <div className="gold-divider mx-auto mb-6" style={{ width: '60px', opacity: 0.4 }} />
+        <button
+          onClick={() => setSubmitted(false)}
+          className="section-label flex items-center gap-2 mx-auto hover:text-yellow-300 transition-colors"
+        >
+          <Edit2 size={14} /> Update Response
+        </button>
+      </motion.div>
     );
   }
 
-  return (
-    <section className="py-20 sm:py-28 bg-theme-secondary relative overflow-hidden">
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/vintage-speckle.png')" }} />
-      
-      <div className="container mx-auto px-4 sm:px-6 relative z-10">
-        <div className="max-w-3xl mx-auto text-center mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <span className="text-theme-accent uppercase tracking-[0.5em] text-xs font-semibold mb-4 block">
-              Join the Celebration
-            </span>
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-serif text-theme-title mb-6">
-              RSVP
-            </h2>
-            <div className="h-[2px] w-24 bg-gradient-to-r from-transparent via-theme-accent to-transparent mx-auto" />
-          </motion.div>
+  return sharedSection(
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="panel-luxe p-8 sm:p-12"
+    >
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Guest name */}
+        <div className="text-center">
+          <p className="section-label mb-2 text-[9px]">Responding for</p>
+          <h4 className="text-yellow-100/90 italic"
+            style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: 'clamp(1.5rem, 4vw, 2.2rem)' }}>
+            {guest?.name || 'Our Valued Guest'}
+          </h4>
         </div>
 
-        <motion.div 
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="max-w-2xl mx-auto bg-white/5 backdrop-blur-sm p-8 sm:p-12 md:p-16 shadow-[0_40px_100px_rgba(0,0,0,0.08)] rounded-2xl border border-theme-accent/10 relative"
-        >
-          <form onSubmit={handleSubmit} className="space-y-12">
-            <div className="text-center">
-              <p className="text-theme-accent/60 font-serif italic mb-2 tracking-widest">Responding for</p>
-              <h4 className="text-3xl sm:text-4xl font-serif text-theme-title drop-shadow-sm">
-                {guest?.name || 'Our Valued Guest'}
-              </h4>
-              <div className="mt-4 flex justify-center gap-2">
-                {[1, 2, 3].map(i => (
-                  <div key={i} className="w-1.5 h-1.5 rounded-full bg-theme-accent/20" />
-                ))}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {/* Choice buttons */}
+        <div className="grid grid-cols-2 gap-4">
+          {[
+            { val: 'Attending', icon: <Check className="w-6 h-6" />, label: 'Joyfully\nAttend' },
+            { val: 'Not Attending', icon: <X className="w-6 h-6" />, label: 'Regretfully\nDecline' },
+          ].map(({ val, icon, label }) => {
+            const active = status === val;
+            return (
               <motion.button
+                key={val}
                 type="button"
                 whileHover={{ y: -4 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setStatus('Attending')}
-                className={`relative flex flex-col items-center justify-center p-8 rounded-2xl border-2 transition-all duration-500 overflow-hidden group ${
-                  status === 'Attending' 
-                  ? 'border-theme-primary bg-theme-primary/5 text-theme-title shadow-lg shadow-theme-primary/10' 
-                  : 'border-white/10 hover:border-theme-accent/40 text-theme-text/40 bg-white/5'
-                }`}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => setStatus(val)}
+                className="relative flex flex-col items-center justify-center p-6 sm:p-8 rounded-[1.35rem] transition-all duration-400 overflow-hidden"
+                style={{
+                  background: active ? 'linear-gradient(145deg, rgba(229,168,48,0.12), rgba(118,10,36,0.12))' : 'rgba(255,255,255,0.02)',
+                  border: `1px solid ${active ? 'rgba(229,168,48,0.34)' : 'rgba(229,168,48,0.08)'}`,
+                  boxShadow: active ? '0 20px 44px rgba(0,0,0,0.24), 0 0 26px rgba(229,168,48,0.08)' : 'none',
+                }}
               >
-                <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-4 transition-colors duration-500 ${
-                  status === 'Attending' ? 'bg-theme-primary text-theme-text' : 'bg-white/5 border border-white/10 text-theme-text/20'
-                }`}>
-                  <Check className="w-7 h-7" />
+                <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3 transition-all duration-400"
+                  style={{
+                    background: active ? 'linear-gradient(135deg, #c8860e, #fde68a)' : 'rgba(255,255,255,0.04)',
+                    color: active ? '#050508' : 'rgba(229,168,48,0.4)',
+                  }}>
+                  {icon}
                 </div>
-                <span className="font-serif tracking-[0.2em] uppercase text-xs font-bold">Joyfully Attend</span>
-                {status === 'Attending' && (
-                  <motion.div layoutId="status-glow" className="absolute inset-0 bg-theme-accent/5 pointer-events-none" />
-                )}
+                <span className="section-label text-[8px] sm:text-[9px] text-center whitespace-pre-line leading-[1.8]">
+                  {label}
+                </span>
               </motion.button>
+            );
+          })}
+        </div>
 
-              <motion.button
-                type="button"
-                whileHover={{ y: -4 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setStatus('Not Attending')}
-                className={`relative flex flex-col items-center justify-center p-8 rounded-2xl border-2 transition-all duration-500 overflow-hidden group ${
-                  status === 'Not Attending' 
-                  ? 'border-gray-400 bg-gray-50/10 text-theme-text/80 shadow-lg shadow-black/5' 
-                  : 'border-white/10 hover:border-theme-accent/40 text-theme-text/40 bg-white/5'
-                }`}
-              >
-                <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-4 transition-colors duration-500 ${
-                  status === 'Not Attending' ? 'bg-gray-500 text-white' : 'bg-white/5 border border-white/10 text-theme-text/20'
-                }`}>
-                  <X className="w-7 h-7" />
-                </div>
-                <span className="font-serif tracking-[0.2em] uppercase text-xs font-bold">Regretfully Decline</span>
-              </motion.button>
-            </div>
-
-            <AnimatePresence mode="wait">
-              {error && (
-                <motion.p 
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="text-red-500 text-center text-sm font-light italic"
-                >
-                  {error}
-                </motion.p>
-              )}
-            </AnimatePresence>
-
-            <motion.button
-              type="submit"
-              disabled={loading || status === 'Pending'}
-              whileHover={status !== 'Pending' ? { scale: 1.02 } : {}}
-              whileTap={status !== 'Pending' ? { scale: 0.98 } : {}}
-              className={`w-full py-5 rounded-xl font-serif tracking-[0.3em] uppercase text-sm flex items-center justify-center gap-3 transition-all duration-500 relative overflow-hidden group ${
-                status === 'Pending'
-                ? 'bg-white/5 text-theme-text/20 cursor-not-allowed border border-white/10'
-                : 'bg-theme-primary text-theme-text shadow-2xl shadow-theme-primary/30'
-              }`}
+        {/* Error */}
+        <AnimatePresence>
+          {error && (
+            <motion.p
+              initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+              className="text-red-400 text-center text-sm italic"
             >
-              {loading ? (
-                <Loader2 className="animate-spin w-5 h-5" />
-              ) : (
-                <>
-                  <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />
-                  <span>{guest?.rsvpStatus && guest.rsvpStatus !== 'Pending' ? 'Update Response' : 'Confirm RSVP'}</span>
-                </>
-              )}
-              
-              {status !== 'Pending' && (
-                <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-              )}
-            </motion.button>
-          </form>
+              {error}
+            </motion.p>
+          )}
+        </AnimatePresence>
 
-          {/* RSVP via Call Section */}
-          <motion.div 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.5 }}
-            className="mt-12 pt-10 border-t border-white/10 text-center"
-          >
-            <p className="text-theme-text/40 font-serif italic text-sm mb-6 uppercase tracking-widest">
-              Need assistance? Reach out to us
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12">
-              <a 
-                href={`tel:${7355259901}`} 
-                className="group flex flex-col items-center gap-2"
-              >
-                <span className="text-xs text-theme-accent uppercase tracking-[0.2em] font-bold group-hover:text-theme-title transition-colors">Call For RSVP</span>
-                <span className="text-xl font-serif text-theme-title border-b border-transparent group-hover:border-theme-primary/30 transition-all tracking-wider">
-                  +91 9198065015
+        {/* Submit */}
+        <motion.button
+          type="submit"
+          disabled={loading || status === 'Pending'}
+          whileHover={status !== 'Pending' ? { scale: 1.02 } : {}}
+          whileTap={status !== 'Pending' ? { scale: 0.98 } : {}}
+          className={`w-full py-4 rounded-full flex items-center justify-center gap-3 transition-all duration-400 ${
+            status === 'Pending'
+              ? 'opacity-30 cursor-not-allowed section-label'
+              : 'btn-luxury ring-glow'
+          }`}
+        >
+          {loading ? <Loader2 className="animate-spin w-5 h-5" /> : (
+            <>
+              <Send size={16} className={status !== 'Pending' ? 'group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform' : ''} />
+              <span>{guest?.rsvpStatus && guest.rsvpStatus !== 'Pending' ? 'Update Response' : 'Confirm RSVP'}</span>
+            </>
+          )}
+        </motion.button>
+
+        {/* Phone contacts */}
+        <div className="pt-6 border-t border-yellow-400/[0.06] text-center">
+          <p className="section-label mb-5 text-[9px]">Need assistance? Call us</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-10">
+            {[{ n: '9198065015', label: 'Primary' }, { n: '9001787742', label: 'Alternative' }].map(({ n, label }) => (
+              <a key={n} href={`tel:${n}`} className="group flex flex-col items-center gap-1">
+                <span className="section-label text-[8px] group-hover:text-yellow-300 transition-colors">{label}</span>
+                <span className="text-yellow-400/70 group-hover:text-yellow-300 transition-colors tracking-widest"
+                  style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem' }}>
+                  +91 {n}
                 </span>
               </a>
-              <div className="hidden sm:block w-[1px] h-10 bg-white/10" />
-              <a 
-                href={`tel:${8953731369}`} 
-                className="group flex flex-col items-center gap-2"
-              >
-                <span className="text-xs text-theme-accent uppercase tracking-[0.2em] font-bold group-hover:text-theme-title transition-colors">Alternative Contact</span>
-                <span className="text-xl font-serif text-theme-title border-b border-transparent group-hover:border-theme-primary/30 transition-all tracking-wider">
-                  +91 9001787742
-                </span>
-              </a>
-            </div>
-          </motion.div>
-        </motion.div>
-      </div>
-
-    </section>
+            ))}
+          </div>
+        </div>
+      </form>
+    </motion.div>
   );
 };
 

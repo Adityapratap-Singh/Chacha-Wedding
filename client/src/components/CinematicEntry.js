@@ -1,70 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
-import GoldDust from './GoldDust';
-import AnimatedText from './AnimatedText';
 import GaneshaIntro from './GaneshaIntro';
 
-const Mandala = ({ className, analyser }) => {
-  const [scale, setScale] = useState(1);
-  const [opacity, setOpacity] = useState(0.05);
-
-  useEffect(() => {
-    if (!analyser) return;
-
-    const dataArray = new Uint8Array(analyser.frequencyBinCount);
-    let animationFrameId;
-
-    const animate = () => {
-      animationFrameId = requestAnimationFrame(animate);
-      analyser.getByteFrequencyData(dataArray);
-
-      const bass = dataArray.slice(0, 10).reduce((a, b) => a + b) / 10;
-      const normalizedBass = bass / 255;
-
-      const newScale = 1 + normalizedBass * 0.1;
-      const newOpacity = 0.05 + normalizedBass * 0.05;
-
-      setScale(newScale);
-      setOpacity(newOpacity);
-    };
-
-    animate();
-
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [analyser]);
-  return (
-    <svg className={className} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ transform: `scale(${scale})`, opacity }}>
-      <circle cx="100" cy="100" r="80" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4 4" />
-      <circle cx="100" cy="100" r="60" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" />
-      <path d="M100 20 L110 40 L130 40 L120 60 L130 80 L110 80 L100 100 L90 80 L70 80 L80 60 L70 40 L90 40 Z" stroke="currentColor" strokeWidth="0.5" />
-      <path d="M100 10 L120 30 L150 30 L140 60 L160 90 L130 90 L120 120 L100 100 L80 120 L70 90 L40 90 L60 60 L50 30 L80 30 Z" stroke="currentColor" strokeWidth="0.3" opacity="0.5" />
-      <circle cx="100" cy="100" r="2" fill="currentColor" />
-    </svg>
-  );
-};
-
-const ParticleBurst = ({ position }) => {
-  const particles = Array.from({ length: 50 });
+/* ── Particle field ── */
+const Particles = ({ count = 60 }) => {
+  const particles = Array.from({ length: count }, (_, i) => ({
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    size: 0.8 + Math.random() * 2.2,
+    delay: Math.random() * 6,
+    dur: 3 + Math.random() * 5,
+    opacity: 0.1 + Math.random() * 0.6,
+  }));
 
   return (
-    <div className="absolute inset-0 pointer-events-none z-50" style={{ left: position.x, top: position.y }}>
-      {particles.map((_, i) => (
-        <motion.div
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {particles.map((p, i) => (
+        <div
           key={i}
-          className="absolute w-1 h-1 bg-gold-500 rounded-full"
-          style={{ width: `${2 + Math.random() * 2}px`, height: `${2 + Math.random() * 2}px` }}
-          initial={{ scale: 0, opacity: 1 }}
-          animate={{
-            x: (Math.random() - 0.5) * 600,
-            y: (Math.random() - 0.5) * 600,
-            scale: [1, 0],
-            opacity: [1, 0],
-          }}
-          transition={{
-            delay: Math.random() * 0.2,
-            duration: 1 + Math.random(),
-            ease: "easeOut",
+          className="absolute rounded-full"
+          style={{
+            left: `${p.x}%`,
+            top: `${p.y}%`,
+            width: `${p.size}px`,
+            height: `${p.size}px`,
+            background: i % 4 === 0
+              ? `rgba(253, 230, 138, ${p.opacity})`
+              : i % 4 === 1
+                ? `rgba(229, 168, 48, ${p.opacity * 0.7})`
+                : i % 4 === 2
+                  ? `rgba(255, 255, 220, ${p.opacity * 0.5})`
+                  : `rgba(200, 134, 14, ${p.opacity * 0.4})`,
+            animation: `twinkle ${p.dur}s ease-in-out ${p.delay}s infinite`,
+            filter: p.size > 1.5 ? 'blur(0.5px)' : 'none',
           }}
         />
       ))}
@@ -72,228 +41,234 @@ const ParticleBurst = ({ position }) => {
   );
 };
 
+/* ── Gold burst on click ── */
+const GoldBurst = ({ position }) => (
+  <div className="absolute inset-0 pointer-events-none z-50" style={{ left: position.x, top: position.y }}>
+    {Array.from({ length: 70 }).map((_, i) => (
+      <motion.div
+        key={i}
+        className="absolute rounded-full"
+        style={{
+          width: `${1.5 + Math.random() * 3}px`,
+          height: `${1.5 + Math.random() * 3}px`,
+          background: ['#fde68a', '#e5a830', '#fff8e7', '#c8860e'][i % 4],
+        }}
+        initial={{ scale: 0, opacity: 1 }}
+        animate={{ x: (Math.random() - 0.5) * 600, y: (Math.random() - 0.5) * 600, scale: [1, 0], opacity: [1, 0] }}
+        transition={{ delay: Math.random() * 0.1, duration: 1 + Math.random() * 0.8, ease: 'easeOut' }}
+      />
+    ))}
+  </div>
+);
+
+/* ── Cinematic horizontal lines ── */
+const ScanLines = () => (
+  <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+    {Array.from({ length: 3 }).map((_, i) => (
+      <div
+        key={i}
+        className="absolute w-full"
+        style={{
+          height: '1px',
+          background: `linear-gradient(90deg, transparent, rgba(229,168,48,${0.04 + i * 0.02}), transparent)`,
+          top: `${25 + i * 25}%`,
+          animation: `scanline ${8 + i * 3}s linear ${i * 2}s infinite`,
+          opacity: 0.3,
+        }}
+      />
+    ))}
+  </div>
+);
+
 const CinematicEntry = ({ onFinish }) => {
   const [guest, setGuest] = useState(null);
-  const [showButton, setShowButton] = useState(false);
   const [showGanesha, setShowGanesha] = useState(true);
-  const [parallaxOffset, setParallaxOffset] = useState({ x: 0, y: 0 });
-  const [showBurst, setShowBurst] = useState(false);
-  const [burstPosition, setBurstPosition] = useState({ x: 0, y: 0 });
+  const [showButton, setShowButton] = useState(false);
+  const [parallax, setParallax]  = useState({ x: 0, y: 0 });
+  const [burst, setBurst]        = useState(null);
+  const rafRef = useRef(null);
 
   useEffect(() => {
-    const fetchGuest = async () => {
-      const path = window.location.pathname;
-      const match = path.match(/\/invite\/(.+)/);
-      if (match && match[1]) {
-        try {
-          const res = await axios.get(`/api/guests/${match[1]}`);
-          setGuest(res.data);
-        } catch (err) {
-          console.error('Error fetching guest for loader:', err);
-        }
+    (async () => {
+      const m = window.location.pathname.match(/\/invite\/(.+)/);
+      if (m) {
+        try { const r = await axios.get(`/api/guests/${m[1]}`); setGuest(r.data); } catch {}
       }
-    };
-    fetchGuest();
-
-    const ganeshaTimer = setTimeout(() => {
-      setShowGanesha(false);
-    }, 6000);
-
-    const buttonTimer = setTimeout(() => {
-      setShowButton(true);
-    }, 10500); // 6000 (ganesha) + 4500 (original delay)
-
-    return () => {
-      clearTimeout(ganeshaTimer);
-      clearTimeout(buttonTimer);
-    };
+    })();
+    const t1 = setTimeout(() => setShowGanesha(false), 5500);
+    const t2 = setTimeout(() => setShowButton(true), 9800);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
-  const coupleNames = {
-    bride: "Renu Singh",
-    groom: "Pushpendra Kumar Singh"
+  const handleMouse = (e) => {
+    cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      setParallax({
+        x: (e.clientX / window.innerWidth - 0.5) * 22,
+        y: (e.clientY / window.innerHeight - 0.5) * 22,
+      });
+    });
   };
 
-  const welcomeText = guest 
-    ? `Welcome <u>${guest.honorific !== 'None' ? guest.honorific : ''}</u> <u>${guest.name}</u> TO THE WEDDING OF`
-    : "Welcome to the Wedding of";
-
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.6,
-        ease: [0.34, 1.56, 0.64, 1],
-      },
-    },
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 30 },
-    show: { 
-      opacity: 1, 
-      y: 0, 
-      transition: { 
-        duration: 1.8, 
-        ease: [0.34, 1.56, 0.64, 1]
-      } 
-    },
-  };
+  const groom = 'Pushpendra Kumar Singh';
+  const bride = 'Rinu Singh';
+  const welcome = guest
+    ? `Your exclusive invitation, ${guest.honorific !== 'None' ? guest.honorific + ' ' : ''}${guest.name}`
+    : 'You are cordially invited to witness';
 
   return (
-    <div 
-      className="fixed inset-0 bg-royal-maroon flex items-center justify-center z-50 overflow-hidden"
-      onMouseMove={(e) => {
-        const x = (e.clientX / window.innerWidth - 0.5) * 15;
-        const y = (e.clientY / window.innerHeight - 0.5) * 15;
-        setParallaxOffset({ x, y });
-      }}
+    <div
+      className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center animated-bg"
+      onMouseMove={handleMouse}
     >
       <AnimatePresence mode="wait">
         {showGanesha ? (
           <GaneshaIntro key="ganesha" />
         ) : (
           <motion.div
-            key="cinematic"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.9, ease: [0.34, 1.56, 0.64, 1] }}
-            className="w-full h-full flex items-center justify-center"
+            key="entry"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 1.06, filter: 'blur(18px)' }}
+            transition={{ duration: 1 }}
+            className="w-full h-full relative flex items-center justify-center"
           >
-            <GoldDust count={60} />
+            <Particles count={70} />
+            <ScanLines />
 
-            {showBurst && <ParticleBurst position={burstPosition} />}
-            {showBurst && (
-              <motion.div
-                className="absolute inset-0 bg-gold-500 z-50"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0.5, 0], transition: { duration: 0.7 } }}
-              />
-            )}
-            
-            {/* Background Mandala - smaller on mobile */}
+            {/* Huge ambient orbs */}
+            <div className="absolute top-[-20%] left-[-15%] w-[600px] h-[600px] rounded-full pointer-events-none"
+              style={{ background: 'radial-gradient(circle, rgba(229,168,48,0.07) 0%, transparent 65%)', animation: 'orb-pulse 8s ease-in-out infinite' }} />
+            <div className="absolute bottom-[-20%] right-[-15%] w-[500px] h-[500px] rounded-full pointer-events-none"
+              style={{ background: 'radial-gradient(circle, rgba(200,134,14,0.05) 0%, transparent 65%)', animation: 'orb-pulse 11s ease-in-out 3s infinite' }} />
+
+            {/* Vignette overlay */}
+            <div className="absolute inset-0 pointer-events-none z-10"
+              style={{ background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.75) 100%)' }} />
+
+            {/* Burst */}
+            {burst && <GoldBurst position={burst} />}
+
+            {/* Main content */}
             <motion.div
-              className="absolute w-[400px] h-[400px] sm:w-[600px] sm:h-[600px] md:w-[800px] md:h-[800px] text-gold-500 opacity-[0.08]"
-              style={{ 
-                translateX: parallaxOffset.x * 2, 
-                translateY: parallaxOffset.y * 2,
-                filter: "drop-shadow(0 0 30px rgba(255, 215, 0, 0.1))"
-              }}
-              animate={{ 
-                rotate: 360,
-                scale: [1, 1.08, 1],
-              }}
-              transition={{ 
-                rotate: { duration: 120, repeat: Infinity, ease: "linear" },
-                scale: { duration: 25, repeat: Infinity, ease: "easeInOut" }
-              }}
+              className="relative z-20 text-center px-6 max-w-[92vw] mx-auto"
+              style={{ translateX: parallax.x, translateY: parallax.y, transition: 'translate 0.08s linear' }}
             >
-              <Mandala className="w-full h-full" analyser={null} />
-            </motion.div>
-
-            {/* Cinematic Overlays */}
-            <div className="absolute inset-0 z-1 pointer-events-none">
-              <div className="absolute inset-0 bg-noise opacity-[0.03]" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/80" />
-            </div>
-
-            <motion.div 
-              className="absolute inset-0 opacity-10"
-              initial={{ scale: 1.3, opacity: 0 }}
-              animate={{ scale: 1, opacity: 0.12 }}
-              transition={{ duration: 12, ease: "easeInOut" }}
-              style={{
-                background: "url('https://www.transparenttextures.com/patterns/black-paper.png')"
-              }}
-            />
-            
-            <motion.div
-              variants={container}
-              initial="hidden"
-              animate="show"
-              exit={{ opacity: 0, scale: 1.2, filter: "blur(20px) brightness(2)" }}
-              transition={{ duration: 2.2, ease: [0.34, 1.56, 0.64, 1] }}
-              className="text-center px-4 sm:px-6 relative z-10 w-full max-w-[95vw]"
-              style={{
-                translateX: parallaxOffset.x,
-                translateY: parallaxOffset.y
-              }}
-            >
-              <div className="flex flex-col items-center">
-                <AnimatedText 
-                  text={welcomeText}
-                  className="text-sm sm:text-base md:text-lg lg:text-xl font-serif tracking-[0.15em] sm:tracking-[0.2em] uppercase text-white/60 mb-8 sm:mb-12"
-                  delay={0.5}
-                />
-                <div className="flex flex-col items-center justify-center gap-y-4">
-                  <AnimatedText 
-                    text={coupleNames.groom} 
-                    className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-serif tracking-widest gold-gradient-text gold-glow italic px-2 sm:px-4 drop-shadow-[0_0_20px_rgba(255,215,0,0.3)]"
-                    delay={1.5}
-                  />
-                  <motion.span 
-                    variants={item}
-                    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif gold-gradient-text gold-glow italic"
-                  >
-                    &
-                  </motion.span>
-                  <AnimatedText 
-                    text={coupleNames.bride} 
-                    className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-serif tracking-widest gold-gradient-text gold-glow italic px-2 sm:px-4 drop-shadow-[0_0_20px_rgba(255,215,0,0.3)]"
-                    delay={2.5}
-                  />
-                </div>
-              </div>
-              
-              <motion.div
-                initial={{ width: 0, opacity: 0 }}
-                animate={{ width: "100%", opacity: 1 }}
-                transition={{ delay: 3.2, duration: 2.2, ease: "easeInOut" }}
-                className="h-[2px] bg-gradient-to-r from-transparent via-gold-500 to-transparent mt-12 mx-auto max-w-lg shadow-[0_0_15px_rgba(255,215,0,0.4)]"
-              />
-              
-              <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 4.7, duration: 1.4, ease: [0.34, 1.56, 0.64, 1] }}
-                className="mt-10"
+              {/* Welcome line */}
+              <motion.p
+                initial={{ opacity: 0, y: -20, letterSpacing: '0.6em' }}
+                animate={{ opacity: 1, y: 0, letterSpacing: '0.22em' }}
+                transition={{ delay: 0.6, duration: 1.4 }}
+                className="section-label mb-8 sm:mb-10 block text-[10px] sm:text-xs"
               >
-                <p className="text-white/40 text-[10px] md:text-xs tracking-[0.6em] uppercase font-light drop-shadow-[0_0_10px_rgba(255,215,0,0.1)]">
-                  An Unforgettable Journey Begins
-                </p>
-                <div className="mt-6 flex items-center justify-center gap-4">
-                  <div className="h-[1px] w-8 bg-gold-500/20" />
-                  <span className="text-gold-500/60 font-serif text-lg tracking-widest uppercase drop-shadow-[0_0_12px_rgba(255,215,0,0.2)]">12.05.2026</span>
-                  <div className="h-[1px] w-8 bg-gold-500/20" />
-                </div>
+                {welcome}
+              </motion.p>
+
+              {/* Horizontal gold rule */}
+              <motion.div
+                initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
+                transition={{ delay: 1.2, duration: 1.2 }}
+                className="gold-divider mx-auto mb-8 sm:mb-10"
+                style={{ width: '120px', transformOrigin: 'center' }}
+              />
+
+              {/* Groom name */}
+              <motion.h1
+                initial={{ opacity: 0, y: 40, filter: 'blur(8px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0)' }}
+                transition={{ delay: 1.5, duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+                className="gold-text-animate text-glow-gold block"
+                style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontWeight: 600,
+                  fontStyle: 'italic',
+                  fontSize: 'clamp(2.2rem, 7vw, 6rem)',
+                  lineHeight: 1.1,
+                  letterSpacing: '0.04em',
+                }}
+              >
+                {groom}
+              </motion.h1>
+
+              {/* Ampersand */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 2.2, duration: 0.8, type: 'spring', damping: 14 }}
+                className="my-3 sm:my-4"
+              >
+                <span
+                  className="gold-text block leading-none"
+                  style={{ fontFamily: "'Tangerine', cursive", fontWeight: 700, fontSize: 'clamp(3rem, 8vw, 6rem)' }}
+                >
+                  &amp;
+                </span>
               </motion.div>
 
+              {/* Bride name */}
+              <motion.h1
+                initial={{ opacity: 0, y: 40, filter: 'blur(8px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0)' }}
+                transition={{ delay: 2.6, duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+                className="gold-text-animate text-glow-gold block"
+                style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontWeight: 600,
+                  fontStyle: 'italic',
+                  fontSize: 'clamp(2.2rem, 7vw, 6rem)',
+                  lineHeight: 1.1,
+                  letterSpacing: '0.04em',
+                }}
+              >
+                {bride}
+              </motion.h1>
+
+              {/* Gold rule */}
+              <motion.div
+                initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
+                transition={{ delay: 3.5, duration: 1.5 }}
+                className="gold-divider mx-auto mt-8 sm:mt-10 mb-6"
+                style={{ width: '180px', transformOrigin: 'center' }}
+              />
+
+              {/* Date */}
+              <motion.p
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                transition={{ delay: 4.2, duration: 1 }}
+                style={{ fontFamily: "'Cinzel', serif", letterSpacing: '0.4em', fontSize: '0.7rem', color: 'rgba(229,168,48,0.65)' }}
+                className="uppercase mb-1"
+              >
+                12 · May · 2026
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                transition={{ delay: 4.5, duration: 1 }}
+                style={{ fontFamily: "'Inter', sans-serif", fontWeight: 200, letterSpacing: '0.25em', fontSize: '0.55rem', color: 'rgba(240,230,208,0.35)' }}
+                className="uppercase"
+              >
+                An Unforgettable Celebration
+              </motion.p>
+
+              {/* Begin button */}
               <AnimatePresence>
                 {showButton && (
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.85, y: 20 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ delay: 5.2, duration: 1.2, ease: [0.34, 1.56, 0.64, 1] }}
-                    className="mt-12"
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+                    className="mt-12 sm:mt-14"
                   >
                     <motion.button
+                      whileHover={{ scale: 1.04, y: -3 }}
+                      whileTap={{ scale: 0.97 }}
                       onClick={(e) => {
-                        const rect = e.currentTarget.getBoundingClientRect();
-                        setBurstPosition({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 });
-                        setShowBurst(true);
-                        
-                        // Wait for burst and flash before calling onFinish
-                        setTimeout(() => onFinish(), 800);
+                        const r = e.currentTarget.getBoundingClientRect();
+                        setBurst({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
+                        setTimeout(onFinish, 900);
                       }}
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="group relative px-10 sm:px-14 py-4 sm:py-5 bg-gradient-to-r from-gold-600 via-gold-400 to-gold-600 text-royal-maroon font-serif tracking-[0.4em] sm:tracking-[0.5em] uppercase text-[10px] sm:text-xs font-bold overflow-hidden transition-all duration-500 rounded-full shadow-[0_10px_30px_rgba(218,165,32,0.3)] hover:shadow-[0_15px_40px_rgba(218,165,32,0.5)] border border-gold-300/50"
+                      className="btn-luxury relative px-12 sm:px-16 py-4 sm:py-5 rounded-full ring-glow"
                     >
-                      <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
-                      <span className="relative z-10 drop-shadow-sm">Begin Experience</span>
+                      Begin Your Invitation
                     </motion.button>
                   </motion.div>
                 )}

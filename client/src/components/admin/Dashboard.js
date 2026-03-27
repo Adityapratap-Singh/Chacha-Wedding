@@ -1,24 +1,35 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Users, UserCheck, UserMinus, LayoutDashboard, LogOut, Menu, X, MapPin, CheckCircle, XCircle, Clock, Settings, Image } from 'lucide-react';
+import {
+  Users, UserCheck, UserMinus, LayoutDashboard, LogOut,
+  Menu, X, MapPin, CheckCircle, XCircle, Clock, Settings, Image
+} from 'lucide-react';
 import axios from 'axios';
 import { useSocket } from '../../context/SocketContext';
 
 const formatDate = (d) => {
-  if (!d) return '-';
+  if (!d) return '—';
   return new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+};
+
+/* ── Design tokens ── */
+const G = {
+  sidebar: 'rgba(5,5,8,0.97)',
+  card: 'rgba(255,255,255,0.9)',
+  border: 'rgba(229,168,48,0.15)',
+  borderHover: 'rgba(229,168,48,0.35)',
+  gold: '#e5a830',
+  gold200: '#fde68a',
+  gold800: '#c8860e',
+  text: '#111827',
+  textSub: '#6b7280',
+  mainBg: '#f6f0ea',
 };
 
 const Dashboard = () => {
   const socket = useSocket();
-  const [stats, setStats] = useState({
-    totalGuests: 0,
-    attending: 0,
-    notAttending: 0,
-    pending: 0
-  });
+  const [stats, setStats] = useState({ totalGuests: 0, attending: 0, notAttending: 0, pending: 0 });
   const [guests, setGuests] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -26,83 +37,47 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const pathname = location.pathname.replace(/\/$/, '');
 
-  const clamp01 = (n) => Math.max(0, Math.min(1, n));
-
   const fetchData = useCallback(async () => {
     try {
-      const res = await axios.get('/api/guests', {
-        headers: { 'x-auth-token': localStorage.getItem('token') },
-      });
+      const res = await axios.get('/api/guests', { headers: { 'x-auth-token': localStorage.getItem('token') } });
       const data = Array.isArray(res.data) ? res.data : [];
       setGuests(data);
       setStats({
         totalGuests: data.length,
-        attending: data.filter((g) => g.rsvpStatus === 'Attending').length,
-        notAttending: data.filter((g) => g.rsvpStatus === 'Not Attending').length,
-        pending: data.filter((g) => g.rsvpStatus === 'Pending' || !g.rsvpStatus).length
+        attending: data.filter(g => g.rsvpStatus === 'Attending').length,
+        notAttending: data.filter(g => g.rsvpStatus === 'Not Attending').length,
+        pending: data.filter(g => g.rsvpStatus === 'Pending' || !g.rsvpStatus).length,
       });
     } catch (err) {
-      if (err.response && err.response.status === 401) {
-        localStorage.removeItem('token');
-        navigate('/admin/login');
-      }
+      if (err.response?.status === 401) { localStorage.removeItem('token'); navigate('/admin/login'); }
     }
   }, [navigate]);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
+  useEffect(() => { fetchData(); }, [fetchData]);
   useEffect(() => {
     if (!socket) return;
-    const handler = () => fetchData();
-    socket.on('guests:updated', handler);
-    return () => socket.off('guests:updated', handler);
+    const h = () => fetchData();
+    socket.on('guests:updated', h);
+    return () => socket.off('guests:updated', h);
   }, [socket, fetchData]);
-
-  const statContainerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.12, delayChildren: 0.08 }
-    }
-  };
-
-  const statCardVariants = {
-    hidden: { opacity: 0, y: 14, filter: 'blur(6px)' },
-    show: {
-      opacity: 1,
-      y: 0,
-      filter: 'blur(0px)',
-      transition: { duration: 0.5, ease: 'easeOut' }
-    }
-  };
 
   const guestsByLocation = React.useMemo(() => {
     const groups = {};
-    const sorted = [...guests].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-    sorted.forEach((g) => {
-      const loc = (g.location || '').trim() || 'Unspecified';
-      if (!groups[loc]) groups[loc] = [];
-      groups[loc].push(g);
-    });
-    return Object.entries(groups).sort(([a], [b]) => {
-      if (a === 'Unspecified') return 1;
-      if (b === 'Unspecified') return -1;
-      return a.localeCompare(b);
-    });
+    [...guests].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+      .forEach(g => {
+        const loc = (g.location || '').trim() || 'Unspecified';
+        if (!groups[loc]) groups[loc] = [];
+        groups[loc].push(g);
+      });
+    return Object.entries(groups).sort(([a], [b]) => a === 'Unspecified' ? 1 : b === 'Unspecified' ? -1 : a.localeCompare(b));
   }, [guests]);
 
   const rsvpBadge = (status) => {
     const s = status || 'Pending';
-    if (s === 'Attending') return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-500/15 text-emerald-700"><CheckCircle size={10} /> Attending</span>;
-    if (s === 'Not Attending') return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-rose-500/15 text-rose-700"><XCircle size={10} /> Declined</span>;
-    return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-amber-500/15 text-amber-700"><Clock size={10} /> Pending</span>;
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/admin/login');
+    const base = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase';
+    if (s === 'Attending') return <span className={`${base} bg-emerald-500/15 text-emerald-600`}><CheckCircle size={10} /> Attending</span>;
+    if (s === 'Not Attending') return <span className={`${base} bg-rose-500/15 text-rose-600`}><XCircle size={10} /> Declined</span>;
+    return <span className={`${base} bg-amber-500/15 text-amber-600`}><Clock size={10} /> Pending</span>;
   };
 
   const NavItem = ({ to, icon: Icon, label }) => {
@@ -110,69 +85,62 @@ const Dashboard = () => {
     return (
       <Link
         to={to}
-        className={`relative group flex items-center py-3 rounded-xl border transition-all duration-200 ${
-          isSidebarOpen ? 'px-4 gap-3 justify-start' : 'px-3 justify-center'
-        } ${
-          isActive
-            ? 'text-white border-gold-500/30 bg-gradient-to-r from-gold-500/15 via-maroon-700/35 to-gold-500/10 shadow-[0_0_34px_rgba(255,215,0,0.18)]'
-            : 'border-transparent text-gray-200/70 hover:text-white hover:bg-white/5 hover:border-white/10'
-        }`}
+        className={`relative flex items-center py-2.5 rounded-xl transition-all duration-200 ${isSidebarOpen ? 'px-4 gap-3' : 'px-3 justify-center'}`}
+        style={{
+          background: isActive ? 'rgba(229,168,48,0.12)' : 'transparent',
+          border: `1px solid ${isActive ? 'rgba(229,168,48,0.3)' : 'transparent'}`,
+          color: isActive ? G.gold200 : 'rgba(255,255,255,0.55)',
+          boxShadow: isActive ? '0 0 20px rgba(229,168,48,0.1)' : 'none',
+        }}
+        onMouseEnter={e => { if (!isActive) { e.currentTarget.style.color = 'rgba(255,255,255,0.85)'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; } }}
+        onMouseLeave={e => { if (!isActive) { e.currentTarget.style.color = 'rgba(255,255,255,0.55)'; e.currentTarget.style.background = 'transparent'; } }}
       >
-        {/* Active glow highlight */}
-        <span
-          aria-hidden
-          className={`absolute inset-0 rounded-xl bg-gradient-to-r from-gold-500/20 via-maroon-700/25 to-gold-500/10 pointer-events-none transition-opacity duration-200 ${
-            isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-          }`}
-        />
-
-        <Icon size={20} className="relative z-10" />
-        {isSidebarOpen && <span className="relative z-10 font-medium">{label}</span>}
+        {isActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r-full" style={{ background: G.gold }} />}
+        <Icon size={18} />
+        {isSidebarOpen && <span className="text-sm font-medium">{label}</span>}
       </Link>
     );
   };
 
   const StatCard = ({ label, value, icon: Icon, color, progress, progressLabel }) => {
-    const percent = Math.round(clamp01(progress) * 100);
+    const percent = Math.round(Math.max(0, Math.min(1, progress)) * 100);
     return (
       <motion.div
-        variants={statCardVariants}
-        whileHover={{ y: -3, scale: 1.02 }}
-        whileTap={{ scale: 0.99 }}
+        whileHover={{ y: -3 }}
         transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-        className="group relative overflow-hidden rounded-2xl border border-white/70 bg-white/55 backdrop-blur-xl shadow-sm"
+        className="relative overflow-hidden rounded-[1.6rem] p-5 sm:p-6"
+        style={{
+          background: 'linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,250,245,0.84))',
+          border: `1px solid ${G.border}`,
+          boxShadow: '0 20px 45px rgba(60,29,18,0.07), 0 1px 3px rgba(0,0,0,0.04)',
+        }}
       >
-        {/* Hover sheen */}
-        <div className="pointer-events-none absolute -inset-24 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-60%] group-hover:animate-[shimmer_1.2s_ease-in-out_infinite]" />
+        {/* Top gold accent */}
+        <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
+
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <p className="text-xs font-medium mb-1" style={{ color: G.textSub }}>{label}</p>
+            <h3 className="text-3xl font-bold" style={{ color: G.text }}>{value}</h3>
+          </div>
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: `${color}18` }}>
+            <Icon size={22} style={{ color }} />
+          </div>
         </div>
 
-        <div className="relative z-10 p-4 sm:p-6">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-sm font-medium text-gray-600 mb-1">{label}</p>
-              <h3 className="text-2xl sm:text-3xl font-bold text-gray-900">{value}</h3>
-            </div>
-
-            <div className={`p-3 rounded-xl ${color} bg-opacity-10 text-opacity-100`}>
-              <Icon size={24} className={color.replace('bg-', 'text-')} />
-            </div>
+        <div>
+          <div className="flex justify-between text-[11px] mb-1.5" style={{ color: G.textSub }}>
+            <span>{progressLabel}</span>
+            <span className="font-semibold" style={{ color }}>{percent}%</span>
           </div>
-
-          <div className="mt-5">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-gray-600">{progressLabel}</span>
-              <span className={`font-semibold ${color.replace('bg-', 'text-')} text-xs`}>{percent}%</span>
-            </div>
-
-            <div className="h-2 mt-2 bg-gray-900/5 rounded-full overflow-hidden">
-              <motion.div
-                className={`h-full rounded-full ${color}`}
-                initial={{ width: 0 }}
-                animate={{ width: `${percent}%` }}
-                transition={{ duration: 0.65, ease: 'easeOut' }}
-              />
-            </div>
+          <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(0,0,0,0.06)' }}>
+            <motion.div
+              className="h-full rounded-full"
+              initial={{ width: 0 }}
+              animate={{ width: `${percent}%` }}
+              transition={{ duration: 0.65, ease: 'easeOut' }}
+              style={{ background: color }}
+            />
           </div>
         </div>
       </motion.div>
@@ -180,179 +148,184 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex min-h-screen min-h-[100dvh] md:h-screen bg-[#fdfbf7] dashboard-noise relative">
-      {/* Premium background gradients */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_0%,rgba(128,0,0,0.18),transparent_55%),radial-gradient(circle_at_90%_15%,rgba(255,215,0,0.18),transparent_45%),radial-gradient(circle_at_60%_120%,rgba(128,0,0,0.10),transparent_50%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-maroon-700/5 via-transparent to-gold-500/10" />
-
-      {/* Mobile sidebar overlay */}
+    <div className="flex min-h-screen md:h-screen relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #f8f2eb 0%, #f1e8df 100%)' }}>
+      <div className="absolute inset-0 pointer-events-none opacity-50" style={{ background: 'radial-gradient(circle at top right, rgba(229,168,48,0.12), transparent 22%), radial-gradient(circle at bottom left, rgba(128,0,0,0.08), transparent 20%)' }} />
+      {/* Mobile overlay */}
       {isMobileMenuOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 z-20 md:hidden"
-          onClick={() => setIsMobileMenuOpen(false)}
-          aria-hidden="true"
-        />
+        <div className="fixed inset-0 bg-black/50 z-20 md:hidden" onClick={() => setIsMobileMenuOpen(false)} />
       )}
 
-      {/* Sidebar - overlay on mobile, inline on md+ */}
+      {/* ── Sidebar ── */}
       <aside
-        className={`fixed md:relative inset-y-0 left-0 z-30 md:z-10 bg-gray-900/95 md:bg-gray-900/60 backdrop-blur-xl border-r border-white/10 text-white flex flex-col w-64 transform transition-transform duration-300 ease-out md:transition-none md:translate-x-0 ${
-          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:translate-x-0 ${isSidebarOpen ? 'md:w-64' : 'md:w-20'}`}
+        className={`fixed md:relative inset-y-0 left-0 z-30 md:z-10 flex flex-col text-white
+          ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0
+          transform transition-transform duration-300 md:transition-none
+          ${isSidebarOpen ? 'w-60' : 'w-[72px]'}`}
+        style={{
+          background: G.sidebar,
+          borderRight: `1px solid rgba(229,168,48,0.1)`,
+          backdropFilter: 'blur(20px)',
+        }}
       >
-        {/* Top gradient strip */}
-        <div className="absolute left-0 right-0 top-0 h-1 bg-gradient-to-r from-gold-500/50 via-maroon-700/50 to-gold-500/30" />
+        {/* Gold top strip */}
+        <div className="absolute top-0 left-0 right-0 h-[1px]"
+          style={{ background: 'linear-gradient(90deg, transparent, rgba(229,168,48,0.6), transparent)' }} />
 
-        <div className="p-4 sm:p-6 flex items-center justify-between relative z-10">
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-5">
           {isSidebarOpen && (
-            <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-gold-500 to-yellow-200 bg-clip-text text-transparent drop-shadow-[0_0_18px_rgba(255,215,0,0.22)]">
-              Royal Wedding
-            </h1>
+            <div>
+              <h1 className="text-sm font-bold tracking-[0.15em] uppercase"
+                style={{ background: 'linear-gradient(135deg, #c8860e, #fde68a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                Wedding Admin
+              </h1>
+              <p className="text-[10px] mt-0.5" style={{ color: 'rgba(229,168,48,0.4)', letterSpacing: '0.05em' }}>Pushpendra &amp; Rinu</p>
+            </div>
           )}
-          <div className="flex items-center gap-2">
-            <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="p-2 min-w-[44px] min-h-[44px] md:hidden hover:bg-white/5 rounded-lg transition-colors flex items-center justify-center"
-              aria-label="Close menu"
-            >
-              <X size={20} />
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="hidden md:flex p-2 hover:bg-white/5 rounded-lg transition-colors items-center justify-center"
-              aria-label={isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
-            >
-              {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
-            </motion.button>
+          <div className="flex items-center gap-1.5">
+            <button onClick={() => setIsMobileMenuOpen(false)}
+              className="md:hidden p-2 rounded-lg hover:bg-white/5 transition-colors" style={{ color: 'rgba(255,255,255,0.5)' }}>
+              <X size={18} />
+            </button>
+            <button onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="hidden md:flex p-2 rounded-lg hover:bg-white/5 transition-colors" style={{ color: 'rgba(255,255,255,0.4)' }}>
+              <Menu size={18} />
+            </button>
           </div>
         </div>
 
-        <nav className="flex-1 px-4 space-y-2 mt-4 relative z-10" onClick={() => setIsMobileMenuOpen(false)}>
-          <NavItem to="/admin/dashboard" icon={LayoutDashboard} label={isSidebarOpen ? "Overview" : ""} />
-          <NavItem to="/admin/dashboard/guests" icon={Users} label={isSidebarOpen ? "Guest List" : ""} />
-          <NavItem to="/admin/dashboard/content" icon={Settings} label={isSidebarOpen ? "CMS" : ""} />
-          <NavItem to="/admin/dashboard/images" icon={Image} label={isSidebarOpen ? "Image Manager" : ""} />
+        {/* Gold divider */}
+        <div className="mx-4 mb-3" style={{ height: '1px', background: 'rgba(229,168,48,0.1)' }} />
+
+        {/* Nav */}
+        <nav className="flex-1 px-3 space-y-1" onClick={() => setIsMobileMenuOpen(false)}>
+          <NavItem to="/admin/dashboard" icon={LayoutDashboard} label="Overview" />
+          <NavItem to="/admin/dashboard/guests" icon={Users} label="Guest List" />
+          <NavItem to="/admin/dashboard/content" icon={Settings} label="CMS" />
+          <NavItem to="/admin/dashboard/images" icon={Image} label="Gallery" />
         </nav>
 
-        <div className="p-4 mt-auto relative z-10">
-          <motion.button
-            whileHover={{ y: -1 }}
-            whileTap={{ scale: 0.99 }}
-            onClick={handleLogout}
-            className={`w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-red-500/10 hover:text-red-500 rounded-xl transition-colors ${
-              isSidebarOpen ? '' : 'justify-center'
-            }`}
+        {/* Logout */}
+        <div className="px-3 py-4 mt-auto">
+          <div className="mx-0 mb-3" style={{ height: '1px', background: 'rgba(229,168,48,0.08)' }} />
+          <button
+            onClick={() => { localStorage.removeItem('token'); navigate('/admin/login'); }}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-sm ${isSidebarOpen ? '' : 'justify-center'}`}
+            style={{ color: 'rgba(255,255,255,0.35)' }}
+            onMouseEnter={e => { e.currentTarget.style.color = '#f87171'; e.currentTarget.style.background = 'rgba(239,68,68,0.08)'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.35)'; e.currentTarget.style.background = ''; }}
           >
-            <LogOut size={20} />
+            <LogOut size={17} />
             {isSidebarOpen && <span className="font-medium">Logout</span>}
-          </motion.button>
+          </button>
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto relative z-10">
+      {/* ── Main ── */}
+      <main className="flex-1 overflow-y-auto relative z-[1]">
+        {/* Header */}
         <motion.header
-          initial={{ opacity: 0, y: -6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, ease: 'easeOut' }}
-          className="backdrop-blur-xl bg-white/60 border-b border-white/70 px-4 sm:px-6 md:px-10 py-4 sm:py-6 flex justify-between items-center sticky top-0 z-10 shadow-sm gap-4"
+          initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}
+          className="sticky top-0 z-10 flex items-center justify-between px-4 sm:px-6 md:px-8 py-4 gap-4"
+          style={{
+            background: 'rgba(255,248,239,0.76)',
+            backdropFilter: 'blur(16px)',
+            borderBottom: '1px solid rgba(229,168,48,0.14)',
+            boxShadow: '0 12px 30px rgba(60,29,18,0.05)',
+          }}
         >
-          <div className="flex items-center gap-3 min-w-0">
-            <motion.button
-              whileTap={{ scale: 0.98 }}
-              onClick={() => setIsMobileMenuOpen(true)}
-              className="md:hidden p-2 min-w-[44px] min-h-[44px] -ml-2 rounded-lg hover:bg-white/50 flex items-center justify-center text-gray-700"
-              aria-label="Open menu"
-            >
-              <Menu size={24} />
-            </motion.button>
-            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 truncate">Dashboard Overview</h2>
-          </div>
-          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
-            <div className="text-right hidden sm:block">
-              <p className="text-sm font-medium text-gray-900">Pushpendra & Renu</p>
-              <p className="text-xs text-gray-500">Wedding Date: 12 May 2026</p>
+          <div className="flex items-center gap-3">
+            <button onClick={() => setIsMobileMenuOpen(true)}
+              className="md:hidden p-2 rounded-xl hover:bg-white/60 transition-colors" style={{ color: G.textSub }}>
+              <Menu size={22} />
+            </button>
+            <div>
+              <h2 className="text-base sm:text-lg font-bold" style={{ color: G.text }}>
+                {pathname === '/admin/dashboard' ? 'Dashboard Overview'
+                  : pathname.includes('guests') ? 'Guest List'
+                  : pathname.includes('content') ? 'Content Manager'
+                  : pathname.includes('images') ? 'Image Manager' : 'Admin'}
+              </h2>
+              <p className="text-xs hidden sm:block" style={{ color: G.textSub }}>12 May 2026 · Pushpendra &amp; Rinu</p>
             </div>
-            <motion.div
-              whileHover={{ y: -1 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-10 h-10 rounded-full bg-gold-500/10 flex items-center justify-center text-gold-500 font-bold border border-gold-500/25 shadow-[0_0_24px_rgba(255,215,0,0.15)]"
-            >
+          </div>
+
+          <div className="flex items-center gap-3">
+            {/* Stats pills */}
+            {pathname === '/admin/dashboard' && (
+              <div className="hidden lg:flex items-center gap-2">
+                {[
+                  { label: 'Total', val: stats.totalGuests, color: '#6366f1' },
+                  { label: 'Attending', val: stats.attending, color: '#10b981' },
+                  { label: 'Pending', val: stats.pending, color: '#f59e0b' },
+                ].map(s => (
+                  <div key={s.label} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 border shadow-sm"
+                    style={{ borderColor: `${s.color}30` }}>
+                    <div className="w-1.5 h-1.5 rounded-full" style={{ background: s.color }} />
+                    <span className="text-xs font-semibold" style={{ color: G.textSub }}>{s.label}</span>
+                    <span className="text-xs font-bold" style={{ color: G.text }}>{s.val}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {/* Avatar */}
+            <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+              style={{ background: 'linear-gradient(135deg, #c8860e, #fde68a)', color: '#050508' }}>
               PR
-            </motion.div>
+            </div>
           </div>
         </motion.header>
 
-        <div className="p-4 sm:p-6 md:p-10 space-y-6 sm:space-y-8">
+        {/* Content */}
+          <div className="p-4 sm:p-6 md:p-8 space-y-6">
           {pathname === '/admin/dashboard' && (
             <>
+              {/* Stats */}
               <motion.div
-                variants={statContainerVariants}
-                initial="hidden"
-                animate="show"
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                transition={{ staggerChildren: 0.1 }}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
               >
-                <StatCard
-                  label="Total Guests"
-                  value={stats.totalGuests}
-                  icon={Users}
-                  color="bg-blue-500"
+                <StatCard label="Total Guests" value={stats.totalGuests} icon={Users} color="#6366f1"
                   progress={stats.totalGuests ? (stats.totalGuests - stats.pending) / stats.totalGuests : 0}
-                  progressLabel="RSVP confirmed"
-                />
-                <StatCard
-                  label="Attending"
-                  value={stats.attending}
-                  icon={UserCheck}
-                  color="bg-green-500"
+                  progressLabel="RSVP confirmed" />
+                <StatCard label="Attending" value={stats.attending} icon={UserCheck} color="#10b981"
                   progress={stats.totalGuests ? stats.attending / stats.totalGuests : 0}
-                  progressLabel="Attending share"
-                />
-                <StatCard
-                  label="Not Attending"
-                  value={stats.notAttending}
-                  icon={UserMinus}
-                  color="bg-red-500"
+                  progressLabel="Attending share" />
+                <StatCard label="Not Attending" value={stats.notAttending} icon={UserMinus} color="#f43f5e"
                   progress={stats.totalGuests ? stats.notAttending / stats.totalGuests : 0}
-                  progressLabel="Declined share"
-                />
+                  progressLabel="Declined share" />
               </motion.div>
 
-              {/* Guests by location */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="space-y-6"
-              >
-                <div className="flex items-center gap-2">
-                  <div className="p-2 bg-gold-500/90 rounded-xl text-white shadow-[0_0_28px_rgba(255,215,0,0.22)]">
-                    <MapPin size={20} />
+              {/* By Location */}
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+                <div className="flex items-center gap-2.5 mb-4">
+                  <div className="w-8 h-8 rounded-xl flex items-center justify-center"
+                    style={{ background: 'linear-gradient(135deg, #c8860e, #fde68a)' }}>
+                    <MapPin size={16} style={{ color: '#050508' }} />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900">Guests by Location</h3>
+                  <h3 className="text-base font-bold" style={{ color: G.text }}>Guests by Location</h3>
                 </div>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   {guestsByLocation.map(([loc, list]) => (
-                    <motion.div
-                      key={loc}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="bg-white/55 backdrop-blur-xl border border-white/70 rounded-2xl overflow-hidden shadow-sm"
-                    >
-                      <div className="px-5 py-3 bg-white/40 border-b border-white/60">
-                        <span className="font-semibold text-gray-800">{loc}</span>
-                        <span className="ml-2 text-sm text-gray-500">({list.length} guest{list.length !== 1 ? 's' : ''})</span>
+                    <motion.div key={loc} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                      className="rounded-[1.6rem] overflow-hidden"
+                      style={{ background: 'rgba(255,255,255,0.82)', border: `1px solid ${G.border}`, boxShadow: '0 18px 40px rgba(60,29,18,0.08)' }}>
+                      <div className="px-5 py-3 flex items-center justify-between"
+                        style={{ borderBottom: `1px solid rgba(229,168,48,0.1)`, background: 'rgba(229,168,48,0.03)' }}>
+                        <span className="text-sm font-semibold" style={{ color: G.text }}>{loc}</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full font-medium"
+                          style={{ background: 'rgba(229,168,48,0.1)', color: G.gold800 }}>
+                          {list.length} guest{list.length !== 1 ? 's' : ''}
+                        </span>
                       </div>
-                      <ul className="divide-y divide-white/40 max-h-[220px] sm:max-h-[280px] overflow-y-auto">
-                        {list.map((g) => (
-                          <li key={g._id} className="px-5 py-3 flex items-center justify-between gap-4 hover:bg-white/30 transition-colors">
+                      <ul className="divide-y divide-black/[0.04] max-h-[220px] overflow-y-auto">
+                        {list.map(g => (
+                          <li key={g._id} className="px-5 py-3 flex items-center justify-between gap-4 hover:bg-yellow-400/[0.02] transition-colors">
                             <div>
-                              <p className="font-medium text-gray-900">{g.name}</p>
-                              <p className="text-xs text-gray-500">{formatDate(g.createdAt)}</p>
+                              <p className="text-sm font-medium" style={{ color: G.text }}>{g.name}</p>
+                              <p className="text-[11px]" style={{ color: G.textSub }}>{formatDate(g.createdAt)}</p>
                             </div>
                             {rsvpBadge(g.rsvpStatus)}
                           </li>
@@ -360,22 +333,22 @@ const Dashboard = () => {
                       </ul>
                     </motion.div>
                   ))}
+                  {guestsByLocation.length === 0 && (
+                    <div className="col-span-2 py-12 text-center text-sm italic rounded-2xl border border-dashed"
+                      style={{ color: G.textSub, borderColor: G.border }}>
+                      No guests yet. Add guests from the Guest List.
+                    </div>
+                  )}
                 </div>
-                {guestsByLocation.length === 0 && (
-                  <div className="text-center py-12 text-gray-500 bg-white/30 rounded-2xl border border-white/60">
-                    No guests yet. Add guests from the Guest List.
-                  </div>
-                )}
               </motion.div>
             </>
           )}
 
           {pathname !== '/admin/dashboard' && (
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, ease: 'easeOut' }}
-              className="bg-white/60 backdrop-blur-xl border border-white/70 rounded-2xl shadow-sm min-h-[400px] overflow-hidden"
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+              className="rounded-[1.8rem] overflow-hidden min-h-[400px]"
+              style={{ background: 'rgba(255,255,255,0.84)', border: `1px solid ${G.border}`, boxShadow: '0 24px 60px rgba(60,29,18,0.08)' }}
             >
               <Outlet />
             </motion.div>

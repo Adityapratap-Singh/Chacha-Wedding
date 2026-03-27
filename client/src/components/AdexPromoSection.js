@@ -11,79 +11,79 @@ const AdexPromoSection = () => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-100px' }}
       transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="relative py-16 sm:py-20 md:py-28 px-4 sm:px-6 overflow-hidden bg-theme-bg"
+      className="section-shell relative py-20 sm:py-28 px-4 sm:px-6 overflow-hidden"
+      style={{ background: 'linear-gradient(180deg, var(--bg-0) 0%, var(--bg-2) 50%, var(--bg-0) 100%)' }}
     >
-      {/* Subtle ambient glow */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-30"
-        style={{
-          background: 'radial-gradient(ellipse 80% 50% at 50% 100%, rgba(var(--color-accent-rgb),0.06) 0%, transparent 70%)'
-        }}
-      />
-      
-      <div className="relative z-10 max-w-2xl mx-auto text-center">
-        {/* Small line */}
+      {/* Ambient glow */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 100%, rgba(229,168,48,0.06) 0%, transparent 70%)' }} />
+
+      {/* Twinkling stars */}
+      {Array.from({ length: 20 }).map((_, i) => (
+        <div key={i} className="absolute rounded-full pointer-events-none"
+          style={{
+            left: `${5 + Math.sin(i * 2.5) * 42 + 42}%`,
+            top: `${5 + Math.cos(i * 1.9) * 36 + 36}%`,
+            width: `${0.8 + (i % 3) * 0.5}px`, height: `${0.8 + (i % 3) * 0.5}px`,
+            background: 'rgba(229,168,48,0.45)',
+            animation: `twinkle ${2.5 + (i % 6)}s ease-in-out ${i * 0.3}s infinite`,
+          }} />
+      ))}
+
+      <div className="section-inner relative z-10 max-w-3xl mx-auto text-center">
+        {/* Top label */}
         <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ opacity: 0, y: -10 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
-          className="text-theme-text/60 font-serif italic text-sm tracking-widest mb-6"
+          className="section-label block mb-6"
         >
-          Crafted with Love ✨
+          <span className="eyebrow-chip">Crafted with Love · By Adex</span>
         </motion.p>
 
-        {/* Gold gradient divider */}
+        {/* Divider */}
         <motion.div
           initial={{ scaleX: 0 }}
           whileInView={{ scaleX: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 1, delay: 0.1 }}
-          className="h-[1px] w-32 mx-auto mb-10 origin-center"
-          style={{
-            background: 'linear-gradient(to right, transparent, var(--color-accent), var(--color-secondary), var(--color-accent), transparent)'
-          }}
+          className="gold-divider mx-auto mb-10"
+          style={{ width: '100px', transformOrigin: 'center' }}
         />
 
-        {/* Heading - gold gradient with subtle glow */}
+        {/* Heading */}
+        <div className="panel-luxe px-6 py-10 sm:px-10">
         <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0)' }}
           viewport={{ once: true }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-          className="text-2xl sm:text-3xl md:text-4xl font-serif font-bold mb-6 sm:mb-8 gold-gradient-text"
+          transition={{ delay: 0.3, duration: 0.9 }}
+          className="gold-text text-glow-gold italic mb-5"
           style={{
-            textShadow: '0 0 30px rgba(var(--color-accent-rgb), 0.15), 0 0 60px rgba(var(--color-accent-rgb), 0.08)'
+            fontFamily: "'Cormorant Garamond', serif",
+            fontWeight: 600,
+            fontSize: 'clamp(2.2rem, 5vw, 3.5rem)',
           }}
         >
           A New Way to Invite
         </motion.h2>
 
-        {/* Description - Hinglish, premium tone */}
+        {/* Description */}
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.5 }}
-          className="text-theme-text/80 font-serif text-base sm:text-lg md:text-xl leading-relaxed mb-8 sm:mb-10 max-w-lg mx-auto italic px-2"
+          className="text-yellow-100/65 italic leading-relaxed mb-8 sm:mb-10"
+          style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(1.1rem, 2.5vw, 1.4rem)' }}
         >
           Yeh sirf invitation nahi hai…
           <br />
-          <span className="text-theme-primary/80">yeh ek cinematic experience hai 💍</span>
+          <span className="text-yellow-300/80">yeh ek cinematic experience hai 💍</span>
         </motion.p>
 
-        {/* By Adex branding */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.6 }}
-          className="text-theme-accent/70 text-xs tracking-[0.4em] uppercase font-light mb-12"
-        >
-          By Adex
-        </motion.p>
-
-        {/* CTA Button */}
+        {/* CTA */}
         <motion.a
           href={WHATSAPP_URL}
           target="_blank"
@@ -92,20 +92,12 @@ const AdexPromoSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.7 }}
-          whileHover={{ y: -4, scale: 1.05 }}
-          whileTap={{ scale: 0.98 }}
-          className="group relative inline-flex items-center justify-center gap-3 min-h-[52px] px-10 sm:px-14 py-4 sm:py-5 bg-theme-primary text-gold-500 font-serif tracking-[0.2em] uppercase text-xs sm:text-sm font-bold rounded-full overflow-hidden shadow-[0_20px_40px_rgba(var(--color-primary-rgb),0.3)] hover:shadow-[0_25px_50px_rgba(var(--color-primary-rgb),0.45)] transition-all duration-500 border border-gold-500/20 hover:border-gold-500/40"
+          whileHover={{ y: -4, scale: 1.04 }}
+          whileTap={{ scale: 0.97 }}
+          className="btn-luxury inline-flex items-center gap-3 px-12 sm:px-16 py-4 rounded-full ring-glow"
         >
-          {/* Animated Background */}
-          <div className="absolute inset-0 bg-gradient-to-r from-theme-primary via-maroon-800 to-theme-primary group-hover:from-maroon-800 group-hover:to-maroon-700 transition-all duration-500" />
-          
-          {/* Golden Sheen */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold-500/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
-          
-          <span className="relative z-10 flex items-center gap-2">
-            Create Yours
-            <span className="text-gold-500 group-hover:translate-x-1.5 transition-transform duration-300">→</span>
-          </span>
+          Create Yours
+          <span className="transition-transform group-hover:translate-x-1 duration-300">→</span>
         </motion.a>
 
         {/* Bottom divider */}
@@ -114,11 +106,10 @@ const AdexPromoSection = () => {
           whileInView={{ scaleX: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 1, delay: 0.8 }}
-          className="h-[1px] w-32 mx-auto mt-16 origin-center"
-          style={{
-            background: 'linear-gradient(to right, transparent, var(--color-accent), var(--color-secondary), var(--color-accent), transparent)'
-          }}
+          className="gold-divider mx-auto mt-14"
+          style={{ width: '80px', transformOrigin: 'center', opacity: 0.4 }}
         />
+        </div>
       </div>
     </motion.section>
   );

@@ -1,221 +1,229 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { useSettings } from '../context/SettingsContext';
+import { useSettings, THEMES } from '../context/SettingsContext';
+
+const C = {
+  container: { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.09, delayChildren: 0.2 } } },
+  item: { hidden: { opacity: 0, y: 18 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.34, 1.56, 0.64, 1] } } },
+};
+
+const MemberCard = ({ member, teamIndex, memberIndex }) => {
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [hovered, setHovered] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgErr, setImgErr] = useState(false);
+
+  const onMove = useCallback((e) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    setTilt({ x: ((e.clientY - r.top) / r.height - 0.5) * -10, y: ((e.clientX - r.left) / r.width - 0.5) * 10 });
+  }, []);
+
+  const onLeave = useCallback(() => { setTilt({ x: 0, y: 0 }); setHovered(false); }, []);
+
+  return (
+    <motion.div
+      variants={C.item}
+      onMouseMove={onMove}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={onLeave}
+      className="flex flex-col items-center p-4 sm:p-5 rounded-2xl relative overflow-hidden cursor-default"
+      style={{
+        transform: `perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+        transition: 'transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.35s ease, border-color 0.35s ease',
+        background: hovered ? 'rgba(229,168,48,0.04)' : 'rgba(255,255,255,0.015)',
+        border: `1px solid ${hovered ? 'rgba(229,168,48,0.3)' : 'rgba(229,168,48,0.07)'}`,
+        boxShadow: hovered ? '0 20px 50px rgba(0,0,0,0.4), 0 0 20px rgba(229,168,48,0.08)' : '0 4px 15px rgba(0,0,0,0.2)',
+      }}
+    >
+      {/* Photo */}
+      <div className="relative mb-4">
+        {/* Rotating dashed ring on hover */}
+        {hovered && (
+          <div
+            className="absolute inset-[-5px] rounded-xl border border-dashed border-yellow-400/50"
+            style={{ animation: 'ring-rotate 4s linear infinite' }}
+          />
+        )}
+        <div
+          className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-xl overflow-hidden relative"
+          style={{
+            border: `2px solid ${hovered ? 'rgba(229,168,48,0.5)' : 'rgba(229,168,48,0.12)'}`,
+            boxShadow: hovered ? '0 0 20px rgba(229,168,48,0.2)' : 'none',
+            transform: hovered ? 'scale(1.06)' : 'scale(1)',
+            transition: 'all 0.4s ease',
+          }}
+        >
+          {!imgLoaded && !imgErr && (
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/10 to-transparent animate-pulse" />
+          )}
+          {imgErr ? (
+            <div className="w-full h-full flex items-center justify-center text-2xl"
+              style={{ background: 'rgba(229,168,48,0.06)' }}>👤</div>
+          ) : (
+            <img
+              src={member.photo}
+              alt={member.name}
+              loading="lazy"
+              className="w-full h-full object-cover"
+              style={{ objectPosition: `center ${member.objectPosition || 'top'}` }}
+              onLoad={() => setImgLoaded(true)}
+              onError={() => setImgErr(true)}
+            />
+          )}
+        </div>
+      </div>
+
+      {/* Name */}
+      <h4
+        className="text-center leading-snug transition-colors duration-400"
+        style={{
+          fontFamily: "'Cormorant Garamond', serif",
+          fontWeight: 600,
+          fontSize: 'clamp(0.85rem, 2vw, 1rem)',
+          color: hovered ? 'rgba(253,230,138,0.95)' : 'rgba(240,230,208,0.80)',
+        }}
+      >
+        {member.name}
+      </h4>
+
+      {member.subtitle && (
+        <p className="text-yellow-400/40 font-light mt-0.5 text-center" style={{ fontFamily: "'Cinzel', serif", fontSize: '0.55rem', letterSpacing: '0.05em' }}>
+          {member.subtitle}
+        </p>
+      )}
+
+      {member.contact && (
+        <a href={`tel:${member.contact}`} className="mt-1.5 text-yellow-400/60 hover:text-yellow-300 transition-colors"
+          style={{ fontFamily: "'Cinzel', serif", fontSize: '0.6rem', letterSpacing: '0.1em' }}>
+          {member.contact}
+        </a>
+      )}
+    </motion.div>
+  );
+};
 
 const CelebrationTeam = () => {
   const { settings } = useSettings();
-  const { contactNumbers, teams: settingsTeams } = settings;
 
   const defaultTeams = [
     {
       title: 'विनीत',
       titleEn: 'Revered Elders',
       members: [
-        { name: 'राकेश सिंह', contact: null, photo: 'https://res.cloudinary.com/do4z0pybd/image/upload/w_300,h_300,c_fill,r_max,a_center,g_center/v1/wedding-avatar-gold?text=%E0%A4%B0%E0%A4%BE%E0%A4%95%E0%A5%87%E0%A4%B6%20%E0%A4%B8%E0%A4%BF%E0%A4%82%E0%A4%B9&bg_8B0000&co_FFFDD0&f_png' },
-        { name: 'अंबरीश सिंह', contact: null, photo: 'https://res.cloudinary.com/do4z0pybd/image/upload/w_300,h_300,c_fill,r_max,a_center,g_center/v1/wedding-avatar-gold?text=%E0%A4%85%E0%A4%82%E0%A4%AC%E0%A4%B0%E0%A5%80%E0%A4%B6%20%E0%A4%B8%E0%A4%BF%E0%A4%82%E0%A4%B9&bg_8B0000&co_FFFDD0&f_png' },
-        { name: 'पुरंदर सिंह', contact: null, photo: 'https://res.cloudinary.com/do4z0pybd/image/upload/w_300,h_300,c_fill,r_max,a_center,g_center/v1/wedding-avatar-gold?text=%E0%A4%AA%E0%A5%81%E0%A4%B0%E0%A4%A8%E0%A5%8D%E0%A4%A6%E0%A4%B0%20%E0%A4%B8%E0%A4%BF%E0%A4%82%E0%A4%B9&bg_8B0000&co_FFFDD0&f_png' },
-        { name: 'धीरेन्द्र सिंह', contact: null, photo: 'https://via.placeholder.com/200/8B0000/FFFDD0?text=धीरेन्द्र' },
-        { name: 'कीरत सिंह', contact: contactNumbers.primary || '9001787742', photo: 'https://res.cloudinary.com/do4z0pybd/image/upload/w_300,h_300,c_fill,r_max,a_center,g_center/v1/wedding-avatar-gold?text=%E0%A4%95%E0%A5%80%E0%A4%B0%E0%A4%A4%20%E0%A4%B8%E0%A4%BF%E0%A4%82%E0%A4%B9&bg_8B0000&co_FFFDD0&f_png' },
-        { name: 'गजेन्द्र प्रताप सिंह', contact: null, photo: 'https://res.cloudinary.com/do4z0pybd/image/upload/w_300,h_300,c_fill,r_max,a_center,g_center/v1/wedding-avatar-gold?text=%E0%A4%97%E0%A4%9C%E0%A5%87%E0%A4%A8%E0%A5%8D%E0%A4%A6%E0%A5%8D%E0%A4%B0%20%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A4%A4%E0%A4%BE%E0%A4%AA%20%E0%A4%B8%E0%A4%BF%E0%A4%82%E0%A4%B9&bg_8B0000&co_FFFDD0&f_png' },
-      ]
+        { name: 'राकेश सिंह', contact: null, photo: 'https://via.placeholder.com/200/0a0a0f/e5a830?text=RS' },
+        { name: 'अंबरीश सिंह', contact: null, photo: 'https://via.placeholder.com/200/0a0a0f/e5a830?text=AS' },
+        { name: 'पुरंदर सिंह', contact: null, photo: 'https://via.placeholder.com/200/0a0a0f/e5a830?text=PS' },
+        { name: 'धीरेन्द्र सिंह', contact: null, photo: 'https://via.placeholder.com/200/0a0a0f/e5a830?text=DS' },
+        { name: 'कीरत सिंह', contact: settings.contactNumbers.primary || '9001787742', photo: 'https://via.placeholder.com/200/0a0a0f/e5a830?text=KS' },
+        { name: 'गजेन्द्र प्रताप सिंह', contact: null, photo: 'https://via.placeholder.com/200/0a0a0f/e5a830?text=GPS' },
+      ],
     },
     {
       title: 'दर्शनाभिलाषी',
       titleEn: 'Wish to Celebrate',
       members: [
-        { name: 'आशु सिंह', subtitle: '(बी.एड एवं टीईटी)', contact: contactNumbers.secondary || '8953731369', photo: 'https://res.cloudinary.com/do4z0pybd/image/upload/v1774185956/image_2026-03-22_185552665_znqxuq.png?text=आशु' },
+        { name: 'आशु सिंह', subtitle: 'बी.एड एवं टीईटी', contact: settings.contactNumbers.secondary || '8953731369', photo: 'https://res.cloudinary.com/do4z0pybd/image/upload/v1774185956/image_2026-03-22_185552665_znqxuq.png' },
         { name: 'प्रियम सिंह', contact: null, photo: 'https://res.cloudinary.com/do4z0pybd/image/upload/v1774187830/image_2026-03-22_192704296_itlegs.png' },
-        { name: 'आदित्यप्रताप सिंह', subtitle: '(आईटी इंजीनियर)', contact: null, photo: 'https://res.cloudinary.com/do4z0pybd/image/upload/v1774186946/image_2026-03-22_191223763_xf9pgj.png' },
-        { name: 'दीप सिंह', contact: null, photo: 'https://res.cloudinary.com/do4z0pybd/image/upload/w_300,h_300,c_fill,r_max,a_center,g_center/v1/wedding-avatar-gold?text=%E0%A4%A6%E0%A5%80%E0%A4%AA%20%E0%A4%B8%E0%A4%BF%E0%A4%82%E0%A4%B9&bg_8B0000&co_FFFDD0&f_png' },
-        { name: 'ओम सिंह', contact: null, photo: 'https://res.cloudinary.com/do4z0pybd/image/upload/w_300,h_300,c_fill,r_max,a_center,g_center/v1/wedding-avatar-gold?text=%E0%A4%93%E0%A4%AE%20%E0%A4%B8%E0%A4%BF%E0%A4%82%E0%A4%B9&bg_8B0000&co_FFFDD0&f_png' },
-      ]
+        { name: 'आदित्यप्रताप सिंह', subtitle: 'आईटी इंजीनियर', contact: null, photo: 'https://res.cloudinary.com/do4z0pybd/image/upload/v1774186946/image_2026-03-22_191223763_xf9pgj.png' },
+        { name: 'दीप सिंह', contact: null, photo: 'https://via.placeholder.com/200/0a0a0f/e5a830?text=DS' },
+        { name: 'ओम सिंह', contact: null, photo: 'https://via.placeholder.com/200/0a0a0f/e5a830?text=OS' },
+      ],
     },
     {
       title: 'स्वागतकांक्षी',
       titleEn: 'Warm Welcomers',
       members: [
-        { name: 'धीरेन्द्र प्रताप सिंह', subtitle: '(सीआरपीएफ इंस्पेक्टर)', contact: null, photo: 'https://via.placeholder.com/200/8B0000/FFFDD0?text=धीरेन्द्र' },
-        { name: 'राहुल सिंह', contact: null, photo: 'https://res.cloudinary.com/do4z0pybd/image/upload/w_300,h_300,c_fill,r_max,a_center,g_center/v1/wedding-avatar-gold?text=%E0%A4%B0%E0%A4%BE%E0%A4%99%E0%A5%81%E0%A4%B2%20%E0%A4%B8%E0%A4%BF%E0%A4%82%E0%A4%B9&bg_8B0000&co_FFFDD0&f_png' },
-        { name: 'धीरज सिंह', contact: null, photo: 'https://res.cloudinary.com/do4z0pybd/image/upload/w_300,h_300,c_fill,r_max,a_center,g_center/v1/wedding-avatar-gold?text=%E0%A4%A7%E0%A5%80%E0%A4%B0%E0%A4%9C%20%E0%A4%B8%E0%A4%BF%E0%A4%82%E0%A4%B9&bg_8B0000&co_FFFDD0&f_png' }
-      ]
-    }
+        { name: 'धीरेन्द्र प्रताप सिंह', subtitle: 'सीआरपीएफ इंस्पेक्टर', contact: null, photo: 'https://via.placeholder.com/200/0a0a0f/e5a830?text=DPS' },
+        { name: 'राहुल सिंह', contact: null, photo: 'https://via.placeholder.com/200/0a0a0f/e5a830?text=RS' },
+        { name: 'धीरज सिंह', contact: null, photo: 'https://via.placeholder.com/200/0a0a0f/e5a830?text=DS2' },
+      ],
+    },
   ];
 
-  const teams = settingsTeams || defaultTeams;
-
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.2,
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: [0.34, 1.56, 0.64, 1]
-      }
-    }
-  };
-
-  const [imageErrors, setImageErrors] = useState({});
-  const [imageLoaded, setImageLoaded] = useState({});
+  const teams = settings.teams || defaultTeams;
 
   return (
     <>
-      {/* Divider */}
-      <motion.div
-        initial={{ scaleX: 0, opacity: 0 }}
-        whileInView={{ scaleX: 1, opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1 }}
-        style={{ transformOrigin: "center" }}
-        className="h-[2px] bg-gradient-to-r from-transparent via-theme-accent/40 to-transparent mx-auto my-8 sm:my-12 md:my-16 max-w-3xl"
-      />
+      {/* Section divider */}
+      <div className="gold-divider mx-auto my-4 opacity-20" style={{ width: '200px' }} />
 
-      <section className="py-16 sm:py-20 md:py-24 bg-theme-bg relative overflow-hidden">
-        <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
-          <div className="rounded-2xl border border-theme-accent/20 bg-theme-secondary/80 backdrop-blur-sm p-5 sm:p-8 md:p-10 shadow-[0_20px_45px_rgba(0,0,0,0.06)]">
+      <section
+        className="relative py-20 sm:py-28 overflow-hidden"
+        style={{ background: 'linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 100%)' }}
+      >
+        {/* Ambient orbs */}
+        <div className="absolute top-0 right-0 w-[300px] h-[300px] rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(229,168,48,0.04) 0%, transparent 70%)', animation: 'orb-pulse 11s ease-in-out infinite' }} />
+        <div className="absolute bottom-0 left-0 w-[250px] h-[250px] rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(200,134,14,0.03) 0%, transparent 70%)', animation: 'orb-pulse 14s ease-in-out 6s infinite' }} />
 
-            {/* Teams Container */}
+        <div className="container mx-auto px-4 sm:px-6 max-w-5xl relative z-10">
+          {/* Header */}
+          <div className="text-center mb-14 sm:mb-18">
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="section-label block mb-4"
+            >
+              The Celebration Team
+            </motion.p>
+            <motion.h2
+              initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
+              whileInView={{ opacity: 1, y: 0, filter: 'blur(0)' }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.15, duration: 1 }}
+              className="gold-text text-glow-gold italic"
+              style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
+            >
+              उत्सव परिवार
+            </motion.h2>
             <motion.div
-              variants={containerVariants}
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3, duration: 1 }}
+              className="gold-divider mx-auto mt-5"
+              style={{ width: '80px', transformOrigin: 'center' }}
+            />
+          </div>
+
+          {/* Teams */}
+          <div
+            className="rounded-2xl p-5 sm:p-8 md:p-10"
+            style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(229,168,48,0.08)' }}
+          >
+            <motion.div
+              variants={C.container}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              className="space-y-16 sm:space-y-20 md:space-y-24"
+              className="space-y-16 sm:space-y-20"
             >
-              {teams.map((team, teamIndex) => (
-                <motion.div key={teamIndex} variants={itemVariants} className="relative">
-                  {/* Team Title */}
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: teamIndex * 0.1 + 0.1, duration: 0.6 }}
-                    className="text-center mb-12 sm:mb-14 md:mb-16"
-                  >
-                    <h3 className="text-xl sm:text-2xl md:text-3xl font-serif text-theme-title mb-1">
+              {teams.map((team, ti) => (
+                <motion.div key={ti} variants={C.item}>
+                  {/* Team title */}
+                  <div className="text-center mb-10 sm:mb-12">
+                    <h3
+                      className="text-yellow-100/80 italic mb-1"
+                      style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: 'clamp(1.4rem, 3vw, 2rem)' }}
+                    >
                       {team.title}
                     </h3>
-                    <p className="text-sm text-theme-accent tracking-[0.1em] uppercase font-light">
-                      {team.titleEn}
-                    </p>
-                    <motion.div
-                      initial={{ width: 0 }}
-                      whileInView={{ width: "60px" }}
-                      viewport={{ once: true }}
-                      transition={{ delay: teamIndex * 0.1 + 0.3, duration: 0.8 }}
-                      className="h-[1px] bg-gradient-to-r from-transparent via-theme-accent/50 to-transparent mx-auto mt-3"
-                    />
-                  </motion.div>
+                    <p className="section-label text-[9px]">{team.titleEn}</p>
+                    <div className="gold-divider mx-auto mt-3" style={{ width: '50px', opacity: 0.35 }} />
+                  </div>
 
-                  {/* Team Members Grid */}
+                  {/* Members */}
                   <motion.div
-                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-8 md:gap-10"
-                    variants={containerVariants}
+                    variants={C.container}
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true }}
+                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6"
                   >
-                    {team.members.map((member, memberIndex) => (
-                      <motion.div
-                        key={memberIndex}
-                        variants={itemVariants}
-                        className="group flex flex-col items-center rounded-3xl border-2 border-theme-primary/10 bg-gradient-to-b from-white/5 to-theme-secondary/20 p-6 transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl hover:shadow-theme-accent/40 hover:border-theme-accent/80 hover:bg-gradient-to-b hover:from-theme-accent/60 hover:to-theme-secondary cursor-pointer relative overflow-hidden hover:rotate-[0.5deg]"
-                      >
-                        {/* Circular Photo */}
-                        <motion.div
-                          whileHover={{ scale: 1.08 }}
-                          transition={{ duration: 0.4 }}
-                          className="relative mb-4 group"
-                        >
-                          {/* Glow Effect */}
-                          <motion.div
-                            initial={{ opacity: 0 }}
-                            whileHover={{ opacity: 1 }}
-                            transition={{ duration: 0.4 }}
-                            className="absolute inset-0 rounded-full bg-gradient-to-br from-theme-accent/30 to-transparent blur-lg -z-10 group-hover:blur-xl transition-all duration-500"
-                          />
-
-                          {/* Photo Container */}
-                          <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 aspect-square rounded-xl overflow-hidden border-2 border-theme-accent/20 group-hover:border-theme-accent/80 ring-2 ring-transparent group-hover:ring-theme-accent/30 transition-all duration-500 shadow-[0_8px_24px_rgba(0,0,0,0.1)] group-hover:shadow-[0_20px_40px_rgba(var(--color-accent-rgb),0.25)] relative bg-gradient-to-br from-white/10 to-theme-secondary/10">
-                            <img
-                              src={member.photo}
-                              alt={member.name}
-                              className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:brightness-105 group-hover:saturate-110 rounded-xl" 
-                              style={{ objectPosition: `center ${member.objectPosition || 'top'}` }}
-                              loading="lazy"
-                              decoding="async"
-                              onLoad={() => setImageLoaded(prev => ({ ...prev, [`${teamIndex}-${memberIndex}`]: true }))}
-                              onError={() => setImageErrors(prev => ({ ...prev, [`${teamIndex}-${memberIndex}`]: true }))}
-                            />
-                            {!imageLoaded[`${teamIndex}-${memberIndex}`] && (
-                              <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/20 animate-pulse rounded-xl" />
-                            )}
-                            {imageErrors[`${teamIndex}-${memberIndex}`] && (
-                              <div className="absolute inset-0 bg-gradient-to-br from-theme-accent/20 to-theme-primary/20 flex items-center justify-center rounded-xl">
-                                <span className="text-xs text-theme-accent font-serif">👤</span>
-                              </div>
-                            )}
-
-                            {/* Overlay on hover */}
-                            <motion.div
-                              initial={{ opacity: 0 }}
-                              whileHover={{ opacity: 1 }}
-                              transition={{ duration: 0.3 }}
-                              className="absolute inset-0 bg-gradient-to-t from-theme-primary/40 to-transparent"
-                            />
-                          </div>
-                        </motion.div>
-
-                        {/* Name */}
-                        <motion.h4
-                          initial={{ opacity: 0, y: 5 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: memberIndex * 0.05 + teamIndex * 0.1 + 0.2, duration: 0.5 }}
-                          className="text-sm sm:text-base md:text-lg font-serif text-theme-title text-center leading-snug tracking-[0.01em]"
-                        >
-                          {member.name}
-                        </motion.h4>
-
-                        {/* Subtitle (if exists) */}
-                        {member.subtitle && (
-                          <motion.p
-                            initial={{ opacity: 0 }}
-                            whileInView={{ opacity: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: memberIndex * 0.05 + teamIndex * 0.1 + 0.3, duration: 0.5 }}
-                            className="text-xs text-theme-text/60 font-light mt-0.5 text-center"
-                          >
-                            {member.subtitle}
-                          </motion.p>
-                        )}
-
-                        {/* Contact */}
-                        {member.contact && (
-                          <motion.a
-                            initial={{ opacity: 0 }}
-                            whileInView={{ opacity: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: memberIndex * 0.05 + teamIndex * 0.1 + 0.4, duration: 0.5 }}
-                            href={`tel:${member.contact}`}
-                            className="text-xs text-theme-accent font-light tracking-widest mt-1 hover:text-theme-accent-hover transition-colors duration-300"
-                          >
-                            📞 {member.contact}
-                          </motion.a>
-                        )}
-                      </motion.div>
+                    {team.members.map((m, mi) => (
+                      <MemberCard key={mi} member={m} teamIndex={ti} memberIndex={mi} />
                     ))}
                   </motion.div>
                 </motion.div>
@@ -223,22 +231,6 @@ const CelebrationTeam = () => {
             </motion.div>
           </div>
         </div>
-
-        {/* Background Accents */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.5, duration: 1 }}
-          className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-theme-accent/5 to-transparent rounded-full blur-3xl pointer-events-none"
-        />
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.6, duration: 1 }}
-          className="absolute bottom-0 left-0 w-72 h-72 bg-gradient-to-tr from-theme-primary/3 to-transparent rounded-full blur-3xl pointer-events-none"
-        />
       </section>
     </>
   );

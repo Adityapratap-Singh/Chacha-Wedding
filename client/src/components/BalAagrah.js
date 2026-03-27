@@ -1,139 +1,156 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useSettings, THEMES } from '../context/SettingsContext';
+import { useSettings } from '../context/SettingsContext';
 
 const BalAagrah = () => {
   const { settings } = useSettings();
   const { baalAagrah } = settings;
   const { names, poem } = baalAagrah;
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3,
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.34, 1.56, 0.64, 1]
-      }
-    }
-  };
-
   const poemLines = poem.includes('\n') ? poem.split('\n') : [poem];
 
   return (
-    <section className="py-20 sm:py-28 bg-theme-secondary relative overflow-hidden">
-      {/* Decorative background elements */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-theme-accent/20 to-transparent" />
-      
-      <div className="container mx-auto px-4 sm:px-6 max-w-4xl relative z-10">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={containerVariants}
-          className="text-center"
-        >
-          {/* Section Title */}
-          <motion.div variants={itemVariants} className="mb-12">
-            <span className="text-theme-accent text-3xl mb-2 block">✨</span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-theme-title mb-4 tracking-wide">
-              बाल आग्रह
-            </h2>
-            <div className="flex items-center justify-center gap-4">
-              <div className="h-px w-12 bg-theme-accent/30" />
-              <p className="text-xs sm:text-sm text-theme-accent/60 uppercase tracking-[0.3em] font-light">
-                With Innocent Hearts
-              </p>
-              <div className="h-px w-12 bg-theme-accent/30" />
-            </div>
-          </motion.div>
+    <section
+      className="section-shell relative py-20 sm:py-28 overflow-hidden"
+      style={{ background: 'linear-gradient(180deg, var(--bg-2) 0%, var(--bg-0) 100%)' }}
+    >
+      {/* Ambient orbs */}
+      <div className="absolute top-0 left-1/3 w-[300px] h-[300px] rounded-full pointer-events-none"
+        style={{ background: 'radial-gradient(circle, rgba(229,168,48,0.04) 0%, transparent 70%)', animation: 'orb-pulse 9s ease-in-out infinite' }} />
 
-          {/* Highlighted Poem Card */}
-          <motion.div 
-            variants={itemVariants}
-            className="relative mb-16 group"
+      <div className="section-inner max-w-6xl relative z-10">
+        {/* Header */}
+        <div className="text-center mb-14">
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="section-label block mb-5"
           >
-            {/* Soft Glow Effect */}
-            <div className="absolute inset-0 bg-theme-accent/5 blur-3xl rounded-full scale-75 group-hover:scale-90 transition-transform duration-1000" />
-            
-            <div className="relative bg-white/5 backdrop-blur-md border border-theme-accent/20 rounded-[2rem] p-8 sm:p-12 md:p-16 shadow-[0_20px_50px_rgba(var(--color-accent-rgb),0.05)] overflow-hidden">
-              {/* Corner Accents */}
-              <div className="absolute top-0 left-0 w-24 h-24 border-t-2 border-l-2 border-theme-accent/10 rounded-tl-[2rem]" />
-              <div className="absolute bottom-0 right-0 w-24 h-24 border-b-2 border-r-2 border-theme-accent/10 rounded-br-[2rem]" />
-              
-              <div className="italic text-theme-text leading-relaxed text-xl sm:text-2xl md:text-3xl font-serif font-medium space-y-4">
-                {poemLines.map((line, idx) => (
-                  <p key={idx} className="drop-shadow-sm opacity-90">{line}</p>
+            <span className="eyebrow-chip">With Innocent Hearts</span>
+          </motion.p>
+          <motion.h2
+            initial={{ opacity: 0, y: 18, filter: 'blur(4px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0)' }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.15, duration: 1 }}
+            className="gold-text text-glow-gold italic"
+            style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
+          >
+            बाल आग्रह
+          </motion.h2>
+          <motion.div
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3, duration: 1 }}
+            className="gold-divider mx-auto mt-4"
+            style={{ width: '80px', transformOrigin: 'center' }}
+          />
+        </div>
+
+        <div className="mb-14">
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+            className="panel-luxe p-8 sm:p-10 lg:p-12 text-center relative overflow-hidden group shimmer-sweep"
+          >
+            <div className="absolute top-0 left-0 right-0 h-[1px]"
+              style={{ background: 'linear-gradient(90deg, transparent, rgba(229,168,48,0.5), transparent)' }} />
+            {['top-4 left-4 border-t border-l', 'top-4 right-4 border-t border-r',
+              'bottom-4 left-4 border-b border-l', 'bottom-4 right-4 border-b border-r'].map((c, i) => (
+              <div key={i} className={`absolute w-8 h-8 border-yellow-400/15 pointer-events-none ${c}`} />
+            ))}
+
+            <div className="relative z-10">
+              <div className="mx-auto mb-6 inline-flex items-center gap-3 rounded-full border border-yellow-400/15 bg-white/[0.04] px-5 py-2">
+                <span className="text-[0.65rem] uppercase tracking-[0.35em] text-yellow-300/70">बाल आग्रह</span>
+              </div>
+
+              <div className="space-y-4">
+                {poemLines.map((line, i) => (
+                  <motion.p
+                    key={i}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.1 * i, duration: 0.8 }}
+                    className="text-yellow-100/85 italic leading-relaxed"
+                    style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(1.15rem, 2.5vw, 1.65rem)' }}
+                  >
+                    {line}
+                  </motion.p>
                 ))}
               </div>
             </div>
           </motion.div>
+        </div>
 
-          {/* Names & Images Cards Grid */}
-          <motion.div 
-            variants={containerVariants}
-            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6 sm:gap-8 md:gap-10"
-          >
-            {names.map((name, index) => (
-              <motion.div
-                key={index}
-                variants={itemVariants}
-                whileHover={{ y: -10 }}
-                className="group flex flex-col items-center"
+        {/* Children grid */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6"
+        >
+          {names.map((name, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.05 * i, duration: 0.6 }}
+              whileHover={{ y: -8 }}
+              className="group panel-soft p-3 sm:p-4 flex flex-col items-center"
+            >
+              {/* Photo */}
+              <div
+                className="w-full aspect-[0.92] rounded-[1.35rem] overflow-hidden mb-4 relative"
+                style={{
+                  border: '1px solid rgba(229,168,48,0.15)',
+                  boxShadow: '0 12px 28px rgba(0,0,0,0.28)',
+                  transition: 'border-color 0.4s ease, box-shadow 0.4s ease',
+                }}
               >
-                {/* Child Photo Card */}
-                <div className="relative w-full aspect-square mb-4 rounded-2xl overflow-hidden border-2 border-theme-accent/20 group-hover:border-theme-accent/80 transition-all duration-500 shadow-lg group-hover:shadow-theme-accent/20">
-                  <img 
-                    src={baalAagrah.images && baalAagrah.images[index] && baalAagrah.images[index].url ? baalAagrah.images[index].url : `https://res.cloudinary.com/do4z0pybd/image/upload/w_400,h_400,c_fill,r_max,a_center,g_center/v1/wedding-avatar-gold?text=${encodeURIComponent(name.split(' ')[0])}&bg_${THEMES['Royal Maroon'].primary.replace('#', '')}&co_${THEMES['Royal Maroon'].secondary.replace('#', '')}&f_png`} 
-                    alt={name} 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    style={{ objectPosition: `center ${baalAagrah.images && baalAagrah.images[index] ? baalAagrah.images[index].objectPosition || 'center' : 'center'}` }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-theme-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                </div>
+                <img
+                  src={
+                    baalAagrah.images?.[i]?.url
+                      || `https://via.placeholder.com/300x300/0a0a0f/e5a830?text=${encodeURIComponent(name.split(' ')[0])}`
+                  }
+                  alt={name}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  style={{ objectPosition: `center ${baalAagrah.images?.[i]?.objectPosition || 'center'}` }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              </div>
 
-                {/* Child Name */}
-                <motion.div 
-                  className="text-center"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <span className="text-lg sm:text-xl font-serif text-theme-title group-hover:text-theme-accent transition-colors duration-300">
-                    {name}
-                  </span>
-                  <div className="h-px w-0 group-hover:w-full bg-theme-accent/40 transition-all duration-500 mx-auto mt-1" />
-                </motion.div>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          {/* Bottom Sentiment */}
-          <motion.div 
-            variants={itemVariants}
-            className="mt-20 opacity-40 font-serif italic text-sm tracking-widest text-theme-text/60"
-          >
-            "बच्चों की मासूमियत से किया गया निमंत्रण ❤️"
-          </motion.div>
+              <span className="section-label text-[8px] mb-2 text-center">Little Invitation</span>
+              <span
+                className="text-yellow-100/80 group-hover:text-yellow-300/90 transition-colors text-center leading-snug"
+                style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, fontSize: 'clamp(0.95rem, 2vw, 1.1rem)' }}
+              >
+                {name}
+              </span>
+              <div className="w-0 group-hover:w-full gold-divider transition-all duration-500 mt-2" style={{ height: '1px', opacity: 0.4 }} />
+            </motion.div>
+          ))}
         </motion.div>
-      </div>
 
-      {/* Floating background petals/elements (Optional subtle feel) */}
-      <div className="absolute top-1/4 left-10 w-2 h-2 bg-theme-accent/20 rounded-full blur-sm" />
-      <div className="absolute bottom-1/4 right-10 w-3 h-3 bg-theme-primary/10 rounded-full blur-sm" />
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 0.35 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.8 }}
+          className="text-center mt-16 italic tracking-widest"
+          style={{ fontFamily: "'Cormorant Garamond', serif", color: 'rgba(229,168,48,0.6)', fontSize: '0.9rem' }}
+        >
+          "बच्चों की मासूमियत से किया गया निमंत्रण ❤️"
+        </motion.p>
+      </div>
     </section>
   );
 };
 
 export default BalAagrah;
-

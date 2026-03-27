@@ -1,161 +1,175 @@
-import React from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import GoldDust from './GoldDust';
-import AnimatedText from './AnimatedText';
+import CountdownTimer from './CountdownTimer';
 import { useSettings } from '../context/SettingsContext';
-
-const Mandala = ({ className }) => (
-  <svg className={className} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="100" cy="100" r="80" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4 4" />
-    <circle cx="100" cy="100" r="60" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" />
-    <path d="M100 20 L110 40 L130 40 L120 60 L130 80 L110 80 L100 100 L90 80 L70 80 L80 60 L70 40 L90 40 Z" stroke="currentColor" strokeWidth="0.5" />
-    <path d="M100 10 L120 30 L150 30 L140 60 L160 90 L130 90 L120 120 L100 100 L80 120 L70 90 L40 90 L60 60 L50 30 L80 30 Z" stroke="currentColor" strokeWidth="0.3" opacity="0.5" />
-    <circle cx="100" cy="100" r="2" fill="currentColor" />
-  </svg>
-);
 
 const Hero = () => {
   const { settings } = useSettings();
-  const { coupleNames, weddingDate } = settings;
+  const { coupleNames, weddingDate, messages } = settings;
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const ref = useRef(null);
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.5,
-      },
-    },
-  };
+  const handleMouseMove = useCallback((e) => {
+    if (!ref.current) return;
+    const r = ref.current.getBoundingClientRect();
+    setTilt({
+      x: ((e.clientY - r.top) / r.height - 0.5) * -6,
+      y: ((e.clientX - r.left) / r.width - 0.5) * 6,
+    });
+  }, []);
 
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { duration: 1.5, ease: "easeOut" } },
-  };
+  const handleMouseLeave = useCallback(() => setTilt({ x: 0, y: 0 }), []);
+
+  /* Particles */
+  const stars = Array.from({ length: 25 }, (_, i) => ({
+    left: `${5 + Math.sin(i * 2.4) * 42 + 42}%`,
+    top:  `${5 + Math.cos(i * 1.7) * 36 + 36}%`,
+    size: 0.8 + (i % 3) * 0.6,
+    dur:  3 + (i % 6),
+    delay: i * 0.3,
+  }));
 
   return (
-    <section className="relative min-h-screen min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden bg-theme-gradient">
-      <GoldDust count={40} />
-      
-      {/* Royal Mandala - smaller on mobile */}
-      <motion.div 
-        className="absolute top-[-10%] right-[-5%] w-[220px] h-[220px] sm:w-[320px] sm:h-[320px] md:w-[400px] md:h-[400px] text-theme-accent opacity-[0.08] pointer-events-none"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 100, repeat: Infinity, ease: "linear" }}
-      >
-        <Mandala className="w-full h-full" />
-      </motion.div>
-      
-      <motion.div 
-        className="absolute bottom-[-15%] left-[-10%] w-[280px] h-[280px] sm:w-[450px] sm:h-[450px] md:w-[600px] md:h-[600px] text-theme-accent opacity-[0.05] pointer-events-none"
-        animate={{ rotate: -360 }}
-        transition={{ duration: 150, repeat: Infinity, ease: "linear" }}
-      >
-        <Mandala className="w-full h-full" />
-      </motion.div>
+    <section className="section-shell relative min-h-screen min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden py-12"
+      style={{ background: 'linear-gradient(180deg, rgba(10,10,15,0.82) 0%, rgba(5,5,8,0.94) 100%)' }}>
 
-      {/* Cinematic Overlays */}
-      <div className="absolute inset-0 z-1 pointer-events-none">
-        <div className="absolute inset-0 bg-noise opacity-[0.03]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/80" />
-      </div>
+      {/* Stars */}
+      {stars.map((s, i) => (
+        <div key={i} className="absolute rounded-full pointer-events-none"
+          style={{ left: s.left, top: s.top, width: `${s.size}px`, height: `${s.size}px`,
+            background: 'rgba(229,168,48,0.5)', animation: `twinkle ${s.dur}s ease-in-out ${s.delay}s infinite` }} />
+      ))}
 
-      <motion.div 
-        className="absolute inset-0 opacity-10"
-        initial={{ scale: 1.3, opacity: 0 }}
-        animate={{ scale: 1, opacity: 0.15 }}
-        transition={{ duration: 10, ease: "linear" }}
+      {/* Ambient orbs */}
+      <div className="absolute top-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full pointer-events-none sm:w-[600px] sm:h-[600px]"
+        style={{ background: 'radial-gradient(circle, rgba(229,168,48,0.065) 0%, transparent 65%)', animation: 'orb-pulse 10s ease-in-out infinite' }} />
+      <div className="absolute bottom-[-15%] left-[-10%] w-[350px] h-[350px] rounded-full pointer-events-none sm:w-[500px] sm:h-[500px]"
+        style={{ background: 'radial-gradient(circle, rgba(200,134,14,0.04) 0%, transparent 65%)', animation: 'orb-pulse 14s ease-in-out 5s infinite' }} />
+
+      {/* Vignette */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.65) 100%)' }} />
+
+      {/* Content with 3D tilt */}
+      <div
+        ref={ref}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        className="section-inner text-center w-full max-w-5xl"
         style={{
-          background: "url('https://www.transparenttextures.com/patterns/black-paper.png')"
+          transform: `perspective(1200px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+          transition: 'transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
         }}
-      />
-
-      {/* Content with Parallax */}
-      <motion.div 
-        variants={container}
-        initial="hidden"
-        animate="show"
-        className="z-10 text-center px-4 sm:px-6 w-full max-w-[95vw]"
       >
-        <div className="flex flex-col items-center">
-          <AnimatedText 
-            text={settings.messages.heroSubtitle}
-            className="text-sm sm:text-base md:text-lg lg:text-xl font-serif tracking-[0.3em] sm:tracking-[0.4em] uppercase text-white/60 mb-6 sm:mb-8"
-            delay={0.5}
-          />
-          <div className="flex flex-col items-center justify-center gap-y-4">
-            <AnimatedText 
-              text={coupleNames.groom} 
-              className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-serif tracking-widest gold-gradient-text gold-glow italic px-2 sm:px-4"
-              delay={1.5}
-            />
-            <motion.span 
-              variants={item}
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif gold-gradient-text gold-glow italic"
-            >
-              &
-            </motion.span>
-            <AnimatedText 
-              text={coupleNames.bride} 
-              className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-serif tracking-widest gold-gradient-text gold-glow italic px-2 sm:px-4"
-              delay={2.5}
-            />
-          </div>
-          </div>
-          
+        <div className="panel-luxe px-6 py-12 sm:px-10 sm:py-14 lg:px-16 lg:py-16">
           <motion.div
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: "100%", opacity: 1 }}
-            transition={{ delay: 3, duration: 2.5 }}
-            className="h-[1px] bg-gradient-to-r from-transparent via-theme-accent to-transparent mt-12 mx-auto max-w-lg"
-          />
-          
-          <motion.div variants={item} className="space-y-4">
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-serif text-theme-title italic tracking-wide">
-              {settings.messages.saveTheDate}
-            </h2>
-            <div className="flex flex-col items-center gap-2">
-              <div className="flex items-center justify-center gap-4">
-                <div className="h-[1px] w-8 bg-theme-accent/30 shadow-[0_0_8px_rgba(var(--color-accent-rgb),0.5)]" />
-                <span className="text-theme-accent font-serif text-lg sm:text-xl font-bold tracking-[0.3em] uppercase gold-glow drop-shadow-[0_0_12px_rgba(var(--color-accent-rgb),0.4)]">{weddingDate}</span>
-                <div className="h-[1px] w-8 bg-theme-accent/30 shadow-[0_0_8px_rgba(var(--color-accent-rgb),0.5)]" />
-              </div>
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 3.5 }}
-                className="mt-4 flex flex-col items-center"
-              >
-                <span className="text-[10px] uppercase tracking-[0.4em] text-theme-text/40 mb-1">RSVP & Inquiry</span>
-                <a href={`tel:${settings.contactNumbers.primary}`} className="text-theme-accent/80 font-serif tracking-widest hover:text-theme-accent transition-colors">
-                  +91 {settings.contactNumbers.primary}
-                </a>
-              </motion.div>
-            </div>
+            initial={{ opacity: 0, y: -10, letterSpacing: '0.6em' }}
+            whileInView={{ opacity: 1, y: 0, letterSpacing: '0.3em' }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.4 }}
+            className="mb-8 inline-flex eyebrow-chip"
+          >
+            <span className="section-label">{messages.heroSubtitle}</span>
           </motion.div>
 
-      </motion.div>
+          <div className="mx-auto mb-10 max-w-4xl">
+            <div className="flex flex-col items-center gap-y-3">
+              <motion.h1
+                initial={{ opacity: 0, y: 30, filter: 'blur(6px)' }}
+                whileInView={{ opacity: 1, y: 0, filter: 'blur(0)' }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.3, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                className="title-display gold-text-animate text-glow-gold"
+                style={{ fontSize: 'clamp(2.6rem, 7vw, 6rem)' }}
+              >
+                {coupleNames.groom}
+              </motion.h1>
+
+              <motion.span
+                initial={{ opacity: 0, scale: 0.5 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.8, type: 'spring', damping: 12 }}
+                className="gold-text leading-none"
+                style={{ fontFamily: "'Tangerine', cursive", fontWeight: 700, fontSize: 'clamp(3.4rem, 8vw, 5.6rem)' }}
+              >
+                &
+              </motion.span>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 30, filter: 'blur(6px)' }}
+                whileInView={{ opacity: 1, y: 0, filter: 'blur(0)' }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.3, delay: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                className="title-display gold-text-animate text-glow-gold"
+                style={{ fontSize: 'clamp(2.6rem, 7vw, 6rem)' }}
+              >
+                {coupleNames.bride}
+              </motion.h1>
+            </div>
+          </div>
+
+          <motion.div
+            initial={{ scaleX: 0, opacity: 0 }}
+            whileInView={{ scaleX: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.8, delay: 1.8 }}
+            className="gold-divider mx-auto mb-8"
+            style={{ width: '180px', transformOrigin: 'center' }}
+          />
+
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, delay: 2.2 }}
+            className="space-y-5"
+          >
+            <h2
+              className="text-yellow-100/75 italic"
+              style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(1.35rem, 3vw, 2rem)' }}
+            >
+              {messages.saveTheDate}
+            </h2>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 2.6 }}
+              className="flex flex-wrap items-center justify-center gap-3"
+            >
+              <span className="metric-pill section-label">{weddingDate}</span>
+              <span className="metric-pill section-label">RSVP +91 {settings.contactNumbers.primary}</span>
+            </motion.div>
+
+            <CountdownTimer />
+          </motion.div>
+        </div>
+      </div>
 
       {/* Scroll indicator */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 2.5, duration: 1 }}
-        className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
+        transition={{ delay: 2, duration: 1 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
       >
-        <span className="text-theme-text/40 text-[10px] uppercase tracking-widest">Discover More</span>
-        <div className="w-[1px] h-12 bg-gradient-to-b from-theme-accent/80 to-transparent" />
+        <span className="section-label" style={{ fontSize: '0.55rem' }}>Scroll</span>
+        <div className="w-px h-12 bg-gradient-to-b from-yellow-400/60 to-transparent" />
       </motion.div>
 
-      {/* Corner Ornaments - smaller on mobile */}
-      <div className="absolute top-4 left-4 sm:top-10 sm:left-10 w-16 h-16 sm:w-24 sm:h-24 border-t-2 border-l-2 border-theme-accent/20 pointer-events-none rounded-tl-lg" />
-      <div className="absolute top-4 right-4 sm:top-10 sm:right-10 w-16 h-16 sm:w-24 sm:h-24 border-t-2 border-r-2 border-theme-accent/20 pointer-events-none rounded-tr-lg" />
-      <div className="absolute bottom-4 left-4 sm:bottom-10 sm:left-10 w-16 h-16 sm:w-24 sm:h-24 border-b-2 border-l-2 border-theme-accent/20 pointer-events-none rounded-bl-lg" />
-      <div className="absolute bottom-4 right-4 sm:bottom-10 sm:right-10 w-16 h-16 sm:w-24 sm:h-24 border-b-2 border-r-2 border-theme-accent/20 pointer-events-none rounded-br-lg" />
+      {/* Corner frames */}
+      {[
+        'top-6 left-6 sm:top-10 sm:left-10 border-t border-l rounded-tl-lg',
+        'top-6 right-6 sm:top-10 sm:right-10 border-t border-r rounded-tr-lg',
+        'bottom-6 left-6 sm:bottom-10 sm:left-10 border-b border-l rounded-bl-lg',
+        'bottom-6 right-6 sm:bottom-10 sm:right-10 border-b border-r rounded-br-lg',
+      ].map((cls, i) => (
+        <div key={i} className={`absolute w-10 h-10 sm:w-14 sm:h-14 border-yellow-400/15 pointer-events-none ${cls}`} />
+      ))}
     </section>
   );
 };
 
 export default Hero;
-

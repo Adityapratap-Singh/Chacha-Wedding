@@ -74,7 +74,7 @@ const Login = () => {
   }, []);
 
   return (
-    <div className="min-h-screen min-h-[100dvh] relative overflow-hidden flex items-center justify-center px-4 sm:px-6 py-8 bg-gradient-to-br from-[#070203] via-[#160406] to-[#0b0103]">
+    <div className="section-shell min-h-screen min-h-[100dvh] relative overflow-hidden flex items-center justify-center px-4 sm:px-6 py-8 bg-gradient-to-br from-[#070203] via-[#160406] to-[#0b0103]">
       {/* Cinematic gold glows */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,rgba(255,215,0,0.22),transparent_40%),radial-gradient(circle_at_90%_20%,rgba(128,0,0,0.25),transparent_35%)]" />
       <div className="absolute inset-0 pointer-events-none login-noise" />
@@ -118,10 +118,14 @@ const Login = () => {
             <ShieldCheck size={32} />
           </motion.div>
 
+          <div className="inline-flex eyebrow-chip mb-4">
+            <span className="section-label">Admin Access</span>
+          </div>
+
           <h1 className="text-2xl sm:text-3xl font-bold font-serif text-white">
             <span className="gold-gradient-text gold-glow">Admin Portal</span>
           </h1>
-          <p className="text-white/60 mt-2">Enter to access Pushpendra & Renu's Wedding Control</p>
+          <p className="text-white/60 mt-3 max-w-sm mx-auto">Enter to access Pushpendra & Renu's wedding control center.</p>
         </div>
 
         <motion.form
@@ -129,7 +133,7 @@ const Login = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: 'easeOut', delay: 0.12 }}
           onSubmit={onSubmit}
-          className="relative bg-white/7 backdrop-blur-xl border border-white/10 rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-8 shadow-[0_20px_80px_rgba(0,0,0,0.65)] overflow-hidden"
+          className="panel-luxe p-5 sm:p-6 md:p-8"
         >
           <div
             className="pointer-events-none absolute -inset-24 opacity-0 transition-opacity duration-500 hover:opacity-100"
@@ -169,7 +173,7 @@ const Login = () => {
                   onChange={onChange}
                   required
                   placeholder="admin@example.com"
-                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-white/35 outline-none transition-all focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500/35 shadow-[0_0_0_1px_rgba(255,215,0,0.10)] focus:shadow-[0_0_0_1px_rgba(255,215,0,0.18),0_0_34px_rgba(255,215,0,0.12)]"
+                  className="input-luxe pl-12 pr-4 py-3 placeholder:text-white/35 shadow-[0_0_0_1px_rgba(255,215,0,0.10)]"
                 />
               </div>
             </div>
@@ -188,7 +192,7 @@ const Login = () => {
                   onChange={onChange}
                   required
                   placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-white/35 outline-none transition-all focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500/35 shadow-[0_0_0_1px_rgba(255,215,0,0.10)] focus:shadow-[0_0_0_1px_rgba(255,215,0,0.18),0_0_34px_rgba(255,215,0,0.12)]"
+                  className="input-luxe pl-12 pr-4 py-3 placeholder:text-white/35 shadow-[0_0_0_1px_rgba(255,215,0,0.10)]"
                 />
               </div>
             </div>
