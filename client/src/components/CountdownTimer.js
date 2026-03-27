@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useSettings } from '../context/SettingsContext';
 
 const CountdownTimer = () => {
-  const { settings } = useSettings();
-
   const getTimeLeft = () => {
     const target = new Date('2026-05-12T00:00:00');
     const diff = target - new Date();
