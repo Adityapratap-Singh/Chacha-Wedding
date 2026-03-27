@@ -2,20 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { jsPDF } from 'jspdf';
 import { useSocket } from '../../context/SocketContext';
 import {
   UserPlus, Trash2, Copy, CheckCircle, XCircle, Clock,
   MessageCircle, Search, MapPin, Edit, X, FileText, Upload, Download, Sheet
 } from 'lucide-react';
-
-/* ── PDF helpers ── */
-const escapeHtml = (value = '') =>
-  String(value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
 
 const csvHeaders = ['name', 'family', 'honorific', 'location', 'specialMessage'];
 
@@ -106,7 +98,44 @@ const generateInviteText = (guest, inviteUrl) => {
   );
 };
 
-const downloadInvitationFile = (guest, inviteUrl) => {
+const blobToDataUrl = (blob) => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onloadend = () => resolve(reader.result);
+  reader.onerror = reject;
+  reader.readAsDataURL(blob);
+});
+
+const fetchQrDataUrl = async (inviteUrl) => {
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(inviteUrl)}`;
+  const response = await fetch(qrCodeUrl);
+  if (!response.ok) throw new Error('Unable to load QR code');
+  const blob = await response.blob();
+  return blobToDataUrl(blob);
+};
+
+const textToImageDataUrl = (text, {
+  width = 1200,
+  height = 120,
+  font = "700 48px 'Noto Sans Devanagari', 'Mangal', 'Nirmala UI', sans-serif",
+  color = '#f2cf7a',
+} = {}) => {
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('Canvas context unavailable');
+
+  ctx.clearRect(0, 0, width, height);
+  ctx.font = font;
+  ctx.fillStyle = color;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, width / 2, height / 2);
+
+  return canvas.toDataURL('image/png');
+};
+
+const downloadInvitationPdf = async (guest, inviteUrl) => {
   const honorific = guest.honorific && guest.honorific !== 'None' ? `${guest.honorific} ` : '';
   const guestLine = `${honorific}${guest.name}${guest.family === 'Yes' ? ' & Family' : ''}`;
   const personalizedNote = guest.specialMessage?.trim()
@@ -114,357 +143,163 @@ const downloadInvitationFile = (guest, inviteUrl) => {
     : 'Your presence, blessings, and warmth will make this celebration complete.';
   const locationLine = guest.location?.trim() || 'With love from our family';
   const fileSafeGuestName = guest.name.replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-');
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(inviteUrl)}`;
-  const html = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<title>Invitation-${escapeHtml(fileSafeGuestName || 'Guest')}</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Cinzel:wght@400;500;600&family=Manrope:wght@400;500;600;700&family=Tangerine:wght@700&display=swap');
-  @page { size: A4; margin: 0; }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { width: 210mm; min-height: 297mm; }
-  body {
-    color: #f7eedc;
-    font-family: 'Cormorant Garamond', serif;
-    background:
-      radial-gradient(circle at top left, rgba(229,168,48,0.14), transparent 26%),
-      radial-gradient(circle at top right, rgba(124,17,44,0.24), transparent 28%),
-      linear-gradient(180deg, #120609 0%, #090308 42%, #13070b 100%);
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  .page {
-    position: relative;
-    width: 210mm;
-    min-height: 297mm;
-    padding: 18mm;
-    overflow: hidden;
-  }
-  .frame {
-    position: relative;
-    min-height: calc(297mm - 36mm);
-    padding: 14mm;
-    border-radius: 20px;
-    border: 1px solid rgba(229,168,48,0.22);
-    background:
-      linear-gradient(155deg, rgba(255,248,231,0.08), rgba(115,10,38,0.15) 42%, rgba(10,6,10,0.96) 92%);
-    box-shadow: inset 0 0 0 1px rgba(255,248,231,0.04);
-  }
-  .frame::before,
-  .frame::after {
-    content: '';
-    position: absolute;
-    border-radius: 999px;
-    pointer-events: none;
-  }
-  .frame::before {
-    inset: -10% auto auto -18%;
-    width: 150mm;
-    height: 150mm;
-    background: radial-gradient(circle, rgba(229,168,48,0.11), transparent 70%);
-  }
-  .frame::after {
-    inset: auto -12% -10% auto;
-    width: 120mm;
-    height: 120mm;
-    background: radial-gradient(circle, rgba(124,17,44,0.18), transparent 72%);
-  }
-  .border {
-    position: absolute;
-    inset: 10mm;
-    border-radius: 14px;
-    border: 1px solid rgba(229,168,48,0.12);
-    pointer-events: none;
-  }
-  .ornament {
-    position: absolute;
-    width: 18mm;
-    height: 18mm;
-    border-color: rgba(229,168,48,0.26);
-    pointer-events: none;
-  }
-  .tl { top: 14mm; left: 14mm; border-top: 1px solid; border-left: 1px solid; border-top-left-radius: 10px; }
-  .tr { top: 14mm; right: 14mm; border-top: 1px solid; border-right: 1px solid; border-top-right-radius: 10px; }
-  .bl { bottom: 14mm; left: 14mm; border-bottom: 1px solid; border-left: 1px solid; border-bottom-left-radius: 10px; }
-  .br { bottom: 14mm; right: 14mm; border-bottom: 1px solid; border-right: 1px solid; border-bottom-right-radius: 10px; }
-  .content {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
-  }
-  .top {
-    text-align: center;
-    padding-top: 4mm;
-  }
-  .eyebrow {
-    display: inline-block;
-    padding: 3mm 6mm;
-    border-radius: 999px;
-    border: 1px solid rgba(229,168,48,0.16);
-    background: rgba(255,248,231,0.04);
-    font-family: 'Cinzel', serif;
-    font-size: 8px;
-    letter-spacing: 0.34em;
-    text-transform: uppercase;
-    color: rgba(229,168,48,0.74);
-  }
-  .mantra {
-    margin-top: 8mm;
-    font-family: 'Tangerine', cursive;
-    font-size: 24pt;
-    color: #f2cf7a;
-    text-shadow: 0 0 22px rgba(229,168,48,0.2);
-  }
-  .divider {
-    width: 44mm;
-    height: 1px;
-    margin: 5mm auto 0;
-    background: linear-gradient(90deg, transparent, rgba(229,168,48,0.72), transparent);
-  }
-  .couple-wrap {
-    text-align: center;
-    margin-top: 12mm;
-  }
-  .couple {
-    font-size: 28pt;
-    font-weight: 600;
-    font-style: italic;
-    line-height: 1.08;
-    background: linear-gradient(135deg, #c8860e, #fff2c3 35%, #d69f2e 68%, #c8860e);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .and {
-    display: block;
-    margin: 2mm 0;
-    font-family: 'Tangerine', cursive;
-    font-size: 30pt;
-    color: rgba(229,168,48,0.88);
-    line-height: 1;
-  }
-  .invitee {
-    margin: 12mm auto 0;
-    max-width: 130mm;
-    padding: 5mm 6mm;
-    border-radius: 14px;
-    background: linear-gradient(180deg, rgba(255,248,231,0.05), rgba(255,255,255,0.02));
-    border: 1px solid rgba(229,168,48,0.12);
-    text-align: center;
-  }
-  .invitee-label {
-    font-family: 'Cinzel', serif;
-    font-size: 7px;
-    letter-spacing: 0.34em;
-    text-transform: uppercase;
-    color: rgba(229,168,48,0.56);
-  }
-  .invitee-name {
-    margin-top: 2.5mm;
-    font-size: 20pt;
-    font-style: italic;
-    color: #fff4da;
-  }
-  .copy {
-    margin: 8mm auto 0;
-    max-width: 128mm;
-    text-align: center;
-    font-size: 14pt;
-    line-height: 1.7;
-    color: rgba(247,238,220,0.8);
-  }
-  .message {
-    margin: 4mm auto 0;
-    max-width: 128mm;
-    text-align: center;
-    font-size: 12.5pt;
-    line-height: 1.7;
-    color: rgba(247,238,220,0.62);
-  }
-  .details {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 5mm;
-    margin-top: 11mm;
-  }
-  .detail-card {
-    padding: 5.5mm;
-    border-radius: 16px;
-    border: 1px solid rgba(229,168,48,0.12);
-    background: linear-gradient(180deg, rgba(255,248,231,0.05), rgba(255,255,255,0.02));
-  }
-  .detail-label {
-    font-family: 'Cinzel', serif;
-    font-size: 7px;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: rgba(229,168,48,0.6);
-    margin-bottom: 2.5mm;
-  }
-  .detail-value {
-    font-size: 15pt;
-    color: #fff2d4;
-    line-height: 1.45;
-  }
-  .detail-sub {
-    margin-top: 1.2mm;
-    font-family: 'Manrope', sans-serif;
-    font-size: 9pt;
-    color: rgba(247,238,220,0.5);
-    line-height: 1.6;
-  }
-  .link-box {
-    margin-top: 8mm;
-    padding: 6mm;
-    border-radius: 16px;
-    background: rgba(229,168,48,0.07);
-    border: 1px solid rgba(229,168,48,0.18);
-  }
-  .link-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1.5fr) minmax(42mm, 52mm);
-    gap: 5mm;
-    align-items: center;
-  }
-  .link-label {
-    font-family: 'Cinzel', serif;
-    font-size: 7px;
-    letter-spacing: 0.3em;
-    color: rgba(229,168,48,0.62);
-    text-transform: uppercase;
-  }
-  .link {
-    display: block;
-    margin-top: 2.5mm;
-    font-family: 'Manrope', sans-serif;
-    font-size: 9.2pt;
-    line-height: 1.6;
-    word-break: break-all;
-    color: #f8d98e;
-    text-decoration: none;
-  }
-  .qr-wrap {
-    padding: 3mm;
-    border-radius: 12px;
-    background: rgba(255,248,231,0.05);
-    border: 1px solid rgba(229,168,48,0.14);
-    text-align: center;
-  }
-  .qr-box {
-    width: 44mm;
-    height: 44mm;
-    display: block;
-    margin: 0 auto;
-    border-radius: 8px;
-    background: white;
-    padding: 2.5mm;
-  }
-  .qr-caption {
-    margin-top: 2mm;
-    font-family: 'Cinzel', serif;
-    font-size: 6.5px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: rgba(229,168,48,0.52);
-  }
-  .footer {
-    margin-top: auto;
-    padding-top: 10mm;
-    text-align: center;
-  }
-  .hindi {
-    font-size: 15pt;
-    font-style: italic;
-    color: rgba(242, 207, 122, 0.78);
-  }
-  .from {
-    margin-top: 2.5mm;
-    font-family: 'Manrope', sans-serif;
-    font-size: 9pt;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: rgba(247,238,220,0.46);
-  }
-  @media print {
-    .page { margin: 0; }
-  }
-</style>
-</head>
-<body>
-<div class="page">
-  <div class="frame">
-    <div class="border"></div>
-    <div class="ornament tl"></div>
-    <div class="ornament tr"></div>
-    <div class="ornament bl"></div>
-    <div class="ornament br"></div>
+  const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  const margin = 16;
+  const cardX = margin;
+  const cardY = margin;
+  const cardW = pageWidth - margin * 2;
+  const cardH = pageHeight - margin * 2;
+  const centerX = pageWidth / 2;
 
-    <div class="content">
-      <div class="top">
-        <span class="eyebrow">Wedding Invitation</span>
-        <p class="mantra">Atithi Devo Bhava</p>
-        <div class="divider"></div>
-      </div>
+  pdf.setFillColor(18, 6, 9);
+  pdf.rect(0, 0, pageWidth, pageHeight, 'F');
 
-      <div class="couple-wrap">
-        <div class="couple">Pushpendra Kumar Singh</div>
-        <span class="and">&amp;</span>
-        <div class="couple">Renu Singh</div>
-      </div>
+  pdf.setDrawColor(200, 134, 14);
+  pdf.setLineWidth(0.4);
+  pdf.roundedRect(cardX, cardY, cardW, cardH, 6, 6, 'S');
+  pdf.setDrawColor(229, 168, 48);
+  pdf.setLineWidth(0.15);
+  pdf.roundedRect(cardX + 4, cardY + 4, cardW - 8, cardH - 8, 4, 4, 'S');
 
-      <div class="invitee">
-        <div class="invitee-label">Honoured Guest</div>
-        <div class="invitee-name">${escapeHtml(guestLine)}</div>
-      </div>
+  let y = 29;
 
-      <p class="copy">
-        You are warmly invited to celebrate with us as two families come together in joy, tradition, and blessing.
-      </p>
-      <p class="message">
-        ${escapeHtml(personalizedNote)}
-      </p>
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(9);
+  pdf.setTextColor(229, 168, 48);
+  pdf.text('WEDDING INVITATION', centerX, y, { align: 'center' });
 
-      <div class="details">
-        <div class="detail-card">
-          <div class="detail-label">Ceremony Date</div>
-          <div class="detail-value">12 May 2026</div>
-          <div class="detail-sub">Tuesday · Baraat welcome from 8:00 PM</div>
-        </div>
-        <div class="detail-card">
-          <div class="detail-label">Venue</div>
-          <div class="detail-value">Maa Ambe Guest House</div>
-          <div class="detail-sub">Chhani · ${escapeHtml(locationLine)}</div>
-        </div>
-      </div>
+  y += 11;
+  pdf.setFont('times', 'italic');
+  pdf.setFontSize(23);
+  pdf.setTextColor(242, 207, 122);
+  pdf.text('Atithi Devo Bhava', centerX, y, { align: 'center' });
 
-      <div class="link-box">
-        <div class="link-grid">
-          <div>
-            <div class="link-label">Personal Invitation Link</div>
-            <a class="link" href="${escapeHtml(inviteUrl)}">${escapeHtml(inviteUrl)}</a>
-          </div>
-          <div class="qr-wrap">
-            <img class="qr-box" src="${qrCodeUrl}" alt="QR code for invitation link" />
-            <div class="qr-caption">Scan to open</div>
-          </div>
-        </div>
-      </div>
+  y += 6;
+  pdf.setDrawColor(229, 168, 48);
+  pdf.line(centerX - 24, y, centerX + 24, y);
 
-      <div class="footer">
-        <p class="hindi">आपकी उपस्थिति हमारे लिए अमूल्य है।</p>
-        <p class="from">With Love · Pushpendra &amp; Renu</p>
-      </div>
-    </div>
-  </div>
-</div>
-</body>
-</html>`;
-  downloadTextFile(`invitation-${fileSafeGuestName || 'guest'}.html`, html, 'text/html;charset=utf-8;');
+  y += 15;
+  pdf.setFont('times', 'bolditalic');
+  pdf.setFontSize(24);
+  pdf.setTextColor(255, 242, 212);
+  pdf.text('Pushpendra Kumar Singh', centerX, y, { align: 'center' });
+
+  y += 9;
+  pdf.setFont('times', 'italic');
+  pdf.setFontSize(26);
+  pdf.setTextColor(229, 168, 48);
+  pdf.text('&', centerX, y, { align: 'center' });
+
+  y += 9;
+  pdf.setFont('times', 'bolditalic');
+  pdf.setFontSize(24);
+  pdf.setTextColor(255, 242, 212);
+  pdf.text('Renu Singh', centerX, y, { align: 'center' });
+
+  y += 12;
+  pdf.setDrawColor(229, 168, 48);
+  pdf.roundedRect(32, y, pageWidth - 64, 18, 3, 3, 'S');
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(8);
+  pdf.setTextColor(229, 168, 48);
+  pdf.text('HONOURED GUEST', centerX, y + 5.5, { align: 'center' });
+  pdf.setFont('times', 'italic');
+  pdf.setFontSize(17);
+  pdf.setTextColor(255, 244, 218);
+  pdf.text(guestLine, centerX, y + 12.5, { align: 'center' });
+
+  y += 28;
+  pdf.setFont('times', 'italic');
+  pdf.setFontSize(14);
+  pdf.setTextColor(247, 238, 220);
+  const inviteCopy = pdf.splitTextToSize(
+    'You are warmly invited to celebrate with us as two families come together in joy, tradition, and blessing.',
+    150
+  );
+  pdf.text(inviteCopy, centerX, y, { align: 'center' });
+
+  y += inviteCopy.length * 7 + 3;
+  pdf.setFont('times', 'normal');
+  pdf.setFontSize(12.5);
+  pdf.setTextColor(230, 220, 200);
+  const noteLines = pdf.splitTextToSize(personalizedNote, 150);
+  pdf.text(noteLines, centerX, y, { align: 'center' });
+
+  y += noteLines.length * 6 + 10;
+  const detailTop = y;
+  const detailW = 78;
+  const detailH = 28;
+  const detailGap = 8;
+  const leftX = 22;
+  const rightX = leftX + detailW + detailGap;
+
+  pdf.roundedRect(leftX, detailTop, detailW, detailH, 3, 3, 'S');
+  pdf.roundedRect(rightX, detailTop, detailW, detailH, 3, 3, 'S');
+
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(8);
+  pdf.setTextColor(229, 168, 48);
+  pdf.text('CEREMONY DATE', leftX + 5, detailTop + 6);
+  pdf.text('VENUE', rightX + 5, detailTop + 6);
+
+  pdf.setFont('times', 'bold');
+  pdf.setFontSize(15);
+  pdf.setTextColor(255, 242, 212);
+  pdf.text('12 May 2026', leftX + 5, detailTop + 14);
+  pdf.text('Maa Ambe Guest House', rightX + 5, detailTop + 14);
+
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(9);
+  pdf.setTextColor(214, 204, 189);
+  pdf.text('Tuesday · Baraat welcome from 8:00 PM', leftX + 5, detailTop + 21);
+  const venueLines = pdf.splitTextToSize(`Chhani · ${locationLine}`, detailW - 10);
+  pdf.text(venueLines, rightX + 5, detailTop + 21);
+
+  y = detailTop + detailH + 10;
+  pdf.roundedRect(22, y, pageWidth - 44, 45, 3, 3, 'S');
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(8);
+  pdf.setTextColor(229, 168, 48);
+  pdf.text('PERSONAL INVITATION LINK', 28, y + 7);
+
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(9.5);
+  pdf.setTextColor(248, 217, 142);
+  const linkLines = pdf.splitTextToSize(inviteUrl, 92);
+  pdf.text(linkLines, 28, y + 15);
+
+  try {
+    const qrDataUrl = await fetchQrDataUrl(inviteUrl);
+    pdf.addImage(qrDataUrl, 'PNG', pageWidth - 58, y + 6, 28, 28);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(7);
+    pdf.setTextColor(229, 168, 48);
+    pdf.text('SCAN TO OPEN', pageWidth - 44, y + 38, { align: 'center' });
+  } catch {
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(8);
+    pdf.setTextColor(214, 204, 189);
+    pdf.text('QR unavailable', pageWidth - 44, y + 22, { align: 'center' });
+  }
+
+  try {
+    const hindiFooter = textToImageDataUrl('आपकी उपस्थिति हमारे लिए अमूल्य है।');
+    pdf.addImage(hindiFooter, 'PNG', 40, pageHeight - 36, pageWidth - 80, 10);
+  } catch {
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(11);
+    pdf.setTextColor(242, 207, 122);
+    pdf.text('Aapki upasthiti hamare liye amoolya hai.', centerX, pageHeight - 30, { align: 'center' });
+  }
+
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(9);
+  pdf.setTextColor(214, 204, 189);
+  pdf.text('With Love · Pushpendra & Renu', centerX, pageHeight - 22, { align: 'center' });
+
+  pdf.save(`invitation-${fileSafeGuestName || 'guest'}.pdf`);
 };
 
 /* ─── Main Component ─── */
@@ -881,8 +716,8 @@ const GuestList = () => {
                         </button>
                         {/* PDF Export */}
                         <button
-                          onClick={() => downloadInvitationFile(guest, getInviteLink(guest.guestId))}
-                          title="Download Invitation"
+                          onClick={() => downloadInvitationPdf(guest, getInviteLink(guest.guestId))}
+                          title="Download Invitation PDF"
                           className="p-1.5 rounded-lg bg-white/60 border border-white/70 hover:bg-yellow-50 transition-all"
                           style={{ color: '#c8860e' }}
                         >
