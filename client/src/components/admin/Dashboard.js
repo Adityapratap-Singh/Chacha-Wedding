@@ -179,7 +179,7 @@ const Dashboard = () => {
                 style={{ background: 'linear-gradient(135deg, #c8860e, #fde68a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 Wedding Admin
               </h1>
-              <p className="text-[10px] mt-0.5" style={{ color: 'rgba(229,168,48,0.4)', letterSpacing: '0.05em' }}>Pushpendra &amp; Rinu</p>
+              <p className="text-[10px] mt-0.5" style={{ color: 'rgba(229,168,48,0.4)', letterSpacing: '0.05em' }}>Pushpendra &amp; Renu</p>
             </div>
           )}
           <div className="flex items-center gap-1.5">
@@ -246,7 +246,7 @@ const Dashboard = () => {
                   : pathname.includes('content') ? 'Content Manager'
                   : pathname.includes('images') ? 'Image Manager' : 'Admin'}
               </h2>
-              <p className="text-xs hidden sm:block" style={{ color: G.textSub }}>12 May 2026 · Pushpendra &amp; Rinu</p>
+              <p className="text-xs hidden sm:block" style={{ color: G.textSub }}>12 May 2026 · Pushpendra &amp; Renu</p>
             </div>
           </div>
 

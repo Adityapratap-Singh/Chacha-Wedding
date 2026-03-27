@@ -95,18 +95,18 @@ const generateInviteText = (guest, inviteUrl) => {
     `We warmly welcome you to the marriage of\n\n` +
     `  Pushpendra Kumar Singh\n` +
     `       &\n` +
-    `  Rinu Singh\n\n` +
+    `  Renu Singh\n\n` +
     `Dear ${honorific}${guest.name}${family},\n\n` +
     `You are cordially invited to grace us with your presence\n` +
     `and be a part of this cherished celebration.\n\n` +
     `📅  12 May 2026\n\n` +
     `🔗 Your personal invitation link:\n${inviteUrl}\n\n` +
     `आपकी उपस्थिति हमारे लिए अमूल्य है।\n` +
-    `— Pushpendra & Rinu`
+    `— Pushpendra & Renu`
   );
 };
 
-const generatePDF = (guest, inviteUrl) => {
+const downloadInvitationFile = (guest, inviteUrl) => {
   const honorific = guest.honorific && guest.honorific !== 'None' ? `${guest.honorific} ` : '';
   const guestLine = `${honorific}${guest.name}${guest.family === 'Yes' ? ' & Family' : ''}`;
   const personalizedNote = guest.specialMessage?.trim()
@@ -414,7 +414,7 @@ const generatePDF = (guest, inviteUrl) => {
       <div class="couple-wrap">
         <div class="couple">Pushpendra Kumar Singh</div>
         <span class="and">&amp;</span>
-        <div class="couple">Rinu Singh</div>
+        <div class="couple">Renu Singh</div>
       </div>
 
       <div class="invitee">
@@ -457,16 +457,14 @@ const generatePDF = (guest, inviteUrl) => {
 
       <div class="footer">
         <p class="hindi">आपकी उपस्थिति हमारे लिए अमूल्य है।</p>
-        <p class="from">With Love · Pushpendra &amp; Rinu</p>
+        <p class="from">With Love · Pushpendra &amp; Renu</p>
       </div>
     </div>
   </div>
 </div>
-<script>window.onload = () => window.print();</script>
 </body>
 </html>`;
-  const w = window.open('', '_blank', 'width=700,height=900');
-  if (w) { w.document.write(html); w.document.close(); }
+  downloadTextFile(`invitation-${fileSafeGuestName || 'guest'}.html`, html, 'text/html;charset=utf-8;');
 };
 
 /* ─── Main Component ─── */
@@ -883,8 +881,8 @@ const GuestList = () => {
                         </button>
                         {/* PDF Export */}
                         <button
-                          onClick={() => generatePDF(guest, getInviteLink(guest.guestId))}
-                          title="Export Invitation as PDF"
+                          onClick={() => downloadInvitationFile(guest, getInviteLink(guest.guestId))}
+                          title="Download Invitation"
                           className="p-1.5 rounded-lg bg-white/60 border border-white/70 hover:bg-yellow-50 transition-all"
                           style={{ color: '#c8860e' }}
                         >

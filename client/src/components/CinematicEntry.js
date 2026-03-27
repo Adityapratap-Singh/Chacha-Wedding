@@ -111,7 +111,7 @@ const CinematicEntry = ({ onFinish }) => {
   };
 
   const groom = 'Pushpendra Kumar Singh';
-  const bride = 'Rinu Singh';
+  const bride = 'Renu Singh';
   const welcome = guest
     ? `Your exclusive invitation, ${guest.honorific !== 'None' ? guest.honorific + ' ' : ''}${guest.name}`
     : 'You are cordially invited to witness';
