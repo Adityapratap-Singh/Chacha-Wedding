@@ -4,7 +4,6 @@ import { useSettings } from '../context/SettingsContext';
 
 const CountdownTimer = () => {
   const { settings } = useSettings();
-  const weddingDateStr = settings?.weddingDate;
 
   const getTimeLeft = () => {
     const target = new Date('2026-05-12T00:00:00');

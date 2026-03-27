@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { useSettings, THEMES } from '../context/SettingsContext';
+import { useSettings } from '../context/SettingsContext';
 
 const C = {
   container: { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.09, delayChildren: 0.2 } } },

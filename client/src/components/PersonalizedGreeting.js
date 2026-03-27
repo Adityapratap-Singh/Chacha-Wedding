@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import FloatingPetals from './FloatingPetals';
 import Hero from './Hero';
 import EventsTimeline from './EventsTimeline';
@@ -14,15 +14,6 @@ import RSVP from './RSVP';
 import AdexPromoSection from './AdexPromoSection';
 import AdexPopup from './AdexPopup';
 import { useSettings } from '../context/SettingsContext';
-
-/* ── Section divider ── */
-const Divider = () => (
-  <div className="flex items-center justify-center gap-4 py-2">
-    <div className="gold-divider flex-1 max-w-xs opacity-30" />
-    <div className="w-1.5 h-1.5 rounded-full bg-yellow-400/40" />
-    <div className="gold-divider flex-1 max-w-xs opacity-30" />
-  </div>
-);
 
 const PersonalizedGreeting = () => {
   const { guestId } = useParams();
